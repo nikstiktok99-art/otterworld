@@ -21,7 +21,12 @@ jobs:
       - name: Abhängigkeiten
         run: npm ci
 
-      - name: Web-Dateien ins iOS-Projekt kopieren
+      - name: Spiel bauen
+        run: npm run build
+        env:
+          VITE_BUILD: s${{ github.run_number }}
+
+      - name: Spiel ins iOS-Projekt kopieren
         run: npx cap sync ios
 
       - name: Simulator wählen (iPhone 16 Pro, sonst neuestes iPhone)
@@ -68,13 +73,14 @@ jobs:
           xcrun simctl launch --console-pty "$UDID" "$APP_ID" > ergebnis/konsole.txt 2>&1 &
           KONSOLE=$!
 
-          sleep 8
-          xcrun simctl io "$UDID" screenshot ergebnis/01-nach-8s.png
-          sleep 12
-          xcrun simctl io "$UDID" screenshot ergebnis/02-nach-20s.png
+          # Ein frisch gestarteter Simulator ist langsam – deshalb großzügige Wartezeiten.
+          sleep 15
+          xcrun simctl io "$UDID" screenshot ergebnis/01-nach-15s.png
+          sleep 20
+          xcrun simctl io "$UDID" screenshot ergebnis/02-nach-35s.png
 
           if xcrun simctl spawn "$UDID" launchctl list | grep -q "UIKitApplication:$APP_ID"; then
-            echo "App läuft nach 20 Sekunden noch." | tee ergebnis/status.txt
+            echo "App läuft nach 35 Sekunden noch." | tee ergebnis/status.txt
           else
             echo "App ist nach dem Start nicht mehr aktiv (Absturz?)" | tee ergebnis/status.txt
             echo "::error::App ist nach dem Start nicht mehr aktiv"

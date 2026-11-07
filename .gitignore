@@ -1,10 +1,11 @@
 node_modules/
+dist/
+e2e-ergebnis/
 ios/App/build/
 ios/DerivedData/
 ios/App/App/public/
 ios/App/App/capacitor.config.json
 ios/App/App/config.xml
-android/
 build/
 *.ipa
 *.apk

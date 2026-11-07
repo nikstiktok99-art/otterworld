@@ -1,57 +1,61 @@
 # Otterwelt
 
-Kleines Spiel, gebaut mit Capacitor. **Hauptplattform: ihr iPhone 16 Pro.** Android = Testgerät, Browser = schnelle Vorschau.
+Kleines, persönliches Otterspiel. **Hauptplattform: ihr iPhone 16 Pro.** Android = dein Testgerät, Browser = schnelle Vorschau.
 
-Aktueller Stand: **Schritt 1a – Durchstich** (Platzhalter-Otter, Tippen zum Laufen, Muscheln sammeln, Speichern, Spielstand-Code, Safe Areas, Technik-Test im Menü).
+Aktueller Stand: **Schritt 1b – Der erste Abend mit Schnabbi** (spielbar, alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf).
 
-## Neue iPhone-Version erzeugen (für dich)
+## Selbst spielen
 
-1. github.com → dieses Repo → **Actions** → links **„iPhone-Build (.ipa)“** → **Run workflow** → grüner Knopf.
-2. Ca. 5–10 Minuten warten, bis der Lauf einen grünen Haken hat.
-3. Den Lauf anklicken → unten bei **Artifacts** die Datei herunterladen. Das ist eine **.zip**,
-   darin liegt die **.ipa**. Entpacken!
-4. Die **.ipa** an sie schicken (z. B. per Mail, WhatsApp-Dokument oder USB-Stick).
-   Sie folgt dann `ANLEITUNG-IPHONE.md`.
-
-Android-Testversion genauso: **„Android-Testbuild (.apk)“** → .zip → .apk aufs Handy, installieren
-(einmalig „Unbekannte Apps installieren“ erlauben).
-
-Vorab-Prüfung ohne ihr iPhone: **„iPhone-Simulator-Test“** startet die App in einem virtuellen
-iPhone 16 Pro auf GitHubs Mac und liefert Bildschirmfotos, Konsolenausgabe und ggf. Absturzberichte.
-Ersetzt nicht den Test auf ihrem echten Gerät.
-
-(Claude startet und prüft diese Läufe inzwischen selbst über das GitHub-Werkzeug `gh`.)
-
-## Im Browser ansehen
+**Im Browser (Windows):**
 
 ```bash
 npm install
+npm run dev
 ```
 
-```bash
-npm run serve
-```
+Dann http://localhost:5173 öffnen, in den Entwicklertools die Handyansicht wählen (z. B. 402 × 874).
+Auf dem Handy im selben WLAN: `npm run dev:lan` und die angezeigte Netzwerkadresse öffnen (zählt nur als Browserprüfung).
 
-Dann http://localhost:8080 öffnen (am besten mit der Handy-Ansicht der Entwicklertools).
+**Android:** Actions › „Android-Testbuild (.apk)“ › Run workflow → .apk aufs Handy, installieren.
+Lokal geht es auch: `npm run android:apk` (braucht das Android-SDK; die .apk liegt dann unter `android/app/build/outputs/apk/debug/`).
 
-## Was schon iPhone-fest ist
+**iPhone:** Actions › „iPhone-Build (.ipa)“ › Run workflow → .ipa an sie schicken → sie folgt `ANLEITUNG-IPHONE.md`.
 
-- Speichern im **nativen** iOS-Speicher (Capacitor Preferences / UserDefaults), Browser-Ersatz: localStorage
-- Sofort speichern, wenn die App in den Hintergrund geht; zusätzlich bei jeder Muschel und alle 10 s
-- Safe Areas für Dynamic Island und Home-Indikator
-- Kein Gummiband-Scrollen, kein Doppeltipp-Zoom, kein Lupen-/Kontextmenü
-- Ton erst nach dem ersten Tipp
-- Bewegung zeitbasiert (gleich schnell bei 60, 120 Hz oder im Stromsparmodus)
-- Nur Hochformat, nur iPhone
-- Spielstand als Text-Code sichern/laden (Menü)
+Vorab-Prüfung ohne ihr iPhone: „iPhone-Simulator-Test“ startet die App in einem virtuellen iPhone 16 Pro und liefert
+Bildschirmfotos, Konsolenausgabe und ggf. Absturzberichte. Ersetzt nicht den Test auf ihrem echten Gerät.
 
-## Technik
+(Claude startet und prüft diese Läufe über das GitHub-Werkzeug `gh`.)
 
-| Was | Wo |
+## Prüfen
+
+| Befehl | Was |
 |---|---|
-| Spiel (HTML/JS, kein Build-Schritt) | `www/` |
-| Xcode-Projekt (Swift Package Manager) | `ios/App/` |
-| Cloud-Builds | `.github/workflows/` |
-| App-ID | `com.schnabbisfriends.otterwelt` (in `capacitor.config.json`) |
+| `npm run check` | TypeScript-Typprüfung |
+| `npm test` | Regeln, Speichern/Laden, doppelte Belohnungen, Inhaltsreferenzen, Wege, Modulgrenzen, keine Emojis |
+| `npm run e2e` | Browser-Durchlauf des ganzen Abends in iPhone-Größe inkl. Neuladen nach Bauen und Aufstellen, mit Fotos in `e2e-ergebnis/` |
 
-Version erhöhen: `version` in `package.json`. Die Build-Nummer zählt GitHub automatisch hoch.
+Bei jedem Hochladen läuft „Prüfen“ automatisch auf GitHub.
+
+## Aufbau
+
+| Ordner | Zuständigkeit |
+|---|---|
+| `src/app` | Startet eine Spielinstanz, verbindet alles, Speichern (zwei Plätze, Warteschlange), Lebenszyklus, Dialogablauf |
+| `src/game` | Reine Spielregeln – keine Imports aus Phaser, React oder Capacitor (ein Test prüft das) |
+| `src/content` | Typisierte Inhalte: Figuren, Körper, Gegenstände, Rezepte, Quests, Dialoge (Entwurf), Maps |
+| `src/world` | Phaser: Karte, Kamera, Tippen, Bewegung, Schwimmen, Dekoriermodus, Effekte |
+| `src/ui` | React: Anzeige, Dialog mit Namenswahl, Beutel, Werkbank, Menü, Spielstand-Code, Technik-Info |
+| `src/assets` | Grafik-Katalog (Übergabevertrag mit Codex) und Platzhalter-Formen |
+| `src/platform` | Speicher, Pause/Fortsetzen, Android-Zurück, Haptik – je für Browser und Capacitor |
+| `public/art` | Gelieferte PNGs (siehe `docs/GRAFIK_SLOTS.md`) |
+| `ios/`, `android/` | Native Projekte (Capacitor 8), nur gezielt angepasst: Hochformat, nur iPhone |
+
+Weitere Dokumente: `TESTPROTOKOLL.md`, `ANLEITUNG-IPHONE.md`, `docs/GRAFIK_SLOTS.md`, `docs/INHALTSPLAN.md`, `AGENTS.md` (für Codex), `CLAUDE.md`.
+
+## Versionen
+
+Exakt gepinnt (siehe `package.json` und `package-lock.json`): Phaser 4.2.1, React 19.3.1, Vite 8.3.5, TypeScript 7.0.2,
+Vitest 5.0.5, Capacitor 8.6.0. App-ID `com.schnabbisfriends.otterwelt` – **niemals ändern**, sonst gilt jede neue
+Version auf ihrem iPhone als andere App und ihr Spielstand ist weg.
+
+Version erhöhen: `version` in `package.json` **und** `src/app/version.ts` (ein Test prüft, dass beide gleich sind).

@@ -1,0 +1,68 @@
+# Grafik-Slots
+
+Lesbare Fassung von `src/assets/catalog.ts` (dort gilt im Zweifel). Maße in Pixeln, Anker = Bodenpunkt ab links oben.
+Raster: 16-px-Kacheln, Weltfiguren etwa 32 px hoch in 48 px hohen Frames, Darstellung mit ganzzahligem Zoom (meist 2×).
+
+Status: **P** = Platzhalter im Code · **E** = Codex-Entwurf eingebaut · **F** = final
+
+## Figuren (Richtungen se und ne; sw/nw spiegelt das Spiel)
+
+| Schlüssel | Frame | Anker | Frames · fps | Status | Hinweis |
+|---|---|---|---|---|---|
+| characters.otter.idle.se / .ne | 48 × 48 | 24, 40 | 2 · 2 | P | steht, atmet |
+| characters.otter.walk.se / .ne | 48 × 48 | 24, 40 | 4 · 8 | P | läuft, kleine Pfotenbewegung |
+| characters.otter.swim.se / .ne | 48 × 48 | 24, 40 | 4 · 5 | P | Anker = Wasserlinie, nur Kopf und Schultern sichtbar |
+| characters.schnabbi.idle.se | 88 × 48 | 44, 40 | 1 | **E** | Paket 01 (Entwurf); Größe noch abstimmen, siehe AGENTS.md |
+| characters.schnabbi.idle.ne | 88 × 48 | 44, 40 | 2 · 2 | P | |
+| characters.schnabbi.walk.se / .ne | 88 × 48 | 44, 40 | 4 · 6 | P | tapst |
+| characters.schnabbi.swim.se / .ne | 88 × 48 | 44, 40 | 2 · 3 | P | paddelt, Anker = Wasserlinie |
+| characters.schnabbi.sit.se / .ne | 88 × 48 | 44, 40 | 2 · 2 | P | sitzt neben der Leuchte |
+
+Solange von einer Figur nur einzelne Zustände geliefert sind, nutzt das Spiel für die fehlenden Zustände das gelieferte
+Bild (kein Mix aus Bild und Testform).
+
+## Umgebung
+
+| Schlüssel | Frame | Anker | Status | Hinweis |
+|---|---|---|---|---|
+| objects.bau | 48 × 40 | 24, 39 | P | Bau unter Wurzeln, karierte Gardine; Grundfläche 3 × 2 Kacheln |
+| objects.werkbank | 32 × 24 | 16, 23 | P | Grundfläche 2 × 1 Kacheln |
+| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Sand, Wasser (2 Frames), Uferkanten, Steg, Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
+
+## Gegenstände und Deko
+
+| Schlüssel | Frame | Anker | Frames · fps | Status | Hinweis |
+|---|---|---|---|---|---|
+| items.treibholz | 16 × 16 | 8, 13 | 1 | P | am Strand |
+| items.treibholz.treibend | 16 × 16 | 8, 12 | 2 · 2 | P | treibt im Wasser, sanftes Wippen |
+| items.muschelschale | 16 × 16 | 8, 13 | 1 | P | natürliche Muschel, ohne Aufhängung |
+| deco.uferleuchte.aus | 16 × 32 | 8, 30 | 1 | P | Treibholzpfosten mit Muschel |
+| deco.uferleuchte.an | 16 × 32 | 8, 30 | 3 · 4 | P | eingeschaltet, sanftes Flackern |
+
+## Effekte
+
+| Schlüssel | Frame | Anker | Frames · fps | Status |
+|---|---|---|---|---|
+| fx.leuchtschein | 64 × 64 | 32, 32 | 1 | P (additiv gezeichnet) |
+| fx.glitzer | 8 × 8 | 4, 4 | 4 · 8 | P |
+| fx.ziel | 16 × 8 | 8, 4 | 1 | P |
+| fx.spritzer | 16 × 8 | 8, 6 | 3 · 10 | P |
+
+## Porträts (Dialog, angezeigt mit 64 CSS-Pixeln)
+
+| Schlüssel | Frame | Status | Hinweis |
+|---|---|---|---|
+| portraits.schnabbi | 64 × 64 | P | neutral; nach Foto |
+| portraits.otter | 64 × 64 | P | neutral |
+
+## Ton (Platzhalter: synthetisch erzeugt, `src/app/sound.ts`)
+
+`sfx.tipp`, `sfx.dialog`, `sfx.aufheben`, `sfx.platsch`, `sfx.bauen`, `sfx.aufstellen`, `sfx.leuchte`, `sfx.nein`;
+Ambiente-Slot `ambience.startufer.abend` (noch stumm).
+
+## Nächste sinnvolle Pakete
+
+1. **Starter-Otter**: idle, walk, swim in se und ne (größter sichtbarer Gewinn, kein Foto nötig).
+2. **Startufer**: Kachelbogen, Bau, Werkbank, Steg.
+3. **Dinge**: Treibholz (2), Muschelschale, Uferleuchte aus/an.
+4. **Schnabbi** komplett (Größe abgestimmt) inkl. Porträt.

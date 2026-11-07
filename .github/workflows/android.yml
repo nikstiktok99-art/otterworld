@@ -19,14 +19,20 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - name: Android-Projekt erzeugen
-        run: npx cap add android && npx cap sync android
+      - name: Spiel bauen
+        run: npm run build
+        env:
+          VITE_BUILD: a${{ github.run_number }}
+      - name: Spiel ins Android-Projekt kopieren
+        run: npx cap sync android
       - name: Bauen
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
-      - run: cp android/app/build/outputs/apk/debug/app-debug.apk "Otterwelt-$(node -p "require('./package.json').version")-test.apk"
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk "Otterwelt-$(node -p "require('./package.json').version")-a${{ github.run_number }}-test.apk"
       - uses: actions/upload-artifact@v4
         with:
-          name: Otterwelt-Android-Test
+          name: Otterwelt-Android-Test-a${{ github.run_number }}
           path: "*.apk"
           retention-days: 14

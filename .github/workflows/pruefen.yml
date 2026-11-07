@@ -1,0 +1,25 @@
+name: Prüfen
+
+# Läuft bei jedem Hochladen: Typprüfung, Inhaltsprüfung und Tests (günstige Linux-Minuten).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typen
+        run: npm run check
+      - name: Tests (Regeln, Speichern, Inhalte, Modulgrenzen)
+        run: npm test
+      - name: Bauen
+        run: npm run build

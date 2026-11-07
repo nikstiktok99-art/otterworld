@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Otterwelt</string>
+    <string name="title_activity_main">Otterwelt</string>
+    <string name="package_name">com.schnabbisfriends.otterwelt</string>
+    <string name="custom_url_scheme">com.schnabbisfriends.otterwelt</string>
+</resources>

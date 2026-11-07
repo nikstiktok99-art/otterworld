@@ -1,18 +1,18 @@
 {
   "appId": "com.schnabbisfriends.otterwelt",
   "appName": "Otterwelt",
-  "webDir": "www",
-  "backgroundColor": "#9fd8e8",
+  "webDir": "dist",
+  "backgroundColor": "#3d86a8",
   "ios": {
     "contentInset": "never",
     "scrollEnabled": false,
     "allowsLinkPreview": false,
-    "backgroundColor": "#9fd8e8"
+    "backgroundColor": "#3d86a8"
   },
   "android": {
-    "backgroundColor": "#9fd8e8"
+    "backgroundColor": "#3d86a8"
   },
   "plugins": {
-    "StatusBar": { "overlaysWebView": true, "style": "LIGHT" }
+    "StatusBar": { "overlaysWebView": true, "style": "DARK" }
   }
 }

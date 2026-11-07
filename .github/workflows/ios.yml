@@ -1,6 +1,7 @@
 name: iPhone-Build (.ipa)
 
 # Start: GitHub › Actions › „iPhone-Build (.ipa)“ › „Run workflow“
+# Ergebnis: unsignierte .ipa – signiert und installiert wird mit Sideloadly (siehe ANLEITUNG-IPHONE.md).
 on:
   workflow_dispatch:
 
@@ -19,7 +20,12 @@ jobs:
       - name: Abhängigkeiten
         run: npm ci
 
-      - name: Web-Dateien ins iOS-Projekt kopieren
+      - name: Spiel bauen
+        run: npm run build
+        env:
+          VITE_BUILD: b${{ github.run_number }}
+
+      - name: Spiel ins iOS-Projekt kopieren
         run: npx cap sync ios
 
       - name: Version lesen
