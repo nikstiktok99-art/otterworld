@@ -2,29 +2,44 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
-## Schritt 1a – Durchstich
+## Schritt 1b – Der erste Abend (Version 0.2.0, Commit d5118ff)
 
-| Test | Browser (iPhone-Ansicht) | Android | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+Automatisch geprüft am 07.11.2026:
+
+- **Unit-Tests:** 40 bestanden (`npm test`) – Regeln, doppelte Belohnungen, Speichern/Laden inkl. beschädigtem Speicherplatz
+  und neuerer Version, Spielstand-Code, Inhaltsreferenzen, Erbsentrio-Datenmodell, Wege, Modulgrenzen, keine Emojis.
+- **Typprüfung:** fehlerfrei (`npm run check`).
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b2), „Android-Testbuild (.apk)“ (a2) und „iPhone-Simulator-Test“ grün.
+
+| Test | Browser (`npm run e2e`, Chromium, 402 × 874, Touch) | Android (dein Handy) | iPhone-Simulator (Cloud, iOS 26.2) | iPhone 16 Pro (ihr Gerät) |
 |---|---|---|---|---|
-| Startbild erscheint, Tippen startet | ok 06.11.2026 | offen | offen | offen |
-| Tippen → Otter läuft dorthin | ok | offen | – (Simulator-Test tippt nicht) | offen |
-| Muschel einsammeln, Zähler steigt, Ton | ok | offen | – | offen |
-| App schließen & neu öffnen → Muscheln noch da | ok (localStorage) | offen | – | offen (nativer Speicher) |
-| In den Hintergrund wechseln → gespeichert („Hintergrund“ im Technik-Test) | – | offen | – | offen |
-| Spielstand-Code sichern → Speicher leeren → Code laden | ok | offen | – | offen |
-| Nichts unter der Dynamic Island / dem Home-Indikator | – (keine Safe Area im Browser) | offen | offen (Bildschirmfoto) | offen |
-| Kein Zoom bei Doppeltipp, keine Lupe bei langem Drücken | – | offen | – | offen |
-| Technik-Test zeigt „nativ (Preferences)“ | – | offen | – | offen |
-| App startet ohne Absturz, keine JS-Fehler in der Konsole | – | offen | offen | offen |
-| Cloud-Build erzeugt .ipa | – | – | – | ok 07.11.2026 (Lauf b1, Commit ba79055; Inhalt geprüft: App-ID, Spieldateien, Capacitor-Framework, Plugins Preferences/App/StatusBar) |
-| Installation per Sideloadly | – | – | – | offen |
-| Update per Sideloadly → Spielstand bleibt | – | – | – | offen |
+| App startet, Startbild, keine Fehler in der Konsole | ok | offen | ok (Startbild nach 35 s, keine Fehler) | offen |
+| Laufen und Schwimmen per Tippen, Wechsel Land/Wasser | ok | offen | – (Test tippt nicht) | offen |
+| Tipp auf Figur/Gegenstand: hinlaufen und genau einmal interagieren | ok | offen | – | offen |
+| Namenswahl im ersten Gespräch, danach Anrede mit Namen | ok | offen | – | offen |
+| Doppeltipp auf eine Fundstelle gibt nur eine Belohnung | ok | offen | – | offen |
+| Werkbank: Verbrauch und Ergebnis passen zusammen | ok | offen | – | offen |
+| Unterbrechen direkt nach dem Bauen → danach stimmt alles | ok (Seite neu geladen) | offen (App wegwischen) | – | offen |
+| Deko nur auf gültigem Grund; vor dem Steg und auf Wasser abgelehnt | ok | offen | – | offen |
+| Unterbrechen direkt nach dem Aufstellen → Leuchte steht, Schnabbi sitzt, Belohnung noch offen | ok | offen | – | offen |
+| Abschluss: Leuchte an, Moment genau einmal, auch bei erneutem Gespräch | ok | offen | – | offen |
+| Endstand bleibt nach Neuladen erhalten | ok | offen | – | offen |
+| Nativer Speicher wird benutzt | – | offen (Menü › Technik-Info) | ok (Konsole: Preferences liest beide Plätze) | offen |
+| Lebenszyklus angemeldet (Pause, Fortsetzen, Zurück) | – | offen | ok (Konsole: 4 Listener) | offen |
+| Hochformat-Sperre | – | offen | – | offen |
+| Nichts unter Dynamic Island / Home-Indikator / Systemleisten | – | offen | ok (Startbild-Foto) | offen |
+| Android-Zurück schließt Fenster, im Spiel geht die App in den Hintergrund | – (Escape-Taste nicht getestet) | offen | – | – |
+| Offline-Start (Flugmodus) | – | offen | – | offen |
+| Ton und Vibration | – (Ton im Testbrowser nicht hörbar) | offen | – | offen |
+| Cloud-Build erzeugt .ipa | – | – | – | ok (b2, 920 KB) |
+| Installation und Update per Sideloadly, Spielstand bleibt | – | – | – | offen |
 
-**So prüft sie es auf dem iPhone:** Menü → „Technik-Test anzeigen“. Unten steht dann, welcher Speicher benutzt wird,
-wann zuletzt gespeichert wurde und wie groß die Safe Areas sind (auf dem 16 Pro oben etwa 62, unten 34).
-Ein Foto davon (Bildschirmfoto) an dich reicht als Nachweis.
+**So prüft man es auf dem Handy:** Menü › Technik-Info. Dort stehen Version, Speicher („nativ (Preferences)“),
+letzte Speicherung und die Safe Areas (auf dem 16 Pro oben etwa 62, unten 34). Ein Bildschirmfoto davon reicht als Nachweis.
 
-Hinweis: Ein erfolgreicher Cloud-Build beweist nur, dass die Datei korrekt gebaut ist. Ob die App auf ihrem iPhone startet, zeigt erst die Installation.
+## Schritt 1a – Durchstich (abgeschlossen, durch 1b ersetzt)
+
+Browser ok (06.11.2026), Cloud-Build b1 ok, Simulator ok (Start, Safe Area, nativer Speicher). Auf Geräten nie installiert.
 
 ## Reihenfolge (Entscheidung 07.11.2026)
 
