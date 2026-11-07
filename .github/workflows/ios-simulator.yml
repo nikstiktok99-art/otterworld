@@ -1,0 +1,102 @@
+name: iPhone-Simulator-Test
+
+# Startet die App in einem virtuellen iPhone 16 Pro auf GitHubs Mac, macht Bildschirmfotos
+# und sammelt die Konsolenausgabe. Findet Startabstürze, JavaScript-Fehler und Layoutfehler früh.
+# Ersetzt NICHT den Test auf ihrem echten iPhone (Sideloading, echter Speicher, echtes Tippen).
+on:
+  workflow_dispatch:
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Abhängigkeiten
+        run: npm ci
+
+      - name: Web-Dateien ins iOS-Projekt kopieren
+        run: npx cap sync ios
+
+      - name: Simulator wählen (iPhone 16 Pro, sonst neuestes iPhone)
+        id: sim
+        run: |
+          xcrun simctl list devices available -j > geraete.json
+          UDID=$(node -e '
+            const d = require("./geraete.json").devices;
+            const alle = Object.entries(d)
+              .filter(([rt]) => rt.includes("iOS"))
+              .flatMap(([rt, liste]) => liste.map((g) => ({ ...g, rt })));
+            const wahl = alle.filter((g) => g.name === "iPhone 16 Pro").pop()
+                      || alle.filter((g) => g.name.startsWith("iPhone")).pop();
+            if (!wahl) { console.error("Kein iPhone-Simulator gefunden"); process.exit(1); }
+            console.error("Simulator: " + wahl.name + " | " + wahl.rt);
+            console.log(wahl.udid);
+          ')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      # Debug-Konfiguration, damit Capacitor die JavaScript-Konsole (inkl. Fehler) ausgibt.
+      - name: Für den Simulator bauen
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Starten, fotografieren, Absturz prüfen
+        run: |
+          set -e
+          UDID="${{ steps.sim.outputs.udid }}"
+          APP_ID=$(node -p "require('./capacitor.config.json').appId")
+          mkdir -p ergebnis
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" build/Build/Products/Debug-iphonesimulator/App.app
+
+          # Konsole mitschneiden, während die App läuft
+          xcrun simctl launch --console-pty "$UDID" "$APP_ID" > ergebnis/konsole.txt 2>&1 &
+          KONSOLE=$!
+
+          sleep 8
+          xcrun simctl io "$UDID" screenshot ergebnis/01-nach-8s.png
+          sleep 12
+          xcrun simctl io "$UDID" screenshot ergebnis/02-nach-20s.png
+
+          if xcrun simctl spawn "$UDID" launchctl list | grep -q "UIKitApplication:$APP_ID"; then
+            echo "App läuft nach 20 Sekunden noch." | tee ergebnis/status.txt
+          else
+            echo "App ist nach dem Start nicht mehr aktiv (Absturz?)" | tee ergebnis/status.txt
+            echo "::error::App ist nach dem Start nicht mehr aktiv"
+            kill "$KONSOLE" 2>/dev/null || true
+            exit 1
+          fi
+          kill "$KONSOLE" 2>/dev/null || true
+
+          # JavaScript-Fehler in der Konsole sichtbar machen (lässt den Lauf nicht scheitern)
+          if grep -iE "error|exception|undefined is not" ergebnis/konsole.txt; then
+            echo "::warning::Die Konsole enthält Fehlermeldungen – siehe ergebnis/konsole.txt"
+          fi
+
+      - name: Absturzberichte einsammeln
+        if: always()
+        run: |
+          mkdir -p ergebnis
+          cp ~/Library/Logs/DiagnosticReports/App* ergebnis/ 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iPhone-Simulator-Ergebnis
+          path: ergebnis/
+          retention-days: 14

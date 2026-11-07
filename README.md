@@ -16,6 +16,12 @@ Aktueller Stand: **Schritt 1a – Durchstich** (Platzhalter-Otter, Tippen zum La
 Android-Testversion genauso: **„Android-Testbuild (.apk)“** → .zip → .apk aufs Handy, installieren
 (einmalig „Unbekannte Apps installieren“ erlauben).
 
+Vorab-Prüfung ohne ihr iPhone: **„iPhone-Simulator-Test“** startet die App in einem virtuellen
+iPhone 16 Pro auf GitHubs Mac und liefert Bildschirmfotos, Konsolenausgabe und ggf. Absturzberichte.
+Ersetzt nicht den Test auf ihrem echten Gerät.
+
+(Claude startet und prüft diese Läufe inzwischen selbst über das GitHub-Werkzeug `gh`.)
+
 ## Im Browser ansehen
 
 ```bash
