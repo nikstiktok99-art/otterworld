@@ -4,12 +4,12 @@
 
 | Test | Browser (iPhone-Ansicht) | Android | iPhone 16 Pro |
 |---|---|---|---|
-| Startbild erscheint, Tippen startet | ✅ 06.11.2026 | offen | **offen** |
-| Tippen → Otter läuft dorthin | ✅ | offen | **offen** |
-| Muschel einsammeln, Zähler steigt, Ton | ✅ | offen | **offen** |
-| App schließen & neu öffnen → Muscheln noch da | ✅ (localStorage) | offen | **offen** (nativer Speicher) |
+| Startbild erscheint, Tippen startet | ok 06.11.2026 | offen | **offen** |
+| Tippen → Otter läuft dorthin | ok | offen | **offen** |
+| Muschel einsammeln, Zähler steigt, Ton | ok | offen | **offen** |
+| App schließen & neu öffnen → Muscheln noch da | ok (localStorage) | offen | **offen** (nativer Speicher) |
 | In den Hintergrund wechseln → gespeichert („Hintergrund“ im Technik-Test) | – | offen | **offen** |
-| Spielstand-Code sichern → Speicher leeren → Code laden | ✅ | offen | **offen** |
+| Spielstand-Code sichern → Speicher leeren → Code laden | ok | offen | **offen** |
 | Nichts unter der Dynamic Island / dem Home-Indikator | – (keine Safe Area im Browser) | offen | **offen** |
 | Kein Zoom bei Doppeltipp, keine Lupe bei langem Drücken | – | offen | **offen** |
 | Technik-Test zeigt „nativ (Preferences)“ | – | offen | **offen** |
@@ -17,7 +17,7 @@
 | Installation per Sideloadly | – | – | **offen** |
 | Update per Sideloadly → Spielstand bleibt | – | – | **offen** |
 
-**So prüft sie es auf dem iPhone:** ☰ → „Technik-Test anzeigen“. Unten steht dann, welcher Speicher benutzt wird,
+**So prüft sie es auf dem iPhone:** Menü → „Technik-Test anzeigen“. Unten steht dann, welcher Speicher benutzt wird,
 wann zuletzt gespeichert wurde und wie groß die Safe Areas sind (auf dem 16 Pro oben etwa 62, unten 34).
 Ein Foto davon (Bildschirmfoto) an dich reicht als Nachweis.
 

@@ -1,6 +1,6 @@
 # Otterwelt aufs iPhone bringen
 
-Hallo! 🦦 Diese Anleitung brauchst du **einmal**, das dauert etwa 20–30 Minuten.
+Hallo! Diese Anleitung brauchst du **einmal**, das dauert etwa 20–30 Minuten.
 Danach kommen neue Versionen fast von allein.
 
 Du brauchst:
@@ -38,7 +38,7 @@ Du brauchst:
    *(Steht dort kein Entwicklermodus? Einmal kurz das Otterwelt-Symbol antippen, dann erscheint er.)*
 2. **Dem Entwickler vertrauen:**
    Einstellungen → Allgemein → **VPN & Geräteverwaltung** → die Spiel-Apple-ID antippen → **Vertrauen**.
-3. Jetzt das **Otterwelt**-Symbol antippen. 🎉
+3. Jetzt das **Otterwelt**-Symbol antippen. Fertig!
 
 ## Teil 4: Automatisch erneuern (einmalig)
 
@@ -64,5 +64,5 @@ Du bekommst von mir eine neue .ipa-Datei → wie in **Teil 2** in Sideloadly zie
 
 1. **Immer dieselbe Spiel-Apple-ID** benutzen. Niemals eine andere.
 2. **Die App nie löschen** – sonst ist der Spielstand weg.
-   Sicherheitsnetz: Im Spiel unter ☰ → **Spielstand sichern** gibt es einen Code.
+   Sicherheitsnetz: Im Spiel unter **Menü** → **Spielstand sichern** gibt es einen Code.
    Den ab und zu kopieren und z. B. in der Notizen-App aufheben.

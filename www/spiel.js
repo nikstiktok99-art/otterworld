@@ -253,7 +253,7 @@
       ctx.beginPath(); ctx.arc(zp.x, zp.y, 8 + Math.sin(t * 8) * 2, 0, Math.PI * 2); ctx.stroke();
     }
 
-    $('muscheln').textContent = '🐚 ' + stand.muscheln;
+    $('muscheln').textContent = 'Muscheln: ' + stand.muscheln;
     if (!$('technik').classList.contains('versteckt')) technikText();
     requestAnimationFrame(schleife);
   }
@@ -319,7 +319,7 @@
   $('codeAktion').addEventListener('click', async () => {
     const feldEl = $('codeFeld');
     if (codeModus === 'sichern') {
-      try { await navigator.clipboard.writeText(feldEl.value); $('codeAktion').textContent = 'Kopiert ✓'; }
+      try { await navigator.clipboard.writeText(feldEl.value); $('codeAktion').textContent = 'Kopiert'; }
       catch (e) { feldEl.readOnly = false; feldEl.focus(); feldEl.select(); $('codeHilfe').textContent = 'Bitte Text markieren und kopieren.'; }
     } else {
       try {
@@ -347,7 +347,7 @@
     const geladen = await Speicher.lesen();
     if (geladen && geladen.v === 1) {
       stand = geladen;
-      $('los').textContent = 'Weiterspielen (🐚 ' + stand.muscheln + ')';
+      $('los').textContent = 'Weiterspielen (' + stand.muscheln + (stand.muscheln === 1 ? ' Muschel)' : ' Muscheln)');
       letzteSpeicherung = new Date(stand.gespeichert).toLocaleString('de-DE') + ' (geladen)';
     }
     muschelnAuffuellen();

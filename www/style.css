@@ -102,7 +102,7 @@ h2 { margin: 0 0 6px; }
 .knopf:active { transform: scale(.97); }
 .knopf.hell { background: #eadfcd; color: var(--dunkel); }
 .knopf.gross { font-size: 20px; padding: 18px; }
-.knopf.klein { padding: 8px 14px; font-size: 22px; background: #fff8ecd0; color: var(--dunkel); }
+.knopf.klein { padding: 8px 14px; font-size: 17px; background: #fff8ecd0; color: var(--dunkel); }
 
 textarea {
   width: 100%;

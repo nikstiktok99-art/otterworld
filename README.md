@@ -37,7 +37,7 @@ Dann http://localhost:8080 öffnen (am besten mit der Handy-Ansicht der Entwickl
 - Ton erst nach dem ersten Tipp
 - Bewegung zeitbasiert (gleich schnell bei 60, 120 Hz oder im Stromsparmodus)
 - Nur Hochformat, nur iPhone
-- Spielstand als Text-Code sichern/laden (Menü ☰)
+- Spielstand als Text-Code sichern/laden (Menü)
 
 ## Technik
 
@@ -46,6 +46,6 @@ Dann http://localhost:8080 öffnen (am besten mit der Handy-Ansicht der Entwickl
 | Spiel (HTML/JS, kein Build-Schritt) | `www/` |
 | Xcode-Projekt (Swift Package Manager) | `ios/App/` |
 | Cloud-Builds | `.github/workflows/` |
-| App-ID | `de.otterwelt.spiel` (in `capacitor.config.json`) |
+| App-ID | `com.schnabbisfriends.otterwelt` (in `capacitor.config.json`) |
 
 Version erhöhen: `version` in `package.json`. Die Build-Nummer zählt GitHub automatisch hoch.
