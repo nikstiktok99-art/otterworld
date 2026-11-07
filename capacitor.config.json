@@ -1,0 +1,18 @@
+{
+  "appId": "de.otterwelt.spiel",
+  "appName": "Otterwelt",
+  "webDir": "www",
+  "backgroundColor": "#9fd8e8",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "allowsLinkPreview": false,
+    "backgroundColor": "#9fd8e8"
+  },
+  "android": {
+    "backgroundColor": "#9fd8e8"
+  },
+  "plugins": {
+    "StatusBar": { "overlaysWebView": true, "style": "LIGHT" }
+  }
+}

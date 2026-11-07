@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#9fd8e8">
+  <title>Otterwelt</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="welt"></canvas>
+
+  <!-- Startbild -->
+  <div id="start" class="overlay">
+    <div class="karte">
+      <h1>Otterwelt</h1>
+      <p class="sub">Durchstich 1a</p>
+      <button id="los" class="knopf gross">Tippen zum Starten</button>
+    </div>
+  </div>
+
+  <!-- Oben: Status, unten: Menü-Knopf. Beide respektieren die Safe Areas. -->
+  <div id="hud">
+    <span id="muscheln">🐚 0</span>
+    <button id="menuKnopf" class="knopf klein" aria-label="Menü">☰</button>
+  </div>
+
+  <div id="menu" class="overlay versteckt">
+    <div class="karte">
+      <h2>Menü</h2>
+      <button id="sichern" class="knopf">Spielstand sichern</button>
+      <button id="laden" class="knopf">Spielstand laden</button>
+      <button id="test" class="knopf">Technik-Test anzeigen</button>
+      <button id="zu" class="knopf hell">Zurück zum Spiel</button>
+      <p class="version" id="version"></p>
+    </div>
+  </div>
+
+  <div id="code" class="overlay versteckt">
+    <div class="karte">
+      <h2 id="codeTitel">Spielstand-Code</h2>
+      <p id="codeHilfe" class="klein"></p>
+      <textarea id="codeFeld" rows="5" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+      <button id="codeAktion" class="knopf">Kopieren</button>
+      <button id="codeZu" class="knopf hell">Schließen</button>
+    </div>
+  </div>
+
+  <pre id="technik" class="versteckt"></pre>
+
+  <script src="speicher.js"></script>
+  <script src="spiel.js"></script>
+</body>
+</html>

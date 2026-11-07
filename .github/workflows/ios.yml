@@ -1,0 +1,56 @@
+name: iPhone-Build (.ipa)
+
+# Start: GitHub › Actions › „iPhone-Build (.ipa)“ › „Run workflow“
+on:
+  workflow_dispatch:
+
+jobs:
+  ipa:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Abhängigkeiten
+        run: npm ci
+
+      - name: Web-Dateien ins iOS-Projekt kopieren
+        run: npx cap sync ios
+
+      - name: Version lesen
+        id: v
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Bauen (ohne Signatur – signiert wird später mit Sideloadly)
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            MARKETING_VERSION=${{ steps.v.outputs.version }} \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: .ipa packen
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qry "Otterwelt-${{ steps.v.outputs.version }}-b${{ github.run_number }}.ipa" Payload
+          ls -lh *.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Otterwelt-${{ steps.v.outputs.version }}-b${{ github.run_number }}-iPhone
+          path: "*.ipa"
+          retention-days: 30
