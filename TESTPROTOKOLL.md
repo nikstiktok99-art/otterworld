@@ -13,12 +13,14 @@
 | Nichts unter der Dynamic Island / dem Home-Indikator | – (keine Safe Area im Browser) | offen | **offen** |
 | Kein Zoom bei Doppeltipp, keine Lupe bei langem Drücken | – | offen | **offen** |
 | Technik-Test zeigt „nativ (Preferences)“ | – | offen | **offen** |
-| Cloud-Build erzeugt .ipa | – | – | **offen** |
+| Cloud-Build erzeugt .ipa | – | – | ok 07.11.2026 (Lauf b1, Commit ba79055; Inhalt geprüft: App-ID, Spieldateien, Capacitor-Framework, Plugins Preferences/App/StatusBar) |
 | Installation per Sideloadly | – | – | **offen** |
 | Update per Sideloadly → Spielstand bleibt | – | – | **offen** |
 
 **So prüft sie es auf dem iPhone:** Menü → „Technik-Test anzeigen“. Unten steht dann, welcher Speicher benutzt wird,
 wann zuletzt gespeichert wurde und wie groß die Safe Areas sind (auf dem 16 Pro oben etwa 62, unten 34).
 Ein Foto davon (Bildschirmfoto) an dich reicht als Nachweis.
+
+Hinweis: Ein erfolgreicher Cloud-Build beweist nur, dass die Datei korrekt gebaut ist. Ob die App auf ihrem iPhone startet, zeigt erst die Installation.
 
 Schritt 1b beginnt erst, wenn die iPhone-Spalte grün ist.
