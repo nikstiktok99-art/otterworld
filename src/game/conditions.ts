@@ -14,5 +14,6 @@ export function matches(cond: Condition | undefined, s: GameState): boolean {
   }
   if ('questDone' in cond) return !!s.quests[cond.questDone]?.done;
   if ('hasMoment' in cond) return s.moments.includes(cond.hasMoment);
+  if ('hasItems' in cond) return Object.entries(cond.hasItems).every(([item, n]) => (s.inventory[item] ?? 0) >= n);
   return false;
 }

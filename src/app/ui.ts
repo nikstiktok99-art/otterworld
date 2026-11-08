@@ -7,7 +7,8 @@ export type Panel =
   | { kind: 'title' }
   | { kind: 'dialog'; dialogue: string; character: string; line: number }
   | { kind: 'bag' }
-  | { kind: 'werkbank' }
+  | { kind: 'werkbank'; station: string; title: string }
+  | { kind: 'quests' }
   | { kind: 'menu' }
   | { kind: 'name' }
   | { kind: 'saveExport' }

@@ -41,6 +41,10 @@ zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Sp
 | quest.schnabbi.licht | Ein Licht am Steg (Phase 1, Vorschlag aus dem Masterprompt) | moment.schnabbi.erster-abend | – |
 | quest.schnabbi.schilf | Ein Platz für zwei (Phase 2, **Vorschlag**) | moment.schnabbi.platz-fuer-zwei | Schnabbi ist im Freundebuch spielbar |
 
+Nach „Ein Platz für zwei“ zeigt Schnabbi zwei Rezepte zum freien Bauen (**Vorschlag**): Treibholzbank (3 Treibholz) und
+Muschelwindspiel (1 Treibholz, 2 Muschelschalen). Treibholz, Muscheln und Schilf wachsen nach 10 Minuten nach
+(Startufer und Schilfbucht). Wie Missionen, Freunde und Rezepte als Daten aufgebaut werden: `docs/MISSIONEN.md`.
+
 Ablauf „Ein Platz für zwei“: Schnabbi möchte eine Matte zum Sitzen und geht voraus in die Schilfbucht; dort drei
 Schilfhalme sammeln (einer im Wasser), zurück an der Werkbank die Matte flechten, irgendwo hinlegen, Schnabbi setzt sich
 dazu und sagt, dass er ihr vertraut. Alle Texte sind Entwürfe in `src/content/dialogues.ts` und `src/content/quests.ts`.

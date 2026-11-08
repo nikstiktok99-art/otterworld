@@ -1,6 +1,7 @@
 // Zugriff für automatische Browsertests (nur im Entwicklungsmodus oder mit ?test in der Adresse).
 import type { Tile } from '../game/types';
 import type { WorldScene } from '../world/WorldScene';
+import { clock } from './clock';
 import type { DialogController } from './dialogs';
 import type { GameSession } from './session';
 import type { UiStore } from './ui';
@@ -13,5 +14,10 @@ export function installTestHooks(d: { session: GameSession; ui: UiStore; dialogs
     tileToScreen: (x: number, y: number) => d.world()?.tileToScreen({ x, y } as Tile) ?? null,
     world: () => d.world()?.debugInfo() ?? null,
     flush: () => d.session.flush(),
+    /** Spieluhr vorstellen (z. B. um nachwachsende Fundstellen zu prüfen). */
+    advanceMinutes: (min: number) => {
+      clock.offsetMs += min * 60_000;
+      d.world()?.refreshSpots();
+    },
   };
 }

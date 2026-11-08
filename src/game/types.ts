@@ -28,7 +28,7 @@ export interface Settings {
 
 /** Der gespeicherte Spielstand. Enthält nur stabile IDs, nie Namen, Bilder oder Sprites. */
 export interface GameState {
-  schema: 2;
+  schema: 3;
   player: { name: string | null };
   /** Wer gerade gespielt wird (Figuren-ID). Der Körper ergibt sich aus dem Inhalt. */
   activeCharacter: string;
@@ -38,9 +38,13 @@ export interface GameState {
   location: { map: string; tile: Tile; facing: Dir };
   inventory: Record<string, number>;
   recipesKnown: string[];
-  /** Eingesammelte Fundstellen als `${mapId}/${spotId}`. */
+  /** Eingesammelte einmalige Fundstellen als `${mapId}/${spotId}`. */
   gathered: string[];
+  /** Nachwachsende Fundstellen: `${mapId}/${spotId}` -> Zeitpunkt (ms), ab dem sie wieder da ist. */
+  regrow: Record<string, number>;
   quests: Record<string, QuestProgress>;
+  /** Die Aufgabe, deren Hinweis oben angezeigt wird (null = die zuerst begonnene offene). */
+  tracked: string | null;
   /** Einmalige Belohnungen, die bereits vergeben wurden. */
   claimed: string[];
   moments: string[];

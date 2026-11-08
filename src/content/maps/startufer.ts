@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER } from '../ids';
+import { MAP_SCHILFBUCHT, MAP_STARTUFER, NACHWACHSEN_MIN } from '../ids';
 
 // Vorläufiges Startufer (Vorschlag aus dem Startplan). 16 × 32 Kacheln à 16 px.
 // Legende: ~ Wasser · : Sand · , Gras · = Steg · - Pfad · # Büsche/Wurzeln (nicht begehbar)
@@ -72,9 +72,9 @@ export const startufer: MapDef = {
     },
   ],
   gatherSpots: [
-    { id: 'spot.treibholz.strand', item: 'item.treibholz', count: 1, tile: { x: 4, y: 17 }, sprite: 'items.treibholz' },
-    { id: 'spot.treibholz.wasser', item: 'item.treibholz', count: 1, tile: { x: 6, y: 11 }, sprite: 'items.treibholz.treibend' },
-    { id: 'spot.muschel.sand', item: 'item.muschelschale', count: 1, tile: { x: 13, y: 18 }, sprite: 'items.muschelschale' },
+    { id: 'spot.treibholz.strand', item: 'item.treibholz', count: 1, tile: { x: 4, y: 17 }, sprite: 'items.treibholz', regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.treibholz.wasser', item: 'item.treibholz', count: 1, tile: { x: 6, y: 11 }, sprite: 'items.treibholz.treibend', regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.muschel.sand', item: 'item.muschelschale', count: 1, tile: { x: 13, y: 18 }, sprite: 'items.muschelschale', regrowMinutes: NACHWACHSEN_MIN },
   ],
   exits: [
     {

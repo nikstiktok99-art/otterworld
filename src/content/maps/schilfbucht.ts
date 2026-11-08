@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER, Q_SCHILF } from '../ids';
+import { MAP_SCHILFBUCHT, MAP_STARTUFER, NACHWACHSEN_MIN, Q_SCHILF } from '../ids';
 
 // Vorschlag für Phase 2: eine kleine zweite Map, die Hin- und Rückweg und den Ortswechsel prüft.
 // Kein persönlicher Ort – Name und Gestaltung sind frei austauschbar. 16 × 30 Kacheln.
@@ -58,9 +58,11 @@ export const schilfbucht: MapDef = {
     },
   ],
   gatherSpots: [
-    { id: 'spot.schilf.links', item: 'item.schilfhalm', count: 1, tile: { x: 2, y: 12 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow },
-    { id: 'spot.schilf.rechts', item: 'item.schilfhalm', count: 1, tile: { x: 13, y: 12 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow },
-    { id: 'spot.schilf.wasser', item: 'item.schilfhalm', count: 1, tile: { x: 2, y: 6 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow },
+    { id: 'spot.schilf.links', item: 'item.schilfhalm', count: 1, tile: { x: 2, y: 12 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow, regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.schilf.rechts', item: 'item.schilfhalm', count: 1, tile: { x: 13, y: 12 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow, regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.schilf.wasser', item: 'item.schilfhalm', count: 1, tile: { x: 2, y: 6 }, sprite: 'items.schilfhalm', availableWhen: reedsGrow, regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.treibholz.bucht', item: 'item.treibholz', count: 1, tile: { x: 3, y: 15 }, sprite: 'items.treibholz', regrowMinutes: NACHWACHSEN_MIN },
+    { id: 'spot.muschel.bucht', item: 'item.muschelschale', count: 1, tile: { x: 12, y: 16 }, sprite: 'items.muschelschale', regrowMinutes: NACHWACHSEN_MIN },
   ],
   exits: [
     {

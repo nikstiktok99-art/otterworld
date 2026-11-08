@@ -10,7 +10,7 @@ export function Hud() {
   const hint = activeHint(state, content);
   // Das Freundebuch erscheint, sobald sie jemanden kennt.
   const hasFriends = friendList(state, content).length > 1;
-  const open = (kind: 'bag' | 'menu' | 'friends') => {
+  const open = (kind: 'bag' | 'menu' | 'friends' | 'quests') => {
     sound.play('sfx.tipp');
     ui.open({ kind });
   };
@@ -29,7 +29,12 @@ export function Hud() {
           Menü
         </button>
       </div>
-      {hint && <div className="hint">{hint}</div>}
+      {hint && (
+        // Antippen öffnet das Aufgabenbuch.
+        <button className="hint" aria-label={`${hint} – Aufgabenbuch öffnen`} onClick={() => open('quests')}>
+          {hint}
+        </button>
+      )}
     </div>
   );
 }

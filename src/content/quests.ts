@@ -8,6 +8,8 @@ export const quests: Record<string, QuestDef> = {
   [Q_LICHT]: {
     id: Q_LICHT,
     name: 'Ein Licht am Steg',
+    giver: 'schnabbi',
+    offer: { when: { questNotStarted: Q_LICHT }, hint: 'Schnabbi wartet am Ende des Stegs' },
     steps: [
       {
         id: 'sammeln',
@@ -42,6 +44,7 @@ export const quests: Record<string, QuestDef> = {
   [Q_SCHILF]: {
     id: Q_SCHILF,
     name: 'Ein Platz für zwei',
+    giver: 'schnabbi',
     offer: { when: { questDone: Q_LICHT }, hint: 'Schnabbi hat eine Idee – sprich ihn an' },
     steps: [
       {

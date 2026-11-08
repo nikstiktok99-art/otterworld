@@ -29,12 +29,43 @@ export class DialogController {
     return dlg?.lines[p.line] ?? null;
   }
 
-  /** Nächste Zeile; bei der Namensfrage geht es nur über submitName weiter. */
+  /** Nächste Zeile; bei der Namensfrage geht es nur über submitName weiter, bei Antworten nur über choose. */
   next(): void {
     const p = this.ui.getState().panel;
     if (p?.kind !== 'dialog') return;
     const line = this.currentLine();
     if (line && 'askName' in line) return;
+    if (line && 'choices' in line && line.choices?.length) return;
+    this.advance();
+  }
+
+  /** Antwort wählen: 'weiter' führt fort, 'spaeter' beendet das Gespräch ohne Folgen (es kommt beim nächsten Mal wieder). */
+  choose(index: number): void {
+    const line = this.currentLine();
+    const choice = line && 'choices' in line ? line.choices?.[index] : undefined;
+    if (!choice) return;
+    if (choice.then === 'spaeter') {
+      this.sound.play('sfx.dialog');
+      this.ui.close();
+      return;
+    }
+    this.advance();
+  }
+
+  /** Android-Zurück im Gespräch: weiterlesen, bei einer Frage die zurückhaltende Antwort („später“), wenn es eine gibt. */
+  back(): void {
+    const line = this.currentLine();
+    if (line && 'choices' in line && line.choices?.length) {
+      const later = line.choices.findIndex((c) => c.then === 'spaeter');
+      if (later >= 0) this.choose(later);
+      return;
+    }
+    this.next();
+  }
+
+  private advance(): void {
+    const p = this.ui.getState().panel;
+    if (p?.kind !== 'dialog') return;
     const dlg = this.session.content.dialogues.find((d) => d.id === p.dialogue);
     if (!dlg) {
       this.ui.close();
@@ -79,6 +110,11 @@ export class DialogController {
 
   private finish(dialogue: string): void {
     const events = this.session.dispatch({ type: 'finishDialogue', dialogue });
+    if (events.some((e) => e.type === 'rejected')) {
+      // z. B. etwas zum Abgeben fehlt inzwischen: Gespräch schließen, nichts vergeben.
+      this.ui.close();
+      return;
+    }
     const done = events.find((e) => e.type === 'questDone');
     if (done?.type === 'questDone') {
       this.sound.play('sfx.leuchte');

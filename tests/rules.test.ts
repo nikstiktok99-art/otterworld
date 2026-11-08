@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { afterGreeting, allGathered, content, fresh, MAP, play, rejected } from './helpers';
+import { afterGreeting, allGathered, content, fresh, MAP, play, rejected, T0 } from './helpers';
 import { checkPlacement } from '../src/game/rules/placement';
 import { cleanName } from '../src/game/rules/name';
 import { resolveNpcs } from '../src/game/occupancy';
@@ -9,8 +9,8 @@ describe('Sammeln', () => {
   it('gibt pro Fundstelle genau einmal etwas – auch bei schnellem Doppeltipp', () => {
     const { state, events } = play(
       fresh(),
-      { type: 'gather', map: MAP, spot: 'spot.treibholz.strand' },
-      { type: 'gather', map: MAP, spot: 'spot.treibholz.strand' },
+      { type: 'gather', map: MAP, spot: 'spot.treibholz.strand', at: T0 },
+      { type: 'gather', map: MAP, spot: 'spot.treibholz.strand', at: T0 },
     );
     expect(state.inventory['item.treibholz']).toBe(1);
     expect(rejected(events)).toEqual([expect.objectContaining({ reason: 'alreadyGathered' })]);

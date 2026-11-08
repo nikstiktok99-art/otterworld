@@ -211,6 +211,39 @@ function paintSchilfmatte(c: C) {
   rect(c, 15, 5, 1, 7, '#a88a52');
 }
 
+function paintBank(c: C) {
+  ell(c, 8, 21, 7, 1.5, SHADOW);
+  rect(c, 2, 14, 2, 7, '#5a3c22');
+  rect(c, 12, 14, 2, 7, '#5a3c22');
+  rect(c, 1, 11, 14, 4, '#9a7350');
+  rect(c, 1, 11, 14, 1, '#c09468');
+  rect(c, 1, 14, 14, 1, '#5a3c22');
+  rect(c, 2, 5, 12, 3, '#8a6644');
+  rect(c, 2, 5, 12, 1, '#b48a5e');
+  rect(c, 3, 8, 1, 3, '#5a3c22');
+  rect(c, 12, 8, 1, 3, '#5a3c22');
+}
+
+function paintWindspiel(c: C, f: number) {
+  ell(c, 8, 30, 4, 1, SHADOW);
+  rect(c, 7, 6, 2, 24, '#7a5a3a');
+  rect(c, 7, 6, 1, 24, '#9a7650');
+  rect(c, 3, 5, 10, 2, '#6e4b2c');
+  const sway = [0, 1, 0][f % 3]!;
+  for (const [x, len] of [[4, 5], [8, 8], [12, 5]] as const) {
+    rect(c, x, 7, 1, len, '#d8cbb0');
+    ellOut(c, x + (x === 8 ? 0 : sway), 8 + len, 1.5, 1.5, '#f6c7d0', '#b97a88');
+  }
+}
+
+function paintHinweis(c: C) {
+  // Sprechblase mit drei Punkten (kein Schriftzeichen, kein Emoji)
+  ellOut(c, 6, 5, 5, 4, '#fff8ec', '#3b2a20');
+  rect(c, 4, 9, 2, 2, '#3b2a20');
+  rect(c, 5, 9, 1, 1, '#fff8ec');
+  for (const x of [3, 6, 9]) rect(c, x, 4, 1, 2, '#d9733a');
+}
+
 function log(c: C, y: number) {
   rect(c, 2, y, 12, 4, '#8a6a4a');
   rect(c, 2, y - 1, 12, 1, '#4a3424');
@@ -320,6 +353,9 @@ export function paintFrame(c: C, def: SpriteDef, frame: number): void {
     wegweiser: () => paintWegweiser(c),
     schilfhalm: () => paintSchilfhalm(c),
     schilfmatte: () => paintSchilfmatte(c),
+    bank: () => paintBank(c),
+    windspiel: () => paintWindspiel(c, frame),
+    hinweis: () => paintHinweis(c),
     treibholz: () => paintTreibholz(c),
     treibholzTreibend: () => paintTreibholzTreibend(c, frame),
     muschel: () => paintMuschel(c),

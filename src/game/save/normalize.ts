@@ -13,6 +13,8 @@ import { gridFor, inBounds, standable, terrainAt } from '../space';
 const migrations: Record<number, (s: Record<string, unknown>) => Record<string, unknown>> = {
   // 1 -> 2 (Version 0.3.0): Figurenwechsel. Bisher war nur die Startfigur spielbar.
   1: (s) => ({ ...s, unlocked: [] }),
+  // 2 -> 3 (Version 0.4.0): nachwachsende Fundstellen und verfolgte Aufgabe.
+  2: (s) => ({ ...s, regrow: {}, tracked: null }),
 };
 
 export interface NormalizeResult {
@@ -66,16 +68,21 @@ export function normalizeState(raw: unknown, schema: number, content: Content): 
     s.recipesKnown = [...new Set(src.recipesKnown.filter((r): r is string => typeof r === 'string' && !!content.recipes[r]))];
   }
 
+  // Fundstellen: einmalige in `gathered`, nachwachsende in `regrow`. Ist eine früher einmalige Stelle inzwischen
+  // nachwachsend, ist sie einfach wieder da.
+  const spotOf = (k: string) => {
+    const [mapId, spotId] = k.split('/');
+    return content.maps[mapId ?? '']?.gatherSpots.find((sp) => sp.id === spotId);
+  };
   if (Array.isArray(src.gathered)) {
     s.gathered = [
-      ...new Set(
-        src.gathered.filter((k): k is string => {
-          if (typeof k !== 'string') return false;
-          const [mapId, spotId] = k.split('/');
-          return !!content.maps[mapId ?? '']?.gatherSpots.some((sp) => sp.id === spotId);
-        }),
-      ),
+      ...new Set(src.gathered.filter((k): k is string => typeof k === 'string' && !!spotOf(k) && !spotOf(k)!.regrowMinutes)),
     ];
+  }
+  if (isObj(src.regrow)) {
+    for (const [k, t] of Object.entries(src.regrow)) {
+      if (spotOf(k)?.regrowMinutes && typeof t === 'number' && Number.isFinite(t)) s.regrow[k] = t;
+    }
   }
 
   if (isObj(src.quests)) {
@@ -92,6 +99,8 @@ export function normalizeState(raw: unknown, schema: number, content: Content): 
       s.quests[qid] = { step, done } satisfies QuestProgress;
     }
   }
+
+  if (typeof src.tracked === 'string' && s.quests[src.tracked] && !s.quests[src.tracked]!.done) s.tracked = src.tracked;
 
   if (Array.isArray(src.claimed)) s.claimed = [...new Set(src.claimed.filter((c): c is string => typeof c === 'string'))];
   if (Array.isArray(src.moments)) s.moments = [...new Set(src.moments.filter((m): m is string => typeof m === 'string'))];

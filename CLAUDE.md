@@ -9,6 +9,9 @@ der Freundin erfinden. An vereinbarten Meilensteinen stoppen und kurz berichten.
 - **Keine Emojis** – nicht als Icons, Figuren, Items, Knöpfe, Deko, Platzhalter, auch nicht in Doku (ein Test prüft `src/`).
 - `src/game` und `src/content` importieren nichts aus Phaser, React oder Capacitor (Test prüft das).
 - Genau eine Stelle pro Zustandsänderung: `src/game/reduce.ts`. Welt und UI rufen nur `session.dispatch`.
+- Die Spielregeln lesen keine Uhr: Zeit kommt mit der Aktion (`gather.at`, Quelle `src/app/clock.ts`).
+- Neue Missionen, Freunde, Rezepte und Orte sind reine Daten nach `docs/MISSIONEN.md`; Spielstand-Änderungen nur mit
+  Schema-Erhöhung und Migration in `src/game/save/normalize.ts` (plus Test mit einem Stand der Vorversion).
 - Figuren-ID, Weltkörper-ID und Grafikschlüssel bleiben getrennt; pro Körper höchstens eine Instanz in der Welt.
 - App-ID `com.schnabbisfriends.otterwelt` nie ändern (Sideload-Updates brauchen dieselbe ID).
 - Keine Funktionen, die ein bezahltes Apple-Konto verlangen (Push, iCloud, In-App-Käufe, Game Center).

@@ -1,5 +1,5 @@
 // Prüft alle Inhaltsreferenzen. Läuft beim Start im Entwicklungsmodus und in den Tests.
-import type { Condition, Content, Effect, Trigger } from './types';
+import { DEFAULT_STATION, type Condition, type Content, type Effect, type Trigger } from './types';
 import { newGame } from '../game/state';
 import { movementBlocked } from '../game/occupancy';
 import { mustStayReachable } from '../game/rules/placement';
@@ -20,6 +20,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     else if ('questNotStarted' in cond && !c.quests[cond.questNotStarted]) err(`${where}: Quest ${cond.questNotStarted} fehlt`);
     else if ('questDone' in cond && !c.quests[cond.questDone]) err(`${where}: Quest ${cond.questDone} fehlt`);
     else if ('hasMoment' in cond && !c.moments[cond.hasMoment]) err(`${where}: Moment ${cond.hasMoment} fehlt`);
+    else if ('hasItems' in cond) Object.keys(cond.hasItems).forEach((i) => c.items[i] || err(`${where}: Gegenstand ${i} fehlt`));
     else if ('questStep' in cond) {
       const q = c.quests[cond.questStep.quest];
       if (!q) err(`${where}: Quest ${cond.questStep.quest} fehlt`);
@@ -33,7 +34,22 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
       if ('addMoment' in e && !c.moments[e.addMoment]) err(`${where}: Moment ${e.addMoment} fehlt`);
       if ('setDecoOn' in e && c.items[e.setDecoOn.item]?.kind !== 'deco') err(`${where}: ${e.setDecoOn.item} ist keine Deko`);
       if ('unlockCharacter' in e && !c.characters[e.unlockCharacter]) err(`${where}: Figur ${e.unlockCharacter} fehlt`);
+      for (const items of ['giveItems' in e ? e.giveItems : {}, 'takeItems' in e ? e.takeItems : {}]) {
+        for (const [i, n] of Object.entries(items)) {
+          if (!c.items[i]) err(`${where}: Gegenstand ${i} fehlt`);
+          if (!Number.isInteger(n) || n <= 0) err(`${where}: Anzahl für ${i} muss eine positive Ganzzahl sein`);
+        }
+      }
     }
+  };
+  /** Sind diese Gegenstände durch die Bedingung sicher im Beutel? (nur `hasItems` direkt oder in `all`) */
+  const guarantees = (cond: Condition | undefined, items: Record<string, number>): boolean => {
+    if (!cond) return false;
+    if ('hasItems' in cond) return Object.entries(items).every(([i, n]) => (cond.hasItems[i] ?? 0) >= n);
+    if ('all' in cond) {
+      return Object.entries(items).every(([i, n]) => cond.all.some((x) => guarantees(x, { [i]: n })));
+    }
+    return false;
   };
   const triggerRefs = (t: Trigger, where: string) => {
     if ('hasItems' in t) Object.keys(t.hasItems).forEach((i) => c.items[i] || err(`${where}: Gegenstand ${i} fehlt`));
@@ -77,24 +93,41 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     asset(it.deco?.spriteOn, `Gegenstand ${id}`);
     condRefs(it.deco?.toggleWhen, `Gegenstand ${id}`);
   }
+  const stations = new Set(
+    Object.values(c.maps).flatMap((m) =>
+      m.objects.flatMap((o) => (o.interaction?.kind === 'workbench' ? [o.interaction.station ?? DEFAULT_STATION] : [])),
+    ),
+  );
   for (const [id, r] of Object.entries(c.recipes)) {
+    if (r.id !== id) err(`Rezept ${id}: ID stimmt nicht mit Schlüssel überein`);
     for (const i of Object.keys(r.inputs)) if (!c.items[i]) err(`Rezept ${id}: Zutat ${i} fehlt`);
     if (!c.items[r.output.item]) err(`Rezept ${id}: Ergebnis ${r.output.item} fehlt`);
+    if (!stations.has(r.station ?? DEFAULT_STATION)) err(`Rezept ${id}: keine Station „${r.station ?? DEFAULT_STATION}“ in irgendeiner Map`);
   }
   for (const [id, q] of Object.entries(c.quests)) {
     if (q.steps.length === 0) err(`Quest ${id}: keine Schritte`);
+    if (q.giver && !c.characters[q.giver]) err(`Quest ${id}: Auftraggeberin ${q.giver} fehlt`);
     condRefs(q.offer?.when, `Quest ${id}`);
     q.steps.forEach((st) => {
       triggerRefs(st.completeWhen, `Quest ${id}/${st.id}`);
       effectRefs(st.onComplete, `Quest ${id}/${st.id}`);
+      if (st.onComplete?.some((e) => 'takeItems' in e)) err(`Quest ${id}/${st.id}: Abgeben (takeItems) geht nur in Dialogen`);
     });
   }
   for (const d of c.dialogues) {
     if (!c.characters[d.character]) err(`Dialog ${d.id}: Figur ${d.character} fehlt`);
     condRefs(d.when, `Dialog ${d.id}`);
     effectRefs(d.effects, `Dialog ${d.id}`);
+    for (const e of d.effects ?? []) {
+      // Sonst würde das Gespräch ohne die Gegenstände immer wieder kommen und nie abschließen.
+      if ('takeItems' in e && !guarantees(d.when, e.takeItems)) err(`Dialog ${d.id}: Abgeben braucht passende hasItems-Bedingung`);
+    }
     for (const line of d.lines) {
       if ('speaker' in line && line.speaker && !c.characters[line.speaker]) err(`Dialog ${d.id}: Sprecher ${line.speaker} fehlt`);
+      if ('choices' in line && line.choices) {
+        if (line.choices.length === 0 || line.choices.some((ch) => !ch.label.trim())) err(`Dialog ${d.id}: leere Antwortmöglichkeit`);
+        if (!line.choices.some((ch) => ch.then === 'weiter')) err(`Dialog ${d.id}: Antworten brauchen mindestens ein „weiter“`);
+      }
     }
   }
   if (new Set(c.dialogues.map((d) => d.id)).size !== c.dialogues.length) err('Dialog-IDs sind nicht eindeutig');
@@ -157,6 +190,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     for (const sp of m.gatherSpots) {
       asset(sp.sprite, `${where}/${sp.id}`);
       condRefs(sp.availableWhen, `${where}/${sp.id}`);
+      if (sp.regrowMinutes !== undefined && !(sp.regrowMinutes > 0)) err(`${where}/${sp.id}: Nachwachszeit muss positiv sein`);
       if (!c.items[sp.item]) err(`${where}/${sp.id}: Gegenstand ${sp.item} fehlt`);
       if (startBody && !standable(terrainAt(g, sp.tile), startBody.moves)) err(`${where}/${sp.id}: Fundstelle nicht erreichbar`);
     }

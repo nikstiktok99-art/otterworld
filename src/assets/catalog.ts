@@ -15,6 +15,9 @@ export type PainterId =
   | 'wegweiser'
   | 'schilfhalm'
   | 'schilfmatte'
+  | 'bank'
+  | 'windspiel'
+  | 'hinweis'
   | 'treibholz'
   | 'treibholzTreibend'
   | 'muschel'
@@ -112,11 +115,14 @@ export const sprites: SpriteDef[] = [
   { key: 'deco.uferleuchte.an', frameW: 16, frameH: 32, frames: 3, fps: 4, anchor: { x: 8, y: 30 }, placeholder: { painter: 'leuchteAn' }, note: 'Uferleuchte eingeschaltet, sanftes Flackern' },
   { key: 'items.schilfhalm', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'schilfhalm' }, note: 'Bündel heller Schilfhalme mit Band (Fundstelle), gut vom stehenden Schilf zu unterscheiden' },
   { key: 'deco.schilfmatte', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'schilfmatte' }, note: 'Geflochtene Schilfmatte, flach auf dem Boden' },
+  { key: 'deco.treibholzbank', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 21 }, placeholder: { painter: 'bank' }, note: 'Kleine Bank aus Treibholz, 1 Kachel breit' },
+  { key: 'deco.muschelwindspiel', frameW: 16, frameH: 32, frames: 3, fps: 2, anchor: { x: 8, y: 30 }, placeholder: { painter: 'windspiel' }, note: 'Windspiel aus Muscheln an einem Treibholzpfosten, Muscheln schaukeln leicht' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },
   { key: 'fx.glitzer', frameW: 8, frameH: 8, frames: 4, fps: 8, anchor: { x: 4, y: 4 }, placeholder: { painter: 'glitzer' }, note: 'Glitzern an Fundstellen' },
   { key: 'fx.ziel', frameW: 16, frameH: 8, frames: 1, anchor: { x: 8, y: 4 }, placeholder: { painter: 'ziel' }, note: 'Markierung des Tippziels' },
+  { key: 'fx.hinweis', frameW: 12, frameH: 12, frames: 1, anchor: { x: 6, y: 11 }, placeholder: { painter: 'hinweis' }, note: 'Kleine Sprechblase über einer Figur, die etwas Neues für sie hat (Aufgabe, nächster Schritt)' },
   { key: 'fx.spritzer', frameW: 16, frameH: 8, frames: 3, fps: 10, anchor: { x: 8, y: 6 }, placeholder: { painter: 'spritzer' }, note: 'Spritzer beim Ein- und Aussteigen' },
 
   // ---- Porträts (Dialog) ----

@@ -1,6 +1,7 @@
 // Die einzige Stelle, an der sich der Spielstand ändert.
 // (Zustand, Aktion, Inhalt) -> (neuer Zustand, Ereignisse). Abgelehnte Aktionen ändern nichts.
-import type { Content, Effect, Trigger } from '../content/types';
+import { DEFAULT_STATION, type Content, type Effect, type Trigger } from '../content/types';
+import { spotKey, spotReady } from './rules/spots';
 import type { Action, GameEvent, RejectReason } from './actions';
 import type { GameState, Tile } from './types';
 import { sameTile } from './types';
@@ -47,10 +48,12 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
       const map = content.maps[action.map];
       const spot = map?.gatherSpots.find((sp) => sp.id === action.spot);
       if (!map || !spot) return reject('unknown');
-      const k = `${map.id}/${spot.id}`;
-      if (s.gathered.includes(k)) return reject('alreadyGathered');
+      const k = spotKey(map.id, spot.id);
+      if (!spot.regrowMinutes && s.gathered.includes(k)) return reject('alreadyGathered');
       if (!matches(spot.availableWhen, state)) return reject('notYet');
-      s.gathered.push(k);
+      if (!spotReady(state, map, spot, action.at)) return reject('alreadyGathered');
+      if (spot.regrowMinutes) s.regrow[k] = action.at + spot.regrowMinutes * 60_000;
+      else s.gathered.push(k);
       s.inventory[spot.item] = count(s, spot.item) + spot.count;
       d.touch();
       d.emit({ type: 'itemGained', item: spot.item, count: spot.count, total: count(s, spot.item) });
@@ -61,6 +64,7 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
       const recipe = content.recipes[action.recipe];
       if (!recipe) return reject('unknown');
       if (!s.recipesKnown.includes(recipe.id)) return reject('recipeUnknown');
+      if ((recipe.station ?? DEFAULT_STATION) !== (action.station ?? DEFAULT_STATION)) return reject('wrongStation');
       for (const [item, n] of Object.entries(recipe.inputs)) {
         if (count(s, item) < n) return reject('missingItems');
       }
@@ -109,6 +113,30 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
       break;
     }
 
+    case 'pickUpDeco': {
+      // Wieder einpacken: zurück in den Beutel. Wer daneben saß, sucht sich seinen nächsten Platz.
+      const idx = s.deco.findIndex((x) => x.uid === action.uid);
+      const deco = s.deco[idx];
+      if (!deco) return reject('unknown');
+      s.deco.splice(idx, 1);
+      s.inventory[deco.item] = count(s, deco.item) + 1;
+      d.touch();
+      d.emit({ type: 'pickedUp', uid: deco.uid, item: deco.item });
+      break;
+    }
+
+    case 'trackQuest': {
+      if (action.quest !== null) {
+        const prog = s.quests[action.quest];
+        if (!content.quests[action.quest] || !prog || prog.done) return reject('unknown');
+      }
+      if (s.tracked !== action.quest) {
+        s.tracked = action.quest;
+        d.touch();
+      }
+      break;
+    }
+
     case 'toggleDeco': {
       const deco = s.deco.find((x) => x.uid === action.uid);
       const item = deco ? content.items[deco.item] : undefined;
@@ -123,12 +151,19 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
     case 'finishDialogue': {
       const dlg = content.dialogues.find((x) => x.id === action.dialogue);
       if (!dlg) return reject('unknown');
-      d.emit({ type: 'dialogueFinished', dialogue: dlg.id });
       const claim = `dlg:${dlg.id}`;
-      if (dlg.effects?.length && !s.claimed.includes(claim)) {
+      const pending = !!dlg.effects?.length && !s.claimed.includes(claim);
+      // Abgeben geht nur ganz oder gar nicht: fehlt etwas, bleibt alles, wie es war.
+      if (pending) {
+        for (const e of dlg.effects!) {
+          if ('takeItems' in e && Object.entries(e.takeItems).some(([item, n]) => count(s, item) < n)) return reject('missingItems');
+        }
+      }
+      d.emit({ type: 'dialogueFinished', dialogue: dlg.id });
+      if (pending) {
         s.claimed.push(claim);
         d.touch();
-        applyEffects(d, dlg.effects, content);
+        applyEffects(d, dlg.effects!, content);
       }
       break;
     }
@@ -218,6 +253,8 @@ function applyEffects(d: Draft, effects: Effect[], content: Content) {
       const first = q?.steps[0];
       if (q && first && !s.quests[q.id]) {
         s.quests[q.id] = { step: first.id, done: false };
+        // Eine gerade angenommene Aufgabe steht oben im Hinweis.
+        s.tracked = q.id;
         d.touch();
         d.emit({ type: 'questStarted', quest: q.id });
       }
@@ -240,6 +277,27 @@ function applyEffects(d: Draft, effects: Effect[], content: Content) {
           d.touch();
           d.emit({ type: 'toggled', uid: deco.uid, on: deco.on });
         }
+      }
+    } else if ('giveItems' in e) {
+      for (const [item, n] of Object.entries(e.giveItems)) {
+        if (!content.items[item] || n <= 0) continue;
+        s.inventory[item] = count(s, item) + n;
+        d.touch();
+        d.emit({ type: 'itemGained', item, count: n, total: count(s, item) });
+      }
+    } else if ('takeItems' in e) {
+      // Vorab geprüft (finishDialogue): hier ist genug da.
+      const used: Record<string, number> = {};
+      for (const [item, n] of Object.entries(e.takeItems)) {
+        const take = Math.min(n, count(s, item));
+        if (take <= 0) continue;
+        s.inventory[item] = count(s, item) - take;
+        if (s.inventory[item] === 0) delete s.inventory[item];
+        used[item] = take;
+      }
+      if (Object.keys(used).length) {
+        d.touch();
+        d.emit({ type: 'itemsUsed', items: used });
       }
     } else if ('unlockCharacter' in e) {
       if (content.characters[e.unlockCharacter] && !s.unlocked.includes(e.unlockCharacter)) {
@@ -291,6 +349,7 @@ function progressQuests(d: Draft, content: Content) {
         d.emit({ type: 'questStep', quest: qid, step: next.id });
       } else {
         prog.done = true;
+        if (d.s.tracked === qid) d.s.tracked = null;
         d.emit({ type: 'questDone', quest: qid });
       }
       d.touch();

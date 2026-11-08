@@ -41,6 +41,8 @@ Bild (kein Mix aus Bild und Testform).
 | deco.uferleuchte.an | 16 × 32 | 8, 30 | 3 · 4 | P | eingeschaltet, sanftes Flackern |
 | items.schilfhalm | 16 × 16 | 8, 13 | 1 | P | Phase 2: Bündel heller Schilfhalme (liegt am Ufer oder treibt am Schilf); muss sich vom stehenden Schilf im Boden abheben |
 | deco.schilfmatte | 16 × 16 | 8, 12 | 1 | P | Phase 2: geflochtene Matte, flach auf dem Boden, 1 Kachel |
+| deco.treibholzbank | 16 × 24 | 8, 21 | 1 | P | freies Bauen: kleine Bank aus Treibholz, 1 Kachel breit |
+| deco.muschelwindspiel | 16 × 32 | 8, 30 | 3 · 2 | P | freies Bauen: Windspiel aus Muscheln am Treibholzpfosten, Muscheln schaukeln |
 
 ## Effekte
 
@@ -50,6 +52,7 @@ Bild (kein Mix aus Bild und Testform).
 | fx.glitzer | 8 × 8 | 4, 4 | 4 · 8 | P |
 | fx.ziel | 16 × 8 | 8, 4 | 1 | P |
 | fx.spritzer | 16 × 8 | 8, 6 | 3 · 10 | P |
+| fx.hinweis | 12 × 12 | 6, 11 | 1 | P (kleine Sprechblase über einer Figur, die etwas Neues hat; keine Schrift, kein Ausrufezeichen-Emoji) |
 
 ## Porträts (Dialog, angezeigt mit 64 CSS-Pixeln)
 

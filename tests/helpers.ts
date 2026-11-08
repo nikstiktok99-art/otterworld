@@ -6,6 +6,8 @@ import type { GameState } from '../src/game/types';
 
 export { content };
 export const MAP = 'map.startufer';
+/** Feste Uhrzeit für Tests (nachwachsende Fundstellen). */
+export const T0 = 1_700_000_000_000;
 
 /** Spielt Aktionen nacheinander ab und sammelt alle Ereignisse. */
 export function play(state: GameState, ...actions: Action[]): { state: GameState; events: GameEvent[] } {
@@ -33,9 +35,9 @@ export function afterGreeting(name = 'Lina'): GameState {
 export function allGathered(s: GameState): GameState {
   return play(
     s,
-    { type: 'gather', map: MAP, spot: 'spot.treibholz.strand' },
-    { type: 'gather', map: MAP, spot: 'spot.treibholz.wasser' },
-    { type: 'gather', map: MAP, spot: 'spot.muschel.sand' },
+    { type: 'gather', map: MAP, spot: 'spot.treibholz.strand', at: T0 },
+    { type: 'gather', map: MAP, spot: 'spot.treibholz.wasser', at: T0 },
+    { type: 'gather', map: MAP, spot: 'spot.muschel.sand', at: T0 },
   ).state;
 }
 

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { count } from '../game/state';
 import { exportCode, importCode } from '../game/save/codec';
 import { normalizeState } from '../game/save/normalize';
-import { characterName, fillText, friendList } from '../game/text';
+import { characterName, fillText, friendList, questLog } from '../game/text';
+import { DEFAULT_STATION, type RecipeDef } from '../content/types';
 import { useApp, useGameState, useUi } from './context';
 import { NameForm } from './Dialog';
 import { portraitSrc } from './portraits';
@@ -52,52 +53,145 @@ export function TitlePanel() {
 }
 
 export function BagPanel() {
-  const { ui, content } = useApp();
+  const { ui, content, session, sound } = useApp();
   const s = useGameState();
   const items = Object.entries(s.inventory).filter(([, n]) => n > 0);
+  const decoItems = items.filter(([id]) => content.items[id]?.kind === 'deco');
+  const materials = items.filter(([id]) => content.items[id]?.kind !== 'deco');
   const placed = s.deco;
   const here = content.maps[s.location.map];
-  // Aufstellen und Versetzen nur dort, wo Deko stehen darf.
+  // Aufstellen, Versetzen und Einpacken nur dort, wo Deko stehen darf.
   const canDecorate = !!here?.decorZone;
   const decoHome = Object.values(content.maps).find((m) => m.decorZone);
+  const label = (id: string, n: number) => {
+    const item = content.items[id];
+    return item ? (n === 1 ? item.name : item.plural) : id;
+  };
   return (
     <Sheet title="Beutel" onClose={() => ui.close()}>
       {items.length === 0 && placed.length === 0 && <p className="muted">Noch nichts dabei.</p>}
+      {materials.length > 0 && (
+        <>
+          <h3 className="section">Sachen</h3>
+          <ul className="list">
+            {materials.map(([id, n]) => (
+              <li key={id} className="list-row column">
+                <span>
+                  {label(id, n)} <strong>{n}</strong>
+                </span>
+                {content.items[id]?.description && <span className="muted small">{content.items[id]!.description}</span>}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {(decoItems.length > 0 || placed.length > 0) && <h3 className="section">Deko</h3>}
       <ul className="list">
-        {items.map(([id, n]) => {
-          const item = content.items[id];
-          return (
-            <li key={id} className="list-row">
-              <span>
-                {item ? (n === 1 ? item.name : item.plural) : id} <strong>{n}</strong>
-              </span>
-              {item?.kind === 'deco' &&
-                (canDecorate ? (
-                  <button className="btn small primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: id, tile: null, problem: null } })}>
-                    Aufstellen
-                  </button>
-                ) : (
-                  <span className="muted small">aufstellen {decoHome?.at ?? 'am Ufer'}</span>
-                ))}
-            </li>
-          );
-        })}
+        {decoItems.map(([id, n]) => (
+          <li key={id} className="list-row">
+            <span>
+              {label(id, n)} <strong>{n}</strong>
+            </span>
+            {canDecorate ? (
+              <button className="btn small primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: id, tile: null, problem: null } })}>
+                Aufstellen
+              </button>
+            ) : (
+              <span className="muted small">aufstellen {decoHome?.at ?? 'am Ufer'}</span>
+            )}
+          </li>
+        ))}
         {placed.map((d) => (
           <li key={d.uid} className="list-row">
             <span>
               {content.items[d.item]?.name ?? d.item} <span className="muted">steht {content.maps[d.map]?.at ?? 'am Ufer'}</span>
             </span>
             {d.map === s.location.map && canDecorate && (
-              <button
-                className="btn small"
-                onClick={() => ui.set({ panel: null, decorate: { mode: 'move', item: d.item, uid: d.uid, tile: null, problem: null } })}
-              >
-                Versetzen
-              </button>
+              <span className="row-buttons">
+                <button
+                  className="btn small"
+                  onClick={() => ui.set({ panel: null, decorate: { mode: 'move', item: d.item, uid: d.uid, tile: null, problem: null } })}
+                >
+                  Versetzen
+                </button>
+                <button
+                  className="btn small"
+                  onClick={() => {
+                    sound.play('sfx.aufheben');
+                    session.dispatch({ type: 'pickUpDeco', uid: d.uid });
+                  }}
+                >
+                  Einpacken
+                </button>
+              </span>
             )}
           </li>
         ))}
       </ul>
+    </Sheet>
+  );
+}
+
+export function QuestsPanel() {
+  const { ui, content, session, sound } = useApp();
+  const s = useGameState();
+  const log = questLog(s, content);
+  const giver = (id: string | null) => (id ? characterName(id, s, content) : null);
+  return (
+    <Sheet title="Aufgaben" onClose={() => ui.close()}>
+      {log.active.length === 0 && log.offers.length === 0 && <p className="muted">Gerade gibt es nichts zu tun. Genieß das Ufer!</p>}
+      {log.active.length > 0 && (
+        <ul className="list quests">
+          {log.active.map((q) => (
+            <li key={q.id} className={q.tracked ? 'quest tracked' : 'quest'}>
+              <p className="quest-name">{q.name}</p>
+              {q.giver && <p className="muted small">von {giver(q.giver)}</p>}
+              {q.text && <p className="quest-text">{q.text}</p>}
+              <p className="muted small">
+                Schritt {q.step + 1} von {q.steps}
+              </p>
+              {q.tracked ? (
+                <p className="quest-status">Wird oben angezeigt</p>
+              ) : (
+                <button
+                  className="btn small"
+                  onClick={() => {
+                    sound.play('sfx.tipp');
+                    session.dispatch({ type: 'trackQuest', quest: q.id });
+                  }}
+                >
+                  Oben anzeigen
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      {log.offers.length > 0 && (
+        <>
+          <h3 className="section">Bald</h3>
+          <ul className="list">
+            {log.offers.map((q) => (
+              <li key={q.id} className="list-row column">
+                <span>{q.text}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {log.done.length > 0 && (
+        <>
+          <h3 className="section">Erledigt</h3>
+          <ul className="list">
+            {log.done.map((q) => (
+              <li key={q.id} className="list-row done column">
+                <span>{q.name}</span>
+                {q.giver && <span className="muted small">mit {giver(q.giver)}</span>}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </Sheet>
   );
 }
@@ -163,29 +257,42 @@ export function FriendsPanel() {
 export function WorkbenchPanel() {
   const { ui, content, session } = useApp();
   const s = useGameState();
+  const u = useUi();
   const [built, setBuilt] = useState<string | null>(null);
-  const known = s.recipesKnown.map((id) => content.recipes[id]).filter((r) => !!r);
+  const station = u.panel?.kind === 'werkbank' ? u.panel.station : DEFAULT_STATION;
+  const title = u.panel?.kind === 'werkbank' ? u.panel.title : 'Werkbank';
+  const canBuild = (r: RecipeDef) => Object.entries(r.inputs).every(([i, n]) => count(s, i) >= n);
+  // Nur Rezepte dieser Station; was sich gerade bauen lässt, steht oben.
+  const known = s.recipesKnown
+    .map((id) => content.recipes[id])
+    .filter((r): r is RecipeDef => !!r && (r.station ?? DEFAULT_STATION) === station)
+    .sort((a, b) => Number(canBuild(b)) - Number(canBuild(a)));
   if (built) {
     const item = content.items[built];
     return (
-      <Sheet title="Werkbank" onClose={() => ui.close()} closeLabel="Später">
+      <Sheet title={title} onClose={() => ui.close()} closeLabel="Später">
         <p className="big-text">{item?.name ?? built} gebaut.</p>
         {item?.kind === 'deco' && count(s, built) > 0 && (
           <button className="btn primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: built, tile: null, problem: null } })}>
             Jetzt aufstellen
           </button>
         )}
+        <button className="btn" onClick={() => setBuilt(null)}>
+          Weiter bauen
+        </button>
       </Sheet>
     );
   }
   return (
-    <Sheet title="Werkbank" onClose={() => ui.close()}>
+    <Sheet title={title} onClose={() => ui.close()}>
       {known.length === 0 && <p className="muted">Hier kannst du bauen, sobald du weißt wie.</p>}
       {known.map((r) => {
-        const ok = Object.entries(r.inputs).every(([i, n]) => count(s, i) >= n);
+        const ok = canBuild(r);
+        const desc = content.items[r.output.item]?.description;
         return (
           <div key={r.id} className="recipe">
             <p className="recipe-name">{r.name}</p>
+            {desc && <p className="muted small">{desc}</p>}
             <ul className="list compact">
               {Object.entries(r.inputs).map(([i, n]) => {
                 const have = count(s, i);
@@ -204,7 +311,7 @@ export function WorkbenchPanel() {
               className="btn primary"
               disabled={!ok}
               onClick={() => {
-                const ev = session.dispatch({ type: 'craft', recipe: r.id });
+                const ev = session.dispatch({ type: 'craft', recipe: r.id, station });
                 if (ev.some((e) => e.type === 'crafted')) setBuilt(r.output.item);
               }}
             >
@@ -227,6 +334,9 @@ export function MenuPanel() {
   return (
     <Sheet title="Menü" onClose={() => ui.close()} closeLabel="Zurück zum Spiel">
       <div className="stack">
+        <button className="btn" onClick={() => ui.open({ kind: 'quests' })}>
+          Aufgaben
+        </button>
         <button className="btn" onClick={() => toggle('sound')}>
           Ton: {s.settings.sound ? 'an' : 'aus'}
         </button>

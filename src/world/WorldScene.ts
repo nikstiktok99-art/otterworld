@@ -4,11 +4,13 @@ import Phaser from 'phaser';
 import type { Content, ExitDef, GatherSpotDef, MapDef, MapObjectDef } from '../content/types';
 import type { Action, GameEvent } from '../game/actions';
 import type { Tile } from '../game/types';
-import { matches } from '../game/conditions';
 import { movementBlocked, resolveAllNpcs, resolveNpcs, type NpcPlacement } from '../game/occupancy';
 import { checkPlacement } from '../game/rules/placement';
 import { accessTiles, findPath, gridFor, inBounds, key, standable, terrainAt, TILE, type Grid } from '../game/space';
-import { characterName, selectDialogue } from '../game/text';
+import { characterName, hasNews, selectDialogue } from '../game/text';
+import { spotReady } from '../game/rules/spots';
+import { DEFAULT_STATION } from '../content/types';
+import { clock } from '../app/clock';
 import { spriteDef } from '../assets/catalog';
 import { paintTerrain } from '../assets/placeholders';
 import type { DialogController } from '../app/dialogs';
@@ -46,6 +48,8 @@ interface Fx {
 const DEPTH_EVENING = 50000;
 const DEPTH_GLOW = 50001;
 const DEPTH_UI = 50010;
+// Höhe der Dekorier-Leiste unten (CSS-Pixel, großzügig inkl. Home-Indikator)
+const DECO_BAR_PX = 190;
 // Überblendung bei Orts- und Figurenwechsel (Abendblau)
 const FADE = { ms: 260, r: 28, g: 42, b: 90 };
 
@@ -68,9 +72,12 @@ export class WorldScene extends Phaser.Scene {
   private fx: Fx[] = [];
   private time0 = 0;
   private down: { x: number; y: number } | null = null;
+  private dragFrom: { x: number; y: number } | null = null;
   private unsub: Array<() => void> = [];
   /** Figuren, die gerade zu einem Ausgang gehen und danach verschwinden. */
   private leavers: Actor[] = [];
+  /** Sprechblase pro Körper-ID, solange die Figur etwas Neues hat. */
+  private markers = new Map<string, Phaser.GameObjects.Image>();
   /** Orts- oder Figurenwechsel läuft: keine Tipps, keine Positionsmeldungen. */
   private leaving = false;
   /** Überlebt den Neustart der Szene: Einblenden und kurzer Hinweis nach einem Wechsel. */
@@ -89,6 +96,7 @@ export class WorldScene extends Phaser.Scene {
     this.decos = new Map();
     this.fx = [];
     this.leavers = [];
+    this.markers = new Map();
     this.leaving = false;
     this.preview = null;
     this.decoActive = false;
@@ -172,6 +180,14 @@ export class WorldScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.down = { x: p.x, y: p.y };
+      this.dragFrom = { x: p.x, y: p.y };
+    });
+    // Im Dekoriermodus: Ansicht mit dem Finger verschieben.
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown || !this.dragFrom || !this.decoActive) return;
+      const cam = this.cameras.main;
+      cam.setScroll(cam.scrollX - (p.x - this.dragFrom.x) / cam.zoom, cam.scrollY - (p.y - this.dragFrom.y) / cam.zoom);
+      this.dragFrom = { x: p.x, y: p.y };
     });
     this.input.on('pointerup', (p: Phaser.Input.Pointer) => {
       const d = this.down;
@@ -190,6 +206,8 @@ export class WorldScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
 
     this.time.addEvent({ delay: 2400, loop: true, callback: () => this.sparkleSpot() });
+    // Nachwachsende Fundstellen tauchen von selbst wieder auf.
+    this.time.addEvent({ delay: 4000, loop: true, callback: () => this.refreshSpots() });
   }
 
   private cleanup(): void {
@@ -245,8 +263,18 @@ export class WorldScene extends Phaser.Scene {
 
   /** Fundstelle sichtbar: noch nicht eingesammelt und schon verfügbar. */
   private spotOpen(spot: GatherSpotDef): boolean {
-    const s = this.deps.session.getState();
-    return !s.gathered.includes(`${this.map.id}/${spot.id}`) && matches(spot.availableWhen, s);
+    return spotReady(this.deps.session.getState(), this.map, spot, clock.now());
+  }
+
+  /** Wieder (oder neu) verfügbare Fundstellen sanft einblenden. Ausblenden übernimmt die Aufheben-Animation. */
+  refreshSpots(): void {
+    for (const spot of this.map.gatherSpots) {
+      const sprite = this.spots.get(spot.id);
+      if (!sprite || sprite.visible || !this.spotOpen(spot)) continue;
+      this.tweens.killTweensOf(sprite);
+      sprite.setVisible(true).setAlpha(0);
+      this.tweens.add({ targets: sprite, alpha: 1, duration: 600 });
+    }
   }
 
   private pick(wx: number, wy: number): Target | null {
@@ -384,12 +412,12 @@ export class WorldScene extends Phaser.Scene {
       case 'exit':
         break;
       case 'spot':
-        session.dispatch({ type: 'gather', map: this.map.id, spot: target.spot.id });
+        session.dispatch({ type: 'gather', map: this.map.id, spot: target.spot.id, at: clock.now() });
         break;
       case 'object':
         if (target.obj.interaction?.kind === 'workbench') {
           sound.play('sfx.tipp');
-          ui.open({ kind: 'werkbank' });
+          ui.open({ kind: 'werkbank', station: target.obj.interaction.station ?? DEFAULT_STATION, title: target.obj.interaction.title ?? target.obj.name });
         } else if (target.obj.interaction?.kind === 'inspect') {
           ui.toast(target.obj.interaction.text);
         }
@@ -475,6 +503,10 @@ export class WorldScene extends Phaser.Scene {
       } else if (e.type === 'crafted') {
         sound.play('sfx.bauen');
         haptic();
+      } else if (e.type === 'pickedUp') {
+        haptic();
+        const item = content.items[e.item];
+        ui.toast(`${item?.name ?? e.item} eingepackt`);
       } else if (e.type === 'placed' || e.type === 'moved') {
         sound.play('sfx.aufstellen');
         haptic();
@@ -498,15 +530,34 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private onStateChanged(): void {
-    const s = this.deps.session.getState();
-    for (const spot of this.map.gatherSpots) {
-      const sprite = this.spots.get(spot.id);
-      const gone = s.gathered.includes(`${this.map.id}/${spot.id}`);
-      // Einsammeln blendet die Fundstelle selbst aus (kleine Animation); hier nur neu erscheinende zeigen.
-      if (sprite && !gone) sprite.setVisible(matches(spot.availableWhen, s));
-    }
+    // Einsammeln blendet die Fundstelle selbst aus (kleine Animation); hier nur neu erscheinende zeigen.
+    this.refreshSpots();
     this.syncDeco();
     this.syncNpcs(true);
+  }
+
+  /** Sprechblasen über Figuren, die etwas Neues für sie haben. */
+  private syncMarkers(): void {
+    const { session, content } = this.deps;
+    const s = session.getState();
+    for (const [bodyId, { placement }] of this.npcs) {
+      const news = placement.characters.some((c) => hasNews(c, s, content));
+      const marker = this.markers.get(bodyId);
+      if (news && !marker) {
+        const o = this.tex.origin('fx.hinweis');
+        const img = this.add.image(0, 0, 'fx.hinweis', 0).setOrigin(o.x, o.y).setDepth(DEPTH_UI - 4).setAlpha(0);
+        this.tweens.add({ targets: img, alpha: 1, duration: 300 });
+        this.markers.set(bodyId, img);
+      } else if (!news && marker) {
+        marker.destroy();
+        this.markers.delete(bodyId);
+      }
+    }
+    for (const [bodyId, marker] of this.markers) {
+      if (this.npcs.has(bodyId)) continue;
+      marker.destroy();
+      this.markers.delete(bodyId);
+    }
   }
 
   private syncDeco(): void {
@@ -617,6 +668,7 @@ export class WorldScene extends Phaser.Scene {
       if (animate) this.leave(actor, bodyId);
       else actor.destroy();
     }
+    this.syncMarkers();
   }
 
   /** Eine Figur geht woandershin: zum passenden Ausgang laufen (wenn es einen gibt) und ausblenden. */
@@ -662,6 +714,10 @@ export class WorldScene extends Phaser.Scene {
       this.decoActive = true;
       const z = this.map.decorZone ?? { x: this.player.tile.x, y: this.player.tile.y, w: 1, h: 1 };
       cam.stopFollow();
+      // Unten liegt die Leiste mit „Hier aufstellen“: Kamera darf dafür über den Kartenrand hinaus, und die
+      // Deko-Fläche wird oberhalb der Leiste mittig gezeigt. Mit dem Finger lässt sich die Ansicht verschieben.
+      const bar = DECO_BAR_PX / cam.zoom;
+      cam.setBounds(0, -bar, this.grid.w * TILE, this.grid.h * TILE + 2 * bar);
       // Kamera-Effekte suchen den Easing-Namen wörtlich nach – nur die ausgeschriebene Form funktioniert.
       cam.pan((z.x + z.w / 2) * TILE, (z.y + z.h / 2) * TILE, 450, 'Sine.easeInOut');
       if (d.mode === 'move' && d.uid) this.decos.get(d.uid)?.sprite.setAlpha(0.35);
@@ -672,6 +728,7 @@ export class WorldScene extends Phaser.Scene {
       this.preview?.destroy();
       this.preview = null;
       for (const e of this.decos.values()) e.sprite.setAlpha(1);
+      cam.setBounds(0, 0, this.grid.w * TILE, this.grid.h * TILE);
       cam.startFollow(this.player.sprite, true, 0.12, 0.12);
     } else if (d) {
       this.drawDecoLayer();
@@ -750,6 +807,14 @@ export class WorldScene extends Phaser.Scene {
     for (const actor of [...[...this.npcs.values()].map((n) => n.actor), ...this.leavers]) {
       if (actor.update(dt) === 'splash') this.splash(actor.pos.x, actor.pos.y);
     }
+    const talking = this.deps.ui.getState().panel?.kind === 'dialog';
+    for (const [bodyId, marker] of this.markers) {
+      const npc = this.npcs.get(bodyId);
+      if (!npc) continue;
+      const lift = (this.tex.get(npc.actor.sprite.texture.key)?.def.anchor.y ?? 40) - 4;
+      const bob = Math.round(Math.sin(this.time0 * 3) * 1.5);
+      marker.setPosition(Math.round(npc.actor.pos.x), Math.round(npc.actor.pos.y) - lift + bob).setVisible(!talking);
+    }
     for (const spot of this.map.gatherSpots) {
       const sprite = this.spots.get(spot.id);
       const info = this.tex.get(spot.sprite);
@@ -780,7 +845,14 @@ export class WorldScene extends Phaser.Scene {
       zoom: this.cameras.main.zoom,
       player: { body: this.player.body.id, tile: this.player.tile, moving: this.player.moving, pose: this.player.pose() },
       leavers: this.leavers.length,
-      npcs: [...this.npcs.values()].map(({ actor, placement }) => ({ body: placement.body, tile: actor.tile, moving: actor.moving, pose: actor.pose() })),
+      npcs: [...this.npcs.values()].map(({ actor, placement }) => ({
+        body: placement.body,
+        tile: actor.tile,
+        moving: actor.moving,
+        pose: actor.pose(),
+        news: this.markers.has(placement.body),
+      })),
+      spotsVisible: [...this.spots.entries()].filter(([, sp]) => sp.visible).map(([id]) => id),
       warnings: this.tex.warnings,
       spriteKeys: spriteDef('characters.schnabbi.idle.se')?.file ? 'schnabbi:datei' : 'schnabbi:platzhalter',
     };

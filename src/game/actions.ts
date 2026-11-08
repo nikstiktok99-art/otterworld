@@ -2,11 +2,14 @@ import type { Dir, Tile } from './types';
 
 /** Alle Spielaktionen. Welt und UI rufen genau diese auf – es gibt keine zweite Stelle, die Zustand ändert. */
 export type Action =
-  | { type: 'gather'; map: string; spot: string }
-  | { type: 'craft'; recipe: string }
+  /** `at`: aktuelle Uhrzeit in ms (für nachwachsende Fundstellen; die Regeln lesen selbst keine Uhr). */
+  | { type: 'gather'; map: string; spot: string; at: number }
+  | { type: 'craft'; recipe: string; station?: string }
   | { type: 'placeDeco'; item: string; map: string; tile: Tile }
   | { type: 'moveDeco'; uid: string; tile: Tile }
+  | { type: 'pickUpDeco'; uid: string }
   | { type: 'toggleDeco'; uid: string }
+  | { type: 'trackQuest'; quest: string | null }
   | { type: 'finishDialogue'; dialogue: string }
   | { type: 'setPlayerName'; name: string }
   | { type: 'arrive'; map: string; tile: Tile; facing: Dir }
@@ -27,7 +30,8 @@ export type RejectReason =
   | 'notYet'
   | 'invalidName'
   | 'invalidPosition'
-  | 'locked';
+  | 'locked'
+  | 'wrongStation';
 
 export type GameEvent =
   | { type: 'itemGained'; item: string; count: number; total: number }
@@ -35,6 +39,7 @@ export type GameEvent =
   | { type: 'crafted'; recipe: string; item: string }
   | { type: 'placed'; uid: string; item: string; tile: Tile }
   | { type: 'moved'; uid: string; tile: Tile }
+  | { type: 'pickedUp'; uid: string; item: string }
   | { type: 'toggled'; uid: string; on: boolean }
   | { type: 'dialogueFinished'; dialogue: string }
   | { type: 'recipeLearned'; recipe: string }

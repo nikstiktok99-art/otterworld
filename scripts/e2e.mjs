@@ -109,6 +109,8 @@ try {
   await noPanel();
   await page.waitForTimeout(600);
   await shot('startufer');
+  check((await page.locator('.hint').textContent())?.includes('Schnabbi wartet am Ende des Stegs'), 'Hinweis zum Einstieg');
+  check((await hook('world()')).npcs[0]?.news === true, 'Sprechblase über Schnabbi');
 
   console.log('2. Zu Schnabbi und Namenswahl');
   await tapTile(10, 16);
@@ -231,7 +233,16 @@ try {
   check((await button('Freunde').count()) === 1, 'Freundebuch ist in der Anzeige');
   await tapTile(9, 17);
   await panel('dialog');
-  await shot('ausflug');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await shot('ausflug-frage');
+  await button('Lieber später').tap();
+  await noPanel();
+  s = await state();
+  check(!s.quests[Q2] && s.moments.length === 1, '„Lieber später“: nichts begonnen, nichts doppelt');
+  await tapTile(9, 17);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await button('Gern, zeig sie mir!').tap();
   await advanceDialogUntil('false');
   await noPanel();
   s = await state();
@@ -261,6 +272,13 @@ try {
   check(s.quests[Q2].step === 'schilf', 'Ankunft schaltet die Quest weiter');
   check(JSON.stringify(await npcBodies()) === '["body.schnabbi"]', 'Schnabbi wartet in der Bucht (genau einmal)');
   await shot('schilfbucht');
+  await page.locator('.hint').tap();
+  await panel('quests');
+  check((await page.locator('.quest.tracked .quest-name').textContent()) === 'Ein Platz für zwei', 'Hinweis antippen öffnet das Aufgabenbuch');
+  check((await page.locator('.list-row.done').count()) === 1, 'Aufgabenbuch: der erste Abend steht unter „Erledigt“');
+  await shot('aufgabenbuch');
+  await button('Zurück').tap();
+  await noPanel();
   await hook('flush()');
 
   console.log('12. Unterbrechen in der zweiten Map (Neuladen)');
@@ -362,6 +380,78 @@ try {
   w = await hook('world()');
   check(JSON.stringify(w.npcs.map((n) => n.body)) === '["body.schnabbi"]', 'wieder als Otter, Schnabbi sitzt an der Matte');
   await shot('wieder-otter');
+
+  // ---------------- Grundbau: freies Sammeln, Bauen, Einpacken ----------------
+  console.log('20. Schnabbi hat neue Ideen (Sprechblase)');
+  check(w.npcs[0].news === true, 'Sprechblase über Schnabbi');
+  const sch = w.npcs[0].tile;
+  await tapTile(sch.x, sch.y);
+  await panel('dialog');
+  await advanceDialogUntil('false');
+  await noPanel();
+  s = await state();
+  check(s.recipesKnown.includes('recipe.treibholzbank') && s.recipesKnown.includes('recipe.muschelwindspiel'), 'zwei neue Rezepte gelernt');
+  check((await hook('world()')).npcs[0].news === false, 'Sprechblase ist weg');
+
+  console.log('21. Treibholz wächst nach');
+  const holz = () => page.evaluate(`window.__otterwelt.state().inventory['item.treibholz'] ?? 0`);
+  check(!(await hook('world()')).spotsVisible.includes('spot.treibholz.strand'), 'eingesammeltes Treibholz ist noch weg');
+  await hook('advanceMinutes(11)');
+  await page.waitForTimeout(800);
+  check((await hook('world()')).spotsVisible.includes('spot.treibholz.strand'), 'nach zehn Minuten ist neues Treibholz da');
+  await shot('nachgewachsen');
+  await tapTile(4, 17);
+  await idle();
+  await waitFor('Holz 1', `(window.__otterwelt.state().inventory['item.treibholz'] ?? 0) === 1`);
+  await tapTile(6, 11);
+  await idle();
+  await waitFor('Holz 2', `(window.__otterwelt.state().inventory['item.treibholz'] ?? 0) === 2`);
+  await hook('advanceMinutes(11)');
+  await page.waitForTimeout(800);
+  await tapTile(4, 17);
+  await idle();
+  await waitFor('Holz 3', `(window.__otterwelt.state().inventory['item.treibholz'] ?? 0) === 3`);
+  check((await holz()) === 3, 'drei Treibholz gesammelt');
+
+  console.log('22. Treibholzbank bauen und aufstellen');
+  await tapTile(11, 24);
+  await panel('werkbank');
+  await shot('werkbank-frei');
+  await page.locator('.recipe', { hasText: 'Treibholzbank' }).getByRole('button', { name: 'Bauen' }).tap();
+  await page.waitForTimeout(300);
+  await button('Jetzt aufstellen').tap();
+  await page.waitForTimeout(700);
+  await tapTile(8, 27);
+  await page.waitForTimeout(200);
+  await button('Hier aufstellen').tap();
+  await page.waitForTimeout(400);
+  s = await state();
+  check(s.deco.some((d) => d.item === 'item.treibholzbank') && !s.inventory['item.treibholz'], 'Bank steht, Holz verbraucht');
+  await shot('bank');
+
+  console.log('23. Bank wieder einpacken');
+  await button('Beutel').tap();
+  await panel('bag');
+  await shot('beutel-deko');
+  await page.locator('.list-row', { hasText: 'Treibholzbank' }).getByRole('button', { name: 'Einpacken' }).tap();
+  await page.waitForTimeout(300);
+  s = await state();
+  check(!s.deco.some((d) => d.item === 'item.treibholzbank') && s.inventory['item.treibholzbank'] === 1, 'Bank ist wieder im Beutel');
+  await button('Zurück').tap();
+  await noPanel();
+  await hook('flush()');
+
+  console.log('24. Neuladen: alles bleibt');
+  await start();
+  s = await state();
+  check(s.inventory['item.treibholzbank'] === 1 && s.deco.length === 2 && s.recipesKnown.length === 4, 'nach Neuladen: Beutel, Deko und Rezepte stimmen');
+  await button('Weiterspielen').tap();
+  await noPanel();
+  await button('Menü').tap();
+  await button('Aufgaben').tap();
+  await panel('quests');
+  check((await page.locator('.list-row.done').count()) === 2, 'Aufgabenbuch: beide Erlebnisse erledigt');
+  await shot('aufgabenbuch-ende');
 
   check(consoleErrors.length === 0, `keine Fehler in der Browserkonsole${consoleErrors.length ? ': ' + consoleErrors.join(' | ') : ''}`);
   console.log('\nBrowser-Durchlauf bestanden.');

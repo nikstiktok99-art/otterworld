@@ -109,7 +109,7 @@ export async function boot(): Promise<() => void> {
   // Android-Zurück: schließt das Oberste, im Spiel selbst geht die App in den Hintergrund.
   platform.onBack(() => {
     const st = ui.getState();
-    if (st.panel?.kind === 'dialog') dialogs.next();
+    if (st.panel?.kind === 'dialog') dialogs.back();
     else if (st.panel?.kind === 'name' || st.panel?.kind === 'saveExport' || st.panel?.kind === 'saveImport' || st.panel?.kind === 'tech') ui.open({ kind: 'menu' });
     else if (st.panel && st.panel.kind !== 'title') ui.close();
     else if (st.decorate) ui.set({ decorate: null });

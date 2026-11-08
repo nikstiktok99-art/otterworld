@@ -2,7 +2,9 @@
 
 Kleines, persönliches Otterspiel. **Hauptplattform: ihr iPhone 16 Pro.** Android = dein Testgerät, Browser = schnelle Vorschau.
 
-Aktueller Stand: **Phase 2 – Vertrauen und Figurenwechsel** (Version 0.3.0, spielbar): der erste Abend, danach ein zweites
+Aktueller Stand: **Version 0.4.0** – Phase 2 (Vertrauen und Figurenwechsel) plus Grundbau für Missionen und Crafting
+(Aufgabenbuch, Sprechblasen über Figuren, Antworten im Gespräch, Abgeben/Geschenke, nachwachsende Fundstellen,
+freies Bauen, Deko einpacken, Stationen; Baukasten in `docs/MISSIONEN.md`). Spielbar: der erste Abend, danach ein zweites
 Erlebnis mit Schnabbi in der Schilfbucht (zweite Map mit Hin- und Rückweg), Freundebuch und Spielen als Schnabbi.
 Alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf; Geschichte und Texte von Phase 2 sind Vorschläge.
 
@@ -52,7 +54,7 @@ Bei jedem Hochladen läuft „Prüfen“ automatisch auf GitHub.
 | `public/art` | Gelieferte PNGs (siehe `docs/GRAFIK_SLOTS.md`) |
 | `ios/`, `android/` | Native Projekte (Capacitor 8), nur gezielt angepasst: Hochformat, nur iPhone |
 
-Weitere Dokumente: `TESTPROTOKOLL.md`, `ANLEITUNG-IPHONE.md`, `docs/GRAFIK_SLOTS.md`, `docs/INHALTSPLAN.md`, `AGENTS.md` (für Codex), `CLAUDE.md`.
+Weitere Dokumente: `TESTPROTOKOLL.md`, `ANLEITUNG-IPHONE.md`, `docs/MISSIONEN.md`, `docs/GRAFIK_SLOTS.md`, `docs/INHALTSPLAN.md`, `AGENTS.md` (für Codex), `CLAUDE.md`.
 
 ## Versionen
 

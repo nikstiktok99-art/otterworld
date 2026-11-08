@@ -8,6 +8,7 @@ import {
   MenuPanel,
   NamePanel,
   NoticePanel,
+  QuestsPanel,
   SaveExportPanel,
   SaveImportPanel,
   TechPanel,
@@ -30,6 +31,7 @@ export function UiRoot() {
       {kind === 'werkbank' && <WorkbenchPanel />}
       {kind === 'menu' && <MenuPanel />}
       {kind === 'friends' && <FriendsPanel />}
+      {kind === 'quests' && <QuestsPanel />}
       {kind === 'name' && <NamePanel />}
       {kind === 'saveExport' && <SaveExportPanel />}
       {kind === 'saveImport' && <SaveImportPanel />}

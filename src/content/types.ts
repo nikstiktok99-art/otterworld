@@ -13,15 +13,21 @@ export type Condition =
   | { questNotStarted: string }
   | { questStep: { quest: string; step: string } }
   | { questDone: string }
-  | { hasMoment: string };
+  | { hasMoment: string }
+  /** Mindestens so viele Gegenstände im Beutel (z. B. „Bringst du mir drei Muscheln?“). */
+  | { hasItems: Record<string, number> };
 
-/** Wirkungen, z. B. am Ende eines Dialogs oder eines Questschritts. Alle sind idempotent. */
+/** Wirkungen, z. B. am Ende eines Dialogs oder eines Questschritts. Sie werden über `claimed` genau einmal vergeben. */
 export type Effect =
   | { startQuest: string }
   | { learnRecipe: string }
   | { addMoment: string }
   | { setDecoOn: { item: string; on: boolean } }
-  | { unlockCharacter: string };
+  | { unlockCharacter: string }
+  /** Geschenk einer Figur. */
+  | { giveItems: Record<string, number> }
+  /** Abgeben (nur in Dialogen): fehlt etwas, wird das Gespräch nicht abgeschlossen und nichts vergeben. */
+  | { takeItems: Record<string, number> };
 
 export type Trigger =
   | { hasItems: Record<string, number> }
@@ -69,6 +75,8 @@ export interface ItemDef {
   name: string;
   plural: string;
   kind: 'material' | 'deco';
+  /** Ein kurzer Satz für Beutel und Werkbank. */
+  description?: string;
   /** Grafikschlüssel in der Welt (Fundstelle oder aufgestellte Deko). */
   sprite: string;
   deco?: {
@@ -85,7 +93,12 @@ export interface RecipeDef {
   name: string;
   inputs: Record<string, number>;
   output: { item: string; count: number };
+  /** Wo gebaut wird (Standard: 'werkbank'). Später z. B. ein Kochtopf im Hotpot-Restaurant. */
+  station?: string;
 }
+
+/** Standard-Station für Rezepte ohne eigene Angabe. */
+export const DEFAULT_STATION = 'werkbank';
 
 export interface MapObjectDef {
   id: string;
@@ -96,7 +109,10 @@ export interface MapObjectDef {
   footprint: { w: number; h: number };
   /** Grafik gespiegelt zeichnen (z. B. Wegweiser nach links). */
   flip?: boolean;
-  interaction?: { kind: 'workbench' } | { kind: 'inspect'; text: string } | { kind: 'exit'; exit: string };
+  interaction?:
+    | { kind: 'workbench'; station?: string; title?: string }
+    | { kind: 'inspect'; text: string }
+    | { kind: 'exit'; exit: string };
 }
 
 export interface GatherSpotDef {
@@ -107,6 +123,8 @@ export interface GatherSpotDef {
   sprite: string;
   /** Erst sichtbar und sammelbar, wenn diese Bedingung gilt. */
   availableWhen?: Condition;
+  /** Wächst nach so vielen Minuten (Echtzeit) nach. Fehlt die Angabe, gibt es die Fundstelle nur einmal. */
+  regrowMinutes?: number;
 }
 
 export type PlacementTarget = { tile: Tile } | { besideDeco: string };
@@ -180,6 +198,8 @@ export interface QuestStepDef {
 export interface QuestDef {
   id: string;
   name: string;
+  /** Wer die Aufgabe gibt (Figuren-ID) – für Aufgabenbuch und Freundebuch. */
+  giver?: string;
   /** Hinweis, solange die Quest noch nicht begonnen hat, aber schon ansteht. */
   offer?: { when: Condition; hint: string };
   steps: QuestStepDef[];
@@ -187,8 +207,17 @@ export interface QuestDef {
   ending?: { title: string; text: string };
 }
 
+/**
+ * Antwortmöglichkeit der Spielerin. 'weiter' führt das Gespräch fort; 'spaeter' beendet es ohne Folgen –
+ * beim nächsten Ansprechen kommt dasselbe Gespräch noch einmal (z. B. eine Aufgabe erst später annehmen).
+ */
+export interface DialogueChoice {
+  label: string;
+  then: 'weiter' | 'spaeter';
+}
+
 export type DialogueLine =
-  | { speaker: string | null; text: string; cue?: string }
+  | { speaker: string | null; text: string; cue?: string; choices?: DialogueChoice[] }
   | { askName: true };
 
 export interface DialogueDef {

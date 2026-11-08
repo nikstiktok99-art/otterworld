@@ -1,6 +1,6 @@
 // Phase 2: Ortswechsel, zweites gemeinsames Erlebnis, Figurenwechsel, Migration und das Erbsentrio als Datenbeispiel.
 import { describe, expect, it } from 'vitest';
-import { afterGreeting, allGathered, content, fresh, MAP, play, rejected } from './helpers';
+import { afterGreeting, allGathered, content, fresh, MAP, play, rejected, T0 } from './helpers';
 import type { Action, GameEvent } from '../src/game/actions';
 import type { Content } from '../src/content/types';
 import type { GameState } from '../src/game/types';
@@ -37,9 +37,9 @@ const q2Started = () => play(eveningDone(), { type: 'finishDialogue', dialogue: 
 const reedsGathered = () =>
   play(
     toBay(q2Started()).state,
-    { type: 'gather', map: BAY, spot: 'spot.schilf.links' },
-    { type: 'gather', map: BAY, spot: 'spot.schilf.rechts' },
-    { type: 'gather', map: BAY, spot: 'spot.schilf.wasser' },
+    { type: 'gather', map: BAY, spot: 'spot.schilf.links', at: T0 },
+    { type: 'gather', map: BAY, spot: 'spot.schilf.rechts', at: T0 },
+    { type: 'gather', map: BAY, spot: 'spot.schilf.wasser', at: T0 },
   ).state;
 const matPlaced = () =>
   play(toShore(reedsGathered()).state, { type: 'craft', recipe: 'recipe.schilfmatte' }, { type: 'placeDeco', item: 'item.schilfmatte', map: MAP, tile: MAT })
@@ -125,7 +125,7 @@ describe('Zweites Erlebnis: Ein Platz für zwei', () => {
 
   it('das Schilf wächst erst, wenn Schnabbi davon erzählt hat', () => {
     const s = toBay(eveningDone()).state;
-    const r = play(s, { type: 'gather', map: BAY, spot: 'spot.schilf.links' });
+    const r = play(s, { type: 'gather', map: BAY, spot: 'spot.schilf.links', at: T0 });
     expect(rejected(r.events)[0]).toMatchObject({ reason: 'notYet' });
     expect(r.state.inventory['item.schilfhalm']).toBeUndefined();
   });
@@ -152,7 +152,7 @@ describe('Zweites Erlebnis: Ein Platz für zwei', () => {
 
   it('ein Halm zweimal antippen gibt nur einen', () => {
     const s = toBay(q2Started()).state;
-    const r = play(s, { type: 'gather', map: BAY, spot: 'spot.schilf.links' }, { type: 'gather', map: BAY, spot: 'spot.schilf.links' });
+    const r = play(s, { type: 'gather', map: BAY, spot: 'spot.schilf.links', at: T0 }, { type: 'gather', map: BAY, spot: 'spot.schilf.links', at: T0 });
     expect(r.state.inventory['item.schilfhalm']).toBe(1);
   });
 
@@ -250,7 +250,9 @@ describe('Migration', () => {
     const loaded = await new SaveStore(mem).load(content);
     expect(loaded.problem).toBeNull();
     const s = loaded.state!;
-    expect(s.schema).toBe(2);
+    expect(s.schema).toBe(3);
+    expect(s.regrow).toEqual({});
+    expect(s.tracked).toBeNull();
     expect(s.unlocked).toEqual(['otter']);
     expect(s.player.name).toBe('Lina');
     expect(s.quests['quest.schnabbi.licht']?.done).toBe(true);

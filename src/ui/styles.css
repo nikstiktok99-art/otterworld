@@ -105,10 +105,17 @@ body {
   max-width: 100%;
   background: rgba(30, 40, 70, 0.72);
   color: #fff8ec;
+  border: 0;
   border-radius: 12px;
   padding: 7px 12px;
+  font: inherit;
   font-size: 16px;
   text-align: center;
+  min-height: 36px;
+}
+
+.hint:active {
+  background: rgba(30, 40, 70, 0.85);
 }
 
 .toasts {
@@ -375,6 +382,69 @@ h2 {
 
 .muted.small {
   font-size: 14px;
+}
+
+h3.section {
+  margin: 4px 0 0;
+  font-size: 17px;
+  color: var(--text-leise);
+}
+
+.list-row.column {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.row-buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ---------------- Antworten im Gespräch ---------------- */
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ---------------- Aufgabenbuch ---------------- */
+
+.quest {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #f6ecdb;
+}
+
+.quest.tracked {
+  background: #fde7d4;
+  border: 2px solid #f0c49c;
+}
+
+.quest p {
+  margin: 0;
+}
+
+.quest-name {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.quest-text {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.quest-status {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--akzent-dunkel);
 }
 
 /* ---------------- Freundebuch ---------------- */

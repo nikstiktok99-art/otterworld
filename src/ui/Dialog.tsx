@@ -59,6 +59,7 @@ export function DialogPanel() {
 
   const speaker = line.speaker;
   const portrait = speaker ? portraitSrc(content.characters[speaker]?.portrait) : null;
+  const choices = line.choices ?? [];
   return (
     <div className="backdrop clear" onClick={() => dialogs.next()}>
       <div className="sheet dialog" role="dialog" aria-live="polite">
@@ -69,7 +70,24 @@ export function DialogPanel() {
           </div>
         )}
         <p className={speaker ? 'dialog-text' : 'dialog-text narration'}>{fillText(line.text, state)}</p>
-        <p className="tap-hint">Tippen zum Weiterlesen</p>
+        {choices.length > 0 ? (
+          <div className="choices">
+            {choices.map((c, i) => (
+              <button
+                key={c.label}
+                className={c.then === 'weiter' ? 'btn primary' : 'btn'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dialogs.choose(i);
+                }}
+              >
+                {fillText(c.label, state)}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="tap-hint">Tippen zum Weiterlesen</p>
+        )}
       </div>
     </div>
   );

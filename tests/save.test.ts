@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { afterGreeting, allGathered, content, fresh, MAP, play } from './helpers';
+import { afterGreeting, allGathered, content, fresh, MAP, play, T0 } from './helpers';
 import { decodeEnvelope, encodeEnvelope, exportCode, importCode } from '../src/game/save/codec';
 import { normalizeState } from '../src/game/save/normalize';
 import { SaveStore, type KeyValueStore } from '../src/app/saveStore';
@@ -59,7 +59,7 @@ describe('Normalisieren', () => {
 
   it('ein normaler Stand bleibt unverändert', () => {
     const s = allGathered(afterGreeting());
-    expect(normalizeState(JSON.parse(JSON.stringify(s)), 1, content).state).toEqual(s);
+    expect(normalizeState(JSON.parse(JSON.stringify(s)), SCHEMA, content).state).toEqual(s);
   });
 });
 
@@ -131,7 +131,7 @@ describe('SaveStore', () => {
     const a = afterGreeting('Lina');
     store.request(a);
     await store.flush();
-    const b = play(a, { type: 'gather', map: MAP, spot: 'spot.treibholz.strand' }).state;
+    const b = play(a, { type: 'gather', map: MAP, spot: 'spot.treibholz.strand', at: T0 }).state;
     store.request(b);
     await store.flush();
     // Den zuletzt geschriebenen Platz beschädigen (abgebrochener Schreibvorgang)

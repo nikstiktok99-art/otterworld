@@ -1,5 +1,5 @@
 import type { DialogueDef } from './types';
-import { Q_LICHT, Q_SCHILF, R_LEUCHTE, R_MATTE } from './ids';
+import { Q_LICHT, Q_SCHILF, R_BANK, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
 
 // ENTWURF: Alle Texte sind Vorschläge und dürfen frei ersetzt werden.
 // {name} wird durch den Namen ersetzt, den die Spielerin im ersten Gespräch wählt.
@@ -84,8 +84,15 @@ export const dialogues: DialogueDef[] = [
     lines: [
       { speaker: 'schnabbi', text: 'Weißt du, was mir am Abend noch fehlt, {name}? Der Sand wird ganz schön kühl.' },
       { speaker: 'schnabbi', text: 'Eine weiche Matte zum Draufsitzen wäre schön. Aus Schilf kann man eine flechten.' },
-      { speaker: 'schnabbi', text: 'Hinter dem Ufer liegt eine kleine Bucht, da wächst das weichste Schilf. Komm, ich zeig sie dir!' },
-      { speaker: 'schnabbi', text: 'Der Weg beginnt rechts am Wegweiser. Ich geh schon mal vor.' },
+      {
+        speaker: 'schnabbi',
+        text: 'Hinter dem Ufer liegt eine kleine Bucht, da wächst das weichste Schilf. Kommst du mit?',
+        choices: [
+          { label: 'Gern, zeig sie mir!', then: 'weiter' },
+          { label: 'Lieber später', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'schnabbi', text: 'Schön! Der Weg beginnt rechts am Wegweiser. Ich geh schon mal vor.' },
     ],
     effects: [{ startQuest: Q_SCHILF }, { learnRecipe: R_MATTE }],
   },
@@ -120,6 +127,18 @@ export const dialogues: DialogueDef[] = [
       { speaker: 'schnabbi', text: 'Weißt du, {name}, seit du da bist, ist es hier am Ufer viel schöner.' },
       { speaker: 'schnabbi', text: 'Wenn du magst, darfst du die Welt auch mal mit meinen Augen sehen. Schau dafür ins Freundebuch.' },
     ],
+  },
+  // ---- Freies Bauen (Vorschlag): Schnabbi zeigt zwei neue Rezepte ----
+  {
+    id: 'dlg.schnabbi.ideen',
+    character: 'schnabbi',
+    when: { questDone: Q_SCHILF },
+    lines: [
+      { speaker: 'schnabbi', text: 'Weißt du was, {name}? Mir sind noch ein paar Sachen eingefallen, die man bauen kann.' },
+      { speaker: 'schnabbi', text: 'Eine kleine Bank aus Treibholz und ein Windspiel aus Muscheln. Schau mal an der Werkbank!' },
+      { speaker: 'schnabbi', text: 'Treibholz und Muscheln gibt es immer wieder – das Wasser bringt ständig neue.' },
+    ],
+    effects: [{ learnRecipe: R_BANK }, { learnRecipe: R_WINDSPIEL }],
   },
   {
     id: 'dlg.schnabbi.plaudern2',
