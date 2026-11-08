@@ -2,6 +2,34 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Grundbau Missionen und Crafting (Version 0.4.0, Commit d5576f2)
+
+Automatisch geprüft am 08.11.2026:
+
+- **Unit-Tests:** 90 bestanden (`npm test`), davon 21 neu (`tests/grundbau.test.ts`): Aufgabenbuch und verfolgte
+  Aufgabe, Sprechblase folgt dem Spielverlauf, Antworten „später“/„weiter“ und Android-Zurück, Abgeben ganz oder gar
+  nicht plus Geschenk genau einmal (Datenbeispiel), Prüfung verlangt passende Bedingung, Nachwachsen nach 10 Minuten
+  (auch bei zurückgestellter Uhr), freies Bauen, Einpacken (auch doppelt getippt), Stationen, Migration 0.3.0 → 0.4.0.
+- **Typprüfung:** fehlerfrei.
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b5, 929 KB), „Android-Testbuild (.apk)“ (a5) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
+  Bekannt: Zu Spielbeginn sitzt die Sprechblase über Schnabbi (Stegende) am oberen Rand unter der Statusleiste; sobald
+  sie Richtung Steg läuft, ist sie gut sichtbar.
+
+| Test | Browser (`npm run e2e`) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Phase 1 und 2 wie bisher (alle früheren Prüfungen) | ok | offen | – | offen |
+| Hinweis zum Einstieg, Sprechblase über Schnabbi | ok | offen | – | offen |
+| „Lieber später“ beendet ohne Folgen, danach „Gern“ | ok | offen | – | offen |
+| Hinweis antippen öffnet das Aufgabenbuch (offen/erledigt) | ok | offen | – | offen |
+| Schnabbis neue Ideen: zwei Rezepte, Sprechblase verschwindet | ok | offen | – | offen |
+| Treibholz wächst nach (Uhr im Test vorgestellt) | ok | offen (10 Minuten warten) | – | offen |
+| Treibholzbank bauen, auf der untersten Reihe aufstellen | ok | offen | – | offen |
+| Deko einpacken, Neuladen: Beutel, Deko, Rezepte stimmen | ok | offen | – | offen |
+| Ansicht im Dekoriermodus mit dem Finger verschieben | – (nicht automatisiert) | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
+| Update 0.2.0/0.3.0 → 0.4.0 behält den Spielstand | – (Unit-Tests ok) | offen | – | offen |
+
 ## Phase 2 – Vertrauen und Figurenwechsel (Version 0.3.0, Commit 1779b5f)
 
 Automatisch geprüft am 08.11.2026:
