@@ -196,6 +196,13 @@ describe('Figurenwechsel', () => {
     expect(npcs[0]).toMatchObject({ map: MAP, tile: { x: 5, y: 25 } });
   });
 
+  it('steht am Ruheplatz des Otters schon Deko (alter Spielstand), ruht er daneben', () => {
+    const s = play(q2Done(), { type: 'switchCharacter', character: 'schnabbi' }).state;
+    s.deco.push({ uid: 'alt-1', item: 'item.uferleuchte', map: MAP, tile: { x: 5, y: 25 }, on: false });
+    const otter = resolveAllNpcs(s, content).find((n) => n.body === 'body.otter');
+    expect(otter?.tile).toEqual({ x: 6, y: 25 });
+  });
+
   it('als Schnabbi in die Bucht und zurück, danach wieder als Otter', () => {
     let s = play(q2Done(), { type: 'switchCharacter', character: 'schnabbi' }).state;
     s = toBay(s).state;

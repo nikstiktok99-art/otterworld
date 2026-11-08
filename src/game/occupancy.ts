@@ -75,6 +75,12 @@ export function resolveAllNpcs(s: GameState, content: Content, opts: { includePl
       let facing = p.facing;
       if ('tile' in p.at) {
         tile = p.at.tile;
+        // Steht dort inzwischen Deko (z. B. aus einem älteren Spielstand), weicht die Figur auf den Nachbarplatz aus.
+        const g = gridFor(map);
+        const hardBlocked = movementBlocked(s, map);
+        if (hardBlocked.has(key(g, tile))) {
+          tile = besideTile(g, s, map, tile, body.moves, out.filter((n) => n.map === map.id));
+        }
       } else {
         const item = p.at.besideDeco;
         const deco = s.deco.find((d) => d.map === map.id && d.item === item);
