@@ -1,13 +1,14 @@
 // Die Welt: eine generische Szene für jede Map. Übersetzt Tipps in Spielaktionen und zeigt das Ergebnis.
 // Sie ändert nie selbst den Spielstand – alles läuft über session.dispatch.
 import Phaser from 'phaser';
-import type { Content, GatherSpotDef, MapDef, MapObjectDef } from '../content/types';
+import type { Content, ExitDef, GatherSpotDef, MapDef, MapObjectDef } from '../content/types';
 import type { Action, GameEvent } from '../game/actions';
 import type { Tile } from '../game/types';
-import { movementBlocked, resolveNpcs, type NpcPlacement } from '../game/occupancy';
+import { matches } from '../game/conditions';
+import { movementBlocked, resolveAllNpcs, resolveNpcs, type NpcPlacement } from '../game/occupancy';
 import { checkPlacement } from '../game/rules/placement';
 import { accessTiles, findPath, gridFor, inBounds, key, standable, terrainAt, TILE, type Grid } from '../game/space';
-import { selectDialogue } from '../game/text';
+import { characterName, selectDialogue } from '../game/text';
 import { spriteDef } from '../assets/catalog';
 import { paintTerrain } from '../assets/placeholders';
 import type { DialogController } from '../app/dialogs';
@@ -32,6 +33,7 @@ type Target =
   | { kind: 'npc'; actor: Actor; character: string }
   | { kind: 'spot'; spot: GatherSpotDef }
   | { kind: 'object'; obj: MapObjectDef }
+  | { kind: 'exit'; exit: ExitDef }
   | { kind: 'deco'; uid: string };
 
 interface Fx {
@@ -44,6 +46,8 @@ interface Fx {
 const DEPTH_EVENING = 50000;
 const DEPTH_GLOW = 50001;
 const DEPTH_UI = 50010;
+// Überblendung bei Orts- und Figurenwechsel (Abendblau)
+const FADE = { ms: 260, r: 28, g: 42, b: 90 };
 
 export class WorldScene extends Phaser.Scene {
   private deps!: WorldDeps;
@@ -65,6 +69,12 @@ export class WorldScene extends Phaser.Scene {
   private time0 = 0;
   private down: { x: number; y: number } | null = null;
   private unsub: Array<() => void> = [];
+  /** Figuren, die gerade zu einem Ausgang gehen und danach verschwinden. */
+  private leavers: Actor[] = [];
+  /** Orts- oder Figurenwechsel läuft: keine Tipps, keine Positionsmeldungen. */
+  private leaving = false;
+  /** Überlebt den Neustart der Szene: Einblenden und kurzer Hinweis nach einem Wechsel. */
+  private pendingEnter: { toast?: string } | null = null;
 
   constructor() {
     super('world');
@@ -78,6 +88,8 @@ export class WorldScene extends Phaser.Scene {
     this.objects = [];
     this.decos = new Map();
     this.fx = [];
+    this.leavers = [];
+    this.leaving = false;
     this.preview = null;
     this.decoActive = false;
   }
@@ -115,7 +127,7 @@ export class WorldScene extends Phaser.Scene {
       const x = (obj.tile.x + obj.footprint.w / 2) * TILE;
       const y = (obj.tile.y + obj.footprint.h) * TILE - 1;
       const o = this.tex.origin(obj.sprite);
-      const sprite = this.add.sprite(x, y, obj.sprite, 0).setOrigin(o.x, o.y).setDepth(y);
+      const sprite = this.add.sprite(x, y, obj.sprite, 0).setOrigin(o.x, o.y).setDepth(y).setFlipX(!!obj.flip);
       this.objects.push({ obj, sprite });
     }
 
@@ -124,7 +136,7 @@ export class WorldScene extends Phaser.Scene {
       const a = anchorOf(spot.tile);
       const o = this.tex.origin(spot.sprite);
       const sprite = this.add.sprite(a.x, a.y, spot.sprite, 0).setOrigin(o.x, o.y).setDepth(a.y - 1);
-      sprite.setVisible(!s.gathered.includes(`${this.map.id}/${spot.id}`));
+      sprite.setVisible(this.spotOpen(spot));
       this.spots.set(spot.id, sprite);
     }
 
@@ -151,6 +163,12 @@ export class WorldScene extends Phaser.Scene {
     this.applyZoom();
     cam.startFollow(this.player.sprite, true, 0.12, 0.12);
     cam.centerOn(this.player.pos.x, this.player.pos.y);
+    const enter = this.pendingEnter;
+    this.pendingEnter = null;
+    if (enter) {
+      cam.fadeIn(FADE.ms, FADE.r, FADE.g, FADE.b);
+      if (enter.toast) ui.toast(enter.toast);
+    }
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.down = { x: p.x, y: p.y };
@@ -212,15 +230,23 @@ export class WorldScene extends Phaser.Scene {
 
   tap(wx: number, wy: number): void {
     const ui = this.deps.ui.getState();
-    if (ui.panel) return;
+    if (ui.panel || this.leaving) return;
     const tile = { x: Math.floor(wx / TILE), y: Math.floor(wy / TILE) };
     if (ui.decorate) {
       this.decorateSelect(tile);
       return;
     }
     const target = this.pick(wx, wy);
+    const exit = this.map.exits.find((e) => e.tiles.some((t) => t.x === tile.x && t.y === tile.y));
     if (target) this.goInteract(target);
+    else if (exit) this.goInteract({ kind: 'exit', exit });
     else this.goTo(tile);
+  }
+
+  /** Fundstelle sichtbar: noch nicht eingesammelt und schon verfügbar. */
+  private spotOpen(spot: GatherSpotDef): boolean {
+    const s = this.deps.session.getState();
+    return !s.gathered.includes(`${this.map.id}/${spot.id}`) && matches(spot.availableWhen, s);
   }
 
   private pick(wx: number, wy: number): Target | null {
@@ -242,7 +268,12 @@ export class WorldScene extends Phaser.Scene {
       const sp = this.spots.get(spot.id);
       if (sp) test(sp, { kind: 'spot', spot });
     }
-    for (const { obj, sprite } of this.objects) if (obj.interaction) test(sprite, { kind: 'object', obj });
+    for (const { obj, sprite } of this.objects) {
+      const ia = obj.interaction;
+      if (!ia) continue;
+      const exit = ia.kind === 'exit' ? this.map.exits.find((e) => e.id === ia.exit) : undefined;
+      test(sprite, exit ? { kind: 'exit', exit } : { kind: 'object', obj });
+    }
     hits.sort((a, b) => b.depth - a.depth);
     return hits[0]?.target ?? null;
   }
@@ -285,6 +316,22 @@ export class WorldScene extends Phaser.Scene {
 
   private goInteract(target: Target): void {
     const blocked = this.blocked();
+    if (target.kind === 'exit') {
+      // Bis auf den Ausgang laufen, dann den Ort wechseln.
+      const path = findPath(this.grid, blocked, this.player.nearestTile(), target.exit.tiles, this.moves());
+      if (!path) {
+        this.deps.ui.toast('Da komme ich gerade nicht hin.');
+        this.deps.sound.play('sfx.nein');
+        return;
+      }
+      this.showMarker(path.length ? path[path.length - 1]! : this.player.tile);
+      this.deps.sound.play('sfx.tipp');
+      this.player.walk(path, () => {
+        this.reportPosition();
+        this.travel(target.exit);
+      });
+      return;
+    }
     let rect: { x: number; y: number; w: number; h: number };
     let inside = false;
     let face: Tile;
@@ -328,7 +375,13 @@ export class WorldScene extends Phaser.Scene {
     switch (target.kind) {
       case 'npc':
         target.actor.faceToward(this.player.tile);
-        dialogs.start(target.character);
+        // Ohne Gespräch (z. B. der eigene Otter, während sie als Schnabbi spielt): Freundebuch öffnen.
+        if (!dialogs.start(target.character) && session.getState().unlocked.includes(target.character)) {
+          sound.play('sfx.tipp');
+          ui.open({ kind: 'friends' });
+        }
+        break;
+      case 'exit':
         break;
       case 'spot':
         session.dispatch({ type: 'gather', map: this.map.id, spot: target.spot.id });
@@ -352,7 +405,40 @@ export class WorldScene extends Phaser.Scene {
 
   /** Aktuelle sichere Position melden (nach Ankunft und beim Unterbrechen der App). */
   reportPosition(): void {
+    if (this.leaving) return;
     this.deps.session.dispatch({ type: 'arrive', map: this.map.id, tile: this.player.tile, facing: this.player.facing });
+  }
+
+  /** Ortswechsel: ausblenden, Spielregel ausführen, Szene mit der neuen Map neu aufbauen. */
+  private travel(exit: ExitDef): void {
+    if (this.leaving || !this.deps.ui.idle) return;
+    this.leaving = true;
+    const cam = this.cameras.main;
+    cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      const ev = this.deps.session.dispatch({ type: 'travel', exit: exit.id });
+      if (ev.some((e) => e.type === 'traveled')) {
+        this.pendingEnter = { toast: this.deps.content.maps[exit.to.map]?.name ?? exit.label };
+        this.scene.restart(this.deps);
+      } else {
+        this.leaving = false;
+        cam.fadeIn(FADE.ms, FADE.r, FADE.g, FADE.b);
+        this.deps.sound.play('sfx.nein');
+      }
+    });
+    cam.fadeOut(FADE.ms, FADE.r, FADE.g, FADE.b);
+  }
+
+  /** Figurenwechsel mit anderem Körper: kurz ausblenden und die Welt mit der neuen Figur aufbauen. */
+  private rebuildAfterSwitch(character: string): void {
+    if (this.leaving) return;
+    this.leaving = true;
+    const name = characterName(character, this.deps.session.getState(), this.deps.content);
+    const cam = this.cameras.main;
+    cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      this.pendingEnter = { toast: `Du spielst jetzt als ${name}.` };
+      this.scene.restart(this.deps);
+    });
+    cam.fadeOut(FADE.ms, FADE.r, FADE.g, FADE.b);
   }
 
   private showMarker(t: Tile): void {
@@ -402,6 +488,11 @@ export class WorldScene extends Phaser.Scene {
         sound.play('sfx.leuchte');
       } else if (e.type === 'rejected' && action?.type === 'gather') {
         sound.play('sfx.nein');
+      } else if (e.type === 'switched') {
+        sound.play('sfx.aufstellen');
+        haptic();
+        if (e.bodyChanged) this.rebuildAfterSwitch(e.character);
+        else ui.toast(`Jetzt spricht ${characterName(e.character, this.deps.session.getState(), content)}.`);
       }
     }
   }
@@ -411,7 +502,8 @@ export class WorldScene extends Phaser.Scene {
     for (const spot of this.map.gatherSpots) {
       const sprite = this.spots.get(spot.id);
       const gone = s.gathered.includes(`${this.map.id}/${spot.id}`);
-      if (sprite && !gone) sprite.setVisible(true);
+      // Einsammeln blendet die Fundstelle selbst aus (kleine Animation); hier nur neu erscheinende zeigen.
+      if (sprite && !gone) sprite.setVisible(matches(spot.availableWhen, s));
     }
     this.syncDeco();
     this.syncNpcs(true);
@@ -490,6 +582,10 @@ export class WorldScene extends Phaser.Scene {
       if (!existing) {
         const actor = new Actor(this, this.tex, body, this.grid, p.tile, p.facing);
         actor.restPose = p.pose;
+        if (animate) {
+          actor.sprite.setAlpha(0);
+          this.tweens.add({ targets: actor.sprite, alpha: 1, duration: 400 });
+        }
         this.npcs.set(p.body, { actor, placement: p });
         continue;
       }
@@ -517,9 +613,33 @@ export class WorldScene extends Phaser.Scene {
     }
     for (const [bodyId, { actor }] of this.npcs) {
       if (seen.has(bodyId)) continue;
-      actor.destroy();
       this.npcs.delete(bodyId);
+      if (animate) this.leave(actor, bodyId);
+      else actor.destroy();
     }
+  }
+
+  /** Eine Figur geht woandershin: zum passenden Ausgang laufen (wenn es einen gibt) und ausblenden. */
+  private leave(actor: Actor, bodyId: string): void {
+    const { session, content } = this.deps;
+    const s = session.getState();
+    const dest = resolveAllNpcs(s, content).find((n) => n.body === bodyId);
+    const exit = dest ? this.map.exits.find((e) => e.to.map === dest.map) : undefined;
+    const path = exit ? findPath(this.grid, movementBlocked(s, this.map), actor.nearestTile(), exit.tiles, actor.body.moves) : null;
+    this.leavers.push(actor);
+    const vanish = () =>
+      this.tweens.add({
+        targets: actor.sprite,
+        alpha: 0,
+        duration: 350,
+        onComplete: () => {
+          actor.destroy();
+          this.leavers = this.leavers.filter((a) => a !== actor);
+        },
+      });
+    actor.restPose = 'idle';
+    if (path && path.length > 0) actor.walk(path, vanish);
+    else vanish();
   }
 
   private talkOnArrival(p: NpcPlacement): void {
@@ -540,7 +660,7 @@ export class WorldScene extends Phaser.Scene {
     const cam = this.cameras.main;
     if (d && !this.decoActive) {
       this.decoActive = true;
-      const z = this.map.decorZone;
+      const z = this.map.decorZone ?? { x: this.player.tile.x, y: this.player.tile.y, w: 1, h: 1 };
       cam.stopFollow();
       // Kamera-Effekte suchen den Easing-Namen wörtlich nach – nur die ausgeschriebene Form funktioniert.
       cam.pan((z.x + z.w / 2) * TILE, (z.y + z.h / 2) * TILE, 450, 'Sine.easeInOut');
@@ -565,7 +685,7 @@ export class WorldScene extends Phaser.Scene {
     g.clear();
     if (!d) return;
     const s = this.deps.session.getState();
-    const z = this.map.decorZone;
+    const z = this.map.decorZone ?? { x: 0, y: 0, w: 0, h: 0 };
     g.fillStyle(0xfff4c8, 0.2);
     for (let y = z.y; y < z.y + z.h; y++) {
       for (let x = z.x; x < z.x + z.w; x++) {
@@ -627,7 +747,7 @@ export class WorldScene extends Phaser.Scene {
       this.splash(this.player.pos.x, this.player.pos.y);
       this.deps.sound.play('sfx.platsch');
     }
-    for (const { actor } of this.npcs.values()) {
+    for (const actor of [...[...this.npcs.values()].map((n) => n.actor), ...this.leavers]) {
       if (actor.update(dt) === 'splash') this.splash(actor.pos.x, actor.pos.y);
     }
     for (const spot of this.map.gatherSpots) {
@@ -655,8 +775,11 @@ export class WorldScene extends Phaser.Scene {
   /** Für Tests und das Technik-Fenster. */
   debugInfo() {
     return {
+      map: this.map.id,
+      leaving: this.leaving,
       zoom: this.cameras.main.zoom,
-      player: { tile: this.player.tile, moving: this.player.moving, pose: this.player.pose() },
+      player: { body: this.player.body.id, tile: this.player.tile, moving: this.player.moving, pose: this.player.pose() },
+      leavers: this.leavers.length,
       npcs: [...this.npcs.values()].map(({ actor, placement }) => ({ body: placement.body, tile: actor.tile, moving: actor.moving, pose: actor.pose() })),
       warnings: this.tex.warnings,
       spriteKeys: spriteDef('characters.schnabbi.idle.se')?.file ? 'schnabbi:datei' : 'schnabbi:platzhalter',

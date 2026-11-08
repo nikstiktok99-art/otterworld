@@ -24,12 +24,23 @@ export function selectDialogue(character: string, s: GameState, content: Content
   return content.dialogues.find((d) => d.character === character && matches(d.when, s)) ?? null;
 }
 
-/** Hinweis für die Anzeige oben: der aktuelle Schritt der ersten offenen Quest. */
+/** Hinweis für die Anzeige oben: der aktuelle Schritt der ersten offenen Quest, sonst eine anstehende Quest. */
 export function activeHint(s: GameState, content: Content): string | null {
   for (const [qid, prog] of Object.entries(s.quests)) {
     if (prog.done) continue;
     const step = content.quests[qid]?.steps.find((st) => st.id === prog.step);
     if (step) return fillText(step.hint, s);
   }
+  for (const q of Object.values(content.quests)) {
+    if (!s.quests[q.id] && q.offer && matches(q.offer.when, s)) return fillText(q.offer.hint, s);
+  }
   return null;
+}
+
+/** Figuren im Freundebuch: die Startfigur zuerst, dann alle, die man schon kennt. */
+export function friendList(s: GameState, content: Content): string[] {
+  const met = Object.values(content.characters)
+    .filter((c) => c.id !== content.start.character && c.friend && matches(c.friend.metWhen, s))
+    .map((c) => c.id);
+  return [content.start.character, ...met];
 }

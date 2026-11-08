@@ -3,6 +3,7 @@ import { afterGreeting, allGathered, content, fresh, MAP, play } from './helpers
 import { decodeEnvelope, encodeEnvelope, exportCode, importCode } from '../src/game/save/codec';
 import { normalizeState } from '../src/game/save/normalize';
 import { SaveStore, type KeyValueStore } from '../src/app/saveStore';
+import { SCHEMA } from '../src/game/state';
 
 class MemoryStore implements KeyValueStore {
   data = new Map<string, string>();
@@ -26,7 +27,7 @@ describe('Hülle und Prüfsumme', () => {
     expect(decodeEnvelope(raw).ok).toBe(true);
     expect(decodeEnvelope(raw.slice(0, -10))).toMatchObject({ ok: false, reason: 'corrupt' });
     expect(decodeEnvelope(raw.replace('"nextDecoId":1', '"nextDecoId":2'))).toMatchObject({ ok: false, reason: 'checksum' });
-    expect(decodeEnvelope(raw.replace('"schema":1', '"schema":99'))).toMatchObject({ ok: false, reason: 'newer' });
+    expect(decodeEnvelope(raw.replace(`"schema":${SCHEMA}`, '"schema":99'))).toMatchObject({ ok: false, reason: 'newer' });
     expect(decodeEnvelope(null)).toMatchObject({ ok: false, reason: 'empty' });
   });
 });

@@ -39,12 +39,39 @@ export function terrainAt(g: Grid, t: Tile): Terrain {
 
 /** Kann ein Körper mit diesen Bewegungsarten auf diesem Untergrund stehen? */
 export function standable(terrain: Terrain, moves: readonly Movement[]): boolean {
-  if (terrain === 'blocked') return false;
+  if (terrain === 'blocked' || terrain === 'schilf') return false;
   if (terrain === 'water') return moves.includes('water');
-  return moves.includes('land'); // Sand, Gras, Steg
+  return moves.includes('land'); // Sand, Gras, Steg, Pfad
 }
 
+/** Boden, auf dem Deko stehen darf (Steg und Pfade bleiben frei). */
 export const isLand = (t: Terrain): boolean => t === 'sand' || t === 'grass';
+
+/**
+ * Nächste Kachel ab `from` (Breitensuche über das ganze Raster), auf der ein Körper sicher stehen kann.
+ * Für Ortswechsel und Figurenwechsel: Die Figur landet nie im Gebüsch, in einem Gebäude oder (als Landtier) im Wasser.
+ */
+export function nearestStandable(
+  g: Grid,
+  blocked: ReadonlySet<number>,
+  from: Tile,
+  moves: readonly Movement[],
+): Tile | null {
+  if (!inBounds(g, from)) return null;
+  const seen = new Set<number>([key(g, from)]);
+  const queue: Tile[] = [from];
+  while (queue.length > 0) {
+    const t = queue.shift()!;
+    if (passable(g, blocked, t, moves)) return t;
+    for (const [dx, dy] of STEPS) {
+      const n = { x: t.x + dx, y: t.y + dy };
+      if (!inBounds(g, n) || seen.has(key(g, n))) continue;
+      seen.add(key(g, n));
+      queue.push(n);
+    }
+  }
+  return null;
+}
 
 function passable(g: Grid, blocked: ReadonlySet<number>, t: Tile, moves: readonly Movement[]): boolean {
   return inBounds(g, t) && !blocked.has(key(g, t)) && standable(terrainAt(g, t), moves);

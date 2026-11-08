@@ -1,5 +1,5 @@
 import type { DialogueDef } from './types';
-import { Q_LICHT, R_LEUCHTE } from './ids';
+import { Q_LICHT, Q_SCHILF, R_LEUCHTE, R_MATTE } from './ids';
 
 // ENTWURF: Alle Texte sind Vorschläge und dürfen frei ersetzt werden.
 // {name} wird durch den Namen ersetzt, den die Spielerin im ersten Gespräch wählt.
@@ -74,6 +74,60 @@ export const dialogues: DialogueDef[] = [
       { speaker: null, text: 'Schnabbi stupst die Leuchte mit dem Schnabel an. Sie beginnt warm zu leuchten.', cue: 'leuchteAn' },
       { speaker: 'schnabbi', text: 'So ist der Abend am Ufer gleich viel gemütlicher.' },
       { speaker: 'schnabbi', text: 'Danke, {name}. Bleibst du noch ein bisschen?' },
+    ],
+  },
+  // ---- Phase 2 (Vorschlag): Ein Platz für zwei ----
+  {
+    id: 'dlg.schnabbi.ausflug',
+    character: 'schnabbi',
+    when: { all: [{ questDone: Q_LICHT }, { questNotStarted: Q_SCHILF }] },
+    lines: [
+      { speaker: 'schnabbi', text: 'Weißt du, was mir am Abend noch fehlt, {name}? Der Sand wird ganz schön kühl.' },
+      { speaker: 'schnabbi', text: 'Eine weiche Matte zum Draufsitzen wäre schön. Aus Schilf kann man eine flechten.' },
+      { speaker: 'schnabbi', text: 'Hinter dem Ufer liegt eine kleine Bucht, da wächst das weichste Schilf. Komm, ich zeig sie dir!' },
+      { speaker: 'schnabbi', text: 'Der Weg beginnt rechts am Wegweiser. Ich geh schon mal vor.' },
+    ],
+    effects: [{ startQuest: Q_SCHILF }, { learnRecipe: R_MATTE }],
+  },
+  {
+    id: 'dlg.schnabbi.bucht',
+    character: 'schnabbi',
+    when: { questStep: { quest: Q_SCHILF, step: 'schilf' } },
+    lines: [
+      { speaker: 'schnabbi', text: 'Da bist du ja! Schön hier, oder?' },
+      { speaker: 'schnabbi', text: 'Für eine Matte reichen drei Schilfhalme. Zwei wachsen am Ufer, einer draußen im Wasser am Schilf.' },
+    ],
+  },
+  {
+    id: 'dlg.schnabbi.flechten',
+    character: 'schnabbi',
+    when: { questStep: { quest: Q_SCHILF, step: 'flechten' } },
+    lines: [{ speaker: 'schnabbi', text: 'Hast du die Halme? Dann ab zur Werkbank – flechten geht ganz leicht.' }],
+  },
+  {
+    id: 'dlg.schnabbi.hinlegen',
+    character: 'schnabbi',
+    when: { questStep: { quest: Q_SCHILF, step: 'hinlegen' } },
+    lines: [{ speaker: 'schnabbi', text: 'Die Matte ist fertig? Leg sie hin, wo es dir gefällt. Ich komm dann dazu.' }],
+  },
+  {
+    id: 'dlg.schnabbi.vertrauen',
+    character: 'schnabbi',
+    when: { questStep: { quest: Q_SCHILF, step: 'gemeinsam' } },
+    lines: [
+      { speaker: 'schnabbi', text: 'Oh, ist die weich!' },
+      { speaker: null, text: 'Schnabbi rückt ein Stück zur Seite, damit ihr beide Platz habt.' },
+      { speaker: 'schnabbi', text: 'Weißt du, {name}, seit du da bist, ist es hier am Ufer viel schöner.' },
+      { speaker: 'schnabbi', text: 'Wenn du magst, darfst du die Welt auch mal mit meinen Augen sehen. Schau dafür ins Freundebuch.' },
+    ],
+  },
+  {
+    id: 'dlg.schnabbi.plaudern2',
+    character: 'schnabbi',
+    when: { questDone: Q_SCHILF },
+    lines: [
+      { speaker: 'schnabbi', text: 'So lässt es sich aushalten, {name}.' },
+      { speaker: 'schnabbi', text: 'Im Freundebuch kannst du jederzeit als ich herumtapsen. Dein Otter ruht sich so lange vor dem Bau aus.' },
     ],
   },
   {

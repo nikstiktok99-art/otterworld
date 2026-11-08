@@ -1,4 +1,5 @@
 import type { BodyDef, CharacterDef } from './types';
+import { Q_LICHT } from './ids';
 
 // Figuren-ID, Weltkörper-ID und Grafikschlüssel sind bewusst getrennt.
 // Weitere Figuren aus dem Kanon (Rosie, Bubbles, Chamaron, Meerkat, Bean, Erbsentrio, Squichy,
@@ -17,6 +18,8 @@ export const characters: Record<string, CharacterDef> = {
     name: 'Schnabbi',
     body: 'body.schnabbi',
     portrait: 'portraits.schnabbi',
+    // ENTWURF: Text im Freundebuch, frei ersetzbar.
+    friend: { about: 'Dein erster Freund am Ufer. Er wohnt gleich am Steg.', metWhen: { not: { questNotStarted: Q_LICHT } } },
   },
 };
 

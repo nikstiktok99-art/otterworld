@@ -4,6 +4,7 @@ import { DecorateBar, Hud, Toasts } from './Hud';
 import {
   BagPanel,
   EndCard,
+  FriendsPanel,
   MenuPanel,
   NamePanel,
   NoticePanel,
@@ -28,6 +29,7 @@ export function UiRoot() {
       {kind === 'bag' && <BagPanel />}
       {kind === 'werkbank' && <WorkbenchPanel />}
       {kind === 'menu' && <MenuPanel />}
+      {kind === 'friends' && <FriendsPanel />}
       {kind === 'name' && <NamePanel />}
       {kind === 'saveExport' && <SaveExportPanel />}
       {kind === 'saveImport' && <SaveImportPanel />}

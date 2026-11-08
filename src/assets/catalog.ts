@@ -12,6 +12,9 @@ export type PainterId =
   | 'schnabbi'
   | 'bau'
   | 'werkbank'
+  | 'wegweiser'
+  | 'schilfhalm'
+  | 'schilfmatte'
   | 'treibholz'
   | 'treibholzTreibend'
   | 'muschel'
@@ -99,6 +102,7 @@ export const sprites: SpriteDef[] = [
   // ---- Umgebung ----
   { key: 'objects.bau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'bau' }, note: 'Otterbau unter Wurzeln mit karierter Gardine, Grundfläche 3 × 2 Kacheln' },
   { key: 'objects.werkbank', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'werkbank' }, note: 'Werkbank, Grundfläche 2 × 1 Kacheln' },
+  { key: 'objects.wegweiser', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'wegweiser' }, note: 'Wegweiser aus Holz, Schild zeigt nach rechts (das Spiel spiegelt für links), Grundfläche 1 Kachel' },
 
   // ---- Gegenstände in der Welt ----
   { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand' },
@@ -106,6 +110,8 @@ export const sprites: SpriteDef[] = [
   { key: 'items.muschelschale', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'muschel' }, note: 'Natürliche Muschelschale im Sand (ohne Aufhängung)' },
   { key: 'deco.uferleuchte.aus', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'leuchteAus' }, note: 'Uferleuchte aus Treibholz mit Muschel, ausgeschaltet' },
   { key: 'deco.uferleuchte.an', frameW: 16, frameH: 32, frames: 3, fps: 4, anchor: { x: 8, y: 30 }, placeholder: { painter: 'leuchteAn' }, note: 'Uferleuchte eingeschaltet, sanftes Flackern' },
+  { key: 'items.schilfhalm', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'schilfhalm' }, note: 'Bündel heller Schilfhalme mit Band (Fundstelle), gut vom stehenden Schilf zu unterscheiden' },
+  { key: 'deco.schilfmatte', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'schilfmatte' }, note: 'Geflochtene Schilfmatte, flach auf dem Boden' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },
@@ -121,7 +127,7 @@ export const sprites: SpriteDef[] = [
 /** Bodenkacheln: vorerst prozedural gezeichnet (Platzhalter). Kachelbogen-Layout wird mit Codex abgestimmt. */
 export const TERRAIN_SLOT = {
   key: 'tiles.ufer',
-  note: 'Uferkacheln 16 × 16: Gras, Sand, Wasser (animiert), Übergänge, Steg, Büsche',
+  note: 'Uferkacheln 16 × 16: Gras, Sand, Wasser (animiert), Übergänge, Steg, Pfad, Schilf, Büsche',
 } as const;
 
 const byKey = new Map(sprites.map((s) => [s.key, s]));

@@ -2,6 +2,7 @@
 import type { Condition, Content, Effect, Trigger } from './types';
 import { newGame } from '../game/state';
 import { movementBlocked } from '../game/occupancy';
+import { mustStayReachable } from '../game/rules/placement';
 import { gridFor, inBounds, key, reachableSet, standable, terrainAt } from '../game/space';
 
 export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): string[] {
@@ -18,6 +19,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     else if ('not' in cond) condRefs(cond.not, where);
     else if ('questNotStarted' in cond && !c.quests[cond.questNotStarted]) err(`${where}: Quest ${cond.questNotStarted} fehlt`);
     else if ('questDone' in cond && !c.quests[cond.questDone]) err(`${where}: Quest ${cond.questDone} fehlt`);
+    else if ('hasMoment' in cond && !c.moments[cond.hasMoment]) err(`${where}: Moment ${cond.hasMoment} fehlt`);
     else if ('questStep' in cond) {
       const q = c.quests[cond.questStep.quest];
       if (!q) err(`${where}: Quest ${cond.questStep.quest} fehlt`);
@@ -28,7 +30,9 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     for (const e of effects ?? []) {
       if ('startQuest' in e && !c.quests[e.startQuest]) err(`${where}: Quest ${e.startQuest} fehlt`);
       if ('learnRecipe' in e && !c.recipes[e.learnRecipe]) err(`${where}: Rezept ${e.learnRecipe} fehlt`);
+      if ('addMoment' in e && !c.moments[e.addMoment]) err(`${where}: Moment ${e.addMoment} fehlt`);
       if ('setDecoOn' in e && c.items[e.setDecoOn.item]?.kind !== 'deco') err(`${where}: ${e.setDecoOn.item} ist keine Deko`);
+      if ('unlockCharacter' in e && !c.characters[e.unlockCharacter]) err(`${where}: Figur ${e.unlockCharacter} fehlt`);
     }
   };
   const triggerRefs = (t: Trigger, where: string) => {
@@ -36,6 +40,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     if ('crafted' in t && !c.recipes[t.crafted]) err(`${where}: Rezept ${t.crafted} fehlt`);
     if ('placed' in t && !c.items[t.placed]) err(`${where}: Gegenstand ${t.placed} fehlt`);
     if ('dialogue' in t && !c.dialogues.some((d) => d.id === t.dialogue)) err(`${where}: Dialog ${t.dialogue} fehlt`);
+    if ('atMap' in t && !c.maps[t.atMap]) err(`${where}: Map ${t.atMap} fehlt`);
   };
 
   // Figuren und Körper
@@ -48,6 +53,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
       continue;
     }
     asset(ch.portrait, `Figur ${id}`);
+    condRefs(ch.friend?.metWhen, `Figur ${id}`);
     if ((body.seats ?? 1) > 1) {
       if (ch.seat === undefined || ch.seat < 0 || ch.seat >= (body.seats ?? 1)) err(`Figur ${id}: Sitzplatz ungültig für ${body.id}`);
       const used = seats.get(body.id) ?? new Set<number>();
@@ -59,6 +65,10 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
   for (const [id, b] of Object.entries(c.bodies)) {
     if (b.id !== id) err(`Körper ${id}: ID stimmt nicht mit Schlüssel überein`);
     asset(`${b.sprite}.idle.se`, `Körper ${id}`);
+  }
+  for (const [id, m] of Object.entries(c.moments)) {
+    if (m.id !== id) err(`Moment ${id}: ID stimmt nicht mit Schlüssel überein`);
+    if (!c.characters[m.character]) err(`Moment ${id}: Figur ${m.character} fehlt`);
   }
 
   for (const [id, it] of Object.entries(c.items)) {
@@ -73,6 +83,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
   }
   for (const [id, q] of Object.entries(c.quests)) {
     if (q.steps.length === 0) err(`Quest ${id}: keine Schritte`);
+    condRefs(q.offer?.when, `Quest ${id}`);
     q.steps.forEach((st) => {
       triggerRefs(st.completeWhen, `Quest ${id}/${st.id}`);
       effectRefs(st.onComplete, `Quest ${id}/${st.id}`);
@@ -88,6 +99,37 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
   }
   if (new Set(c.dialogues.map((d) => d.id)).size !== c.dialogues.length) err('Dialog-IDs sind nicht eindeutig');
 
+  // Begegnungen: pro Körper genau eine, alle Figuren einer Begegnung teilen denselben Körper.
+  const bodiesSeen = new Set<string>();
+  for (const e of c.encounters) {
+    const where = `Begegnung ${e.id}`;
+    if (e.characters.length === 0) err(`${where}: keine Figur`);
+    for (const ch of e.characters) if (!c.characters[ch]) err(`${where}: Figur ${ch} fehlt`);
+    const bodyIds = new Set(e.characters.map((ch) => c.characters[ch]?.body));
+    if (bodyIds.size > 1) err(`${where}: Figuren mit verschiedenen Körpern – pro Körper eine eigene Begegnung`);
+    const bodyId = [...bodyIds][0];
+    const body = bodyId ? c.bodies[bodyId] : undefined;
+    if (bodyId && bodiesSeen.has(bodyId)) err(`${where}: Körper ${bodyId} hat schon eine Begegnung`);
+    if (bodyId) bodiesSeen.add(bodyId);
+    for (const p of e.placements) {
+      condRefs(p.when, where);
+      condRefs(p.talkOnArrival, where);
+      const m = c.maps[p.map];
+      if (!m) {
+        err(`${where}: Map ${p.map} fehlt`);
+        continue;
+      }
+      if ('tile' in p.at) {
+        const g = gridFor(m);
+        if (!inBounds(g, p.at.tile)) err(`${where}: Platzierung außerhalb von ${m.id}`);
+        else if (body && !standable(terrainAt(g, p.at.tile), body.moves)) {
+          err(`${where}: ${body.id} kann auf ${m.id} bei ${p.at.tile.x},${p.at.tile.y} nicht stehen`);
+        }
+      }
+      if ('besideDeco' in p.at && c.items[p.at.besideDeco]?.kind !== 'deco') err(`${where}: ${p.at.besideDeco} ist keine Deko`);
+    }
+  }
+
   // Orte
   const start = c.characters[c.start.character];
   if (!start) err(`Startfigur ${c.start.character} fehlt`);
@@ -96,47 +138,63 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
 
   for (const [id, m] of Object.entries(c.maps)) {
     const where = `Map ${id}`;
+    if (m.id !== id) err(`${where}: ID stimmt nicht mit Schlüssel überein`);
     const width = m.grid[0]?.length ?? 0;
     if (m.grid.some((row) => row.length !== width)) err(`${where}: Zeilen unterschiedlich lang`);
     for (const row of m.grid) for (const ch of row) if (!m.legend[ch]) err(`${where}: Zeichen „${ch}“ fehlt in der Legende`);
     const g = gridFor(m);
     const land = ['land'] as const;
-    if (!inBounds(g, m.arrival) || !standable(terrainAt(g, m.arrival), land)) err(`${where}: Ankunftspunkt nicht begehbar`);
+    const onLand = (t: { x: number; y: number }) => inBounds(g, t) && standable(terrainAt(g, t), land);
+    if (!onLand(m.arrival)) err(`${where}: Ankunftspunkt nicht begehbar`);
     for (const o of m.objects) {
       asset(o.sprite, `${where}/${o.id}`);
       for (let y = o.tile.y; y < o.tile.y + o.footprint.h; y++)
         for (let x = o.tile.x; x < o.tile.x + o.footprint.w; x++)
           if (!inBounds(g, { x, y }) || terrainAt(g, { x, y }) === 'water') err(`${where}/${o.id}: Grundfläche liegt nicht auf Land`);
+      const ia = o.interaction;
+      if (ia?.kind === 'exit' && !m.exits.some((e) => e.id === ia.exit)) err(`${where}/${o.id}: Ausgang ${ia.exit} fehlt`);
     }
     for (const sp of m.gatherSpots) {
       asset(sp.sprite, `${where}/${sp.id}`);
+      condRefs(sp.availableWhen, `${where}/${sp.id}`);
       if (!c.items[sp.item]) err(`${where}/${sp.id}: Gegenstand ${sp.item} fehlt`);
       if (startBody && !standable(terrainAt(g, sp.tile), startBody.moves)) err(`${where}/${sp.id}: Fundstelle nicht erreichbar`);
     }
-    const bodiesHere = new Set<string>();
-    for (const e of m.encounters) {
-      for (const ch of e.characters) {
-        const body = c.characters[ch]?.body;
-        if (!body) err(`${where}/${e.id}: Figur ${ch} fehlt`);
+    if (new Set(m.entries.map((e) => e.id)).size !== m.entries.length) err(`${where}: Ankunftspunkt-IDs doppelt`);
+    for (const en of m.entries) if (!onLand(en.tile)) err(`${where}/${en.id}: Ankunftspunkt nicht begehbar`);
+    for (const ex of m.exits) {
+      if (ex.tiles.length === 0) err(`${where}/${ex.id}: Ausgang ohne Kacheln`);
+      for (const t of ex.tiles) if (!onLand(t)) err(`${where}/${ex.id}: Ausgangskachel ${t.x},${t.y} nicht begehbar`);
+      const target = c.maps[ex.to.map];
+      if (!target) {
+        err(`${where}/${ex.id}: Ziel-Map ${ex.to.map} fehlt`);
+        continue;
       }
-      for (const b of new Set(e.characters.map((ch) => c.characters[ch]?.body))) {
-        if (!b) continue;
-        if (bodiesHere.has(b)) err(`${where}: Körper ${b} steht in mehreren Begegnungen`);
-        bodiesHere.add(b);
-      }
-      for (const p of e.placements) {
-        condRefs(p.when, `${where}/${e.id}`);
-        condRefs(p.talkOnArrival, `${where}/${e.id}`);
-        if ('tile' in p.at && !inBounds(g, p.at.tile)) err(`${where}/${e.id}: Platzierung außerhalb der Map`);
-        if ('besideDeco' in p.at && c.items[p.at.besideDeco]?.kind !== 'deco') err(`${where}/${e.id}: ${p.at.besideDeco} ist keine Deko`);
-      }
+      if (!target.entries.some((en) => en.id === ex.to.entry)) err(`${where}/${ex.id}: Ankunftspunkt ${ex.to.entry} fehlt in ${target.id}`);
+      // Hin- und Rückweg: vom Ziel muss ein Ausgang zurückführen.
+      if (!target.exits.some((back) => back.to.map === m.id)) err(`${where}/${ex.id}: von ${target.id} führt kein Weg zurück`);
     }
-    // Wichtige Orte müssen anfangs zu Fuß erreichbar sein.
+    // Wichtige Orte, Ausgänge und Ankunftspunkte müssen anfangs zu Fuß erreichbar sein.
     const blocked = movementBlocked(newGame(c), m);
     const onFoot = reachableSet(g, blocked, m.arrival, ['land']);
-    for (const r of m.keepReachable) {
-      if (!onFoot.has(key(g, r.tile))) err(`${where}: Ziel „${r.name}“ ist vom Ankunftspunkt aus nicht zu Fuß erreichbar`);
+    for (const r of mustStayReachable(m)) {
+      if (!onFoot.has(key(g, r.tile))) err(`${where}: Ziel „${r.name}“ bei ${r.tile.x},${r.tile.y} ist vom sicheren Platz aus nicht zu Fuß erreichbar`);
     }
   }
+
+  // Jede Map muss von der Start-Map aus über Ausgänge erreichbar sein.
+  const reached = new Set<string>([c.start.map]);
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const id of [...reached]) {
+      for (const ex of c.maps[id]?.exits ?? []) {
+        if (c.maps[ex.to.map] && !reached.has(ex.to.map)) {
+          reached.add(ex.to.map);
+          grew = true;
+        }
+      }
+    }
+  }
+  for (const id of Object.keys(c.maps)) if (!reached.has(id)) err(`Map ${id}: von der Start-Map aus nicht erreichbar`);
   return errors;
 }

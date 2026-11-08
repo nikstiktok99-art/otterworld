@@ -28,9 +28,13 @@ export interface Settings {
 
 /** Der gespeicherte Spielstand. Enthält nur stabile IDs, nie Namen, Bilder oder Sprites. */
 export interface GameState {
-  schema: 1;
+  schema: 2;
   player: { name: string | null };
+  /** Wer gerade gespielt wird (Figuren-ID). Der Körper ergibt sich aus dem Inhalt. */
   activeCharacter: string;
+  /** Spielbare Figuren. Die Startfigur ist immer dabei. */
+  unlocked: string[];
+  /** Ort und sichere Position der aktiven Figur. */
   location: { map: string; tile: Tile; facing: Dir };
   inventory: Record<string, number>;
   recipesKnown: string[];

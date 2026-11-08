@@ -2,7 +2,9 @@
 
 Kleines, persönliches Otterspiel. **Hauptplattform: ihr iPhone 16 Pro.** Android = dein Testgerät, Browser = schnelle Vorschau.
 
-Aktueller Stand: **Schritt 1b – Der erste Abend mit Schnabbi** (spielbar, alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf).
+Aktueller Stand: **Phase 2 – Vertrauen und Figurenwechsel** (Version 0.3.0, spielbar): der erste Abend, danach ein zweites
+Erlebnis mit Schnabbi in der Schilfbucht (zweite Map mit Hin- und Rückweg), Freundebuch und Spielen als Schnabbi.
+Alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf; Geschichte und Texte von Phase 2 sind Vorschläge.
 
 ## Selbst spielen
 
@@ -32,7 +34,7 @@ Bildschirmfotos, Konsolenausgabe und ggf. Absturzberichte. Ersetzt nicht den Tes
 |---|---|
 | `npm run check` | TypeScript-Typprüfung |
 | `npm test` | Regeln, Speichern/Laden, doppelte Belohnungen, Inhaltsreferenzen, Wege, Modulgrenzen, keine Emojis |
-| `npm run e2e` | Browser-Durchlauf des ganzen Abends in iPhone-Größe inkl. Neuladen nach Bauen und Aufstellen, mit Fotos in `e2e-ergebnis/` |
+| `npm run e2e` | Browser-Durchlauf von Phase 1 und 2 in iPhone-Größe inkl. Neuladen nach Bauen, Aufstellen, in der zweiten Map und als Schnabbi, mit Fotos in `e2e-ergebnis/` |
 
 Bei jedem Hochladen läuft „Prüfen“ automatisch auf GitHub.
 
@@ -42,9 +44,9 @@ Bei jedem Hochladen läuft „Prüfen“ automatisch auf GitHub.
 |---|---|
 | `src/app` | Startet eine Spielinstanz, verbindet alles, Speichern (zwei Plätze, Warteschlange), Lebenszyklus, Dialogablauf |
 | `src/game` | Reine Spielregeln – keine Imports aus Phaser, React oder Capacitor (ein Test prüft das) |
-| `src/content` | Typisierte Inhalte: Figuren, Körper, Gegenstände, Rezepte, Quests, Dialoge (Entwurf), Maps |
+| `src/content` | Typisierte Inhalte: Figuren, Körper, Begegnungen, Gegenstände, Rezepte, Quests, Momente, Dialoge (Entwurf), Maps |
 | `src/world` | Phaser: Karte, Kamera, Tippen, Bewegung, Schwimmen, Dekoriermodus, Effekte |
-| `src/ui` | React: Anzeige, Dialog mit Namenswahl, Beutel, Werkbank, Menü, Spielstand-Code, Technik-Info |
+| `src/ui` | React: Anzeige, Dialog mit Namenswahl, Beutel, Werkbank, Freundebuch, Menü, Spielstand-Code, Technik-Info |
 | `src/assets` | Grafik-Katalog (Übergabevertrag mit Codex) und Platzhalter-Formen |
 | `src/platform` | Speicher, Pause/Fortsetzen, Android-Zurück, Haptik – je für Browser und Capacitor |
 | `public/art` | Gelieferte PNGs (siehe `docs/GRAFIK_SLOTS.md`) |

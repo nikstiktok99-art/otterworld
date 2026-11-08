@@ -79,9 +79,11 @@ export class DialogController {
 
   private finish(dialogue: string): void {
     const events = this.session.dispatch({ type: 'finishDialogue', dialogue });
-    if (events.some((e) => e.type === 'questDone')) {
+    const done = events.find((e) => e.type === 'questDone');
+    if (done?.type === 'questDone') {
       this.sound.play('sfx.leuchte');
-      this.ui.open({ kind: 'endcard' });
+      const unlocked = events.flatMap((e) => (e.type === 'unlocked' ? [e.character] : []));
+      this.ui.open({ kind: 'endcard', quest: done.quest, unlocked });
     } else {
       this.ui.close();
     }

@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { count } from '../game/state';
 import { exportCode, importCode } from '../game/save/codec';
 import { normalizeState } from '../game/save/normalize';
+import { characterName, fillText, friendList } from '../game/text';
 import { useApp, useGameState, useUi } from './context';
 import { NameForm } from './Dialog';
+import { portraitSrc } from './portraits';
 
 function Sheet({ title, children, onClose, closeLabel = 'Zurück' }: { title: string; children: ReactNode; onClose: () => void; closeLabel?: string }) {
   return (
@@ -27,7 +29,6 @@ export function TitlePanel() {
     <div className="backdrop title-screen">
       <div className="title-card">
         <h1>Otterwelt</h1>
-        <p className="subtitle">Der erste Abend</p>
         <button
           className="btn primary big"
           onClick={() => {
@@ -55,6 +56,10 @@ export function BagPanel() {
   const s = useGameState();
   const items = Object.entries(s.inventory).filter(([, n]) => n > 0);
   const placed = s.deco;
+  const here = content.maps[s.location.map];
+  // Aufstellen und Versetzen nur dort, wo Deko stehen darf.
+  const canDecorate = !!here?.decorZone;
+  const decoHome = Object.values(content.maps).find((m) => m.decorZone);
   return (
     <Sheet title="Beutel" onClose={() => ui.close()}>
       {items.length === 0 && placed.length === 0 && <p className="muted">Noch nichts dabei.</p>}
@@ -66,27 +71,90 @@ export function BagPanel() {
               <span>
                 {item ? (n === 1 ? item.name : item.plural) : id} <strong>{n}</strong>
               </span>
-              {item?.kind === 'deco' && (
-                <button className="btn small primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: id, tile: null, problem: null } })}>
-                  Aufstellen
-                </button>
-              )}
+              {item?.kind === 'deco' &&
+                (canDecorate ? (
+                  <button className="btn small primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: id, tile: null, problem: null } })}>
+                    Aufstellen
+                  </button>
+                ) : (
+                  <span className="muted small">aufstellen {decoHome?.at ?? 'am Ufer'}</span>
+                ))}
             </li>
           );
         })}
         {placed.map((d) => (
           <li key={d.uid} className="list-row">
             <span>
-              {content.items[d.item]?.name ?? d.item} <span className="muted">steht am Ufer</span>
+              {content.items[d.item]?.name ?? d.item} <span className="muted">steht {content.maps[d.map]?.at ?? 'am Ufer'}</span>
             </span>
-            <button
-              className="btn small"
-              onClick={() => ui.set({ panel: null, decorate: { mode: 'move', item: d.item, uid: d.uid, tile: null, problem: null } })}
-            >
-              Versetzen
-            </button>
+            {d.map === s.location.map && canDecorate && (
+              <button
+                className="btn small"
+                onClick={() => ui.set({ panel: null, decorate: { mode: 'move', item: d.item, uid: d.uid, tile: null, problem: null } })}
+              >
+                Versetzen
+              </button>
+            )}
           </li>
         ))}
+      </ul>
+    </Sheet>
+  );
+}
+
+export function FriendsPanel() {
+  const { ui, content, session, sound } = useApp();
+  const s = useGameState();
+  const friends = friendList(s, content);
+  return (
+    <Sheet title="Freundebuch" onClose={() => ui.close()}>
+      <ul className="list friends">
+        {friends.map((id) => {
+          const ch = content.characters[id];
+          if (!ch) return null;
+          const isStart = id === content.start.character;
+          const active = s.activeCharacter === id;
+          const playable = s.unlocked.includes(id);
+          const moments = Object.values(content.moments).filter((m) => m.character === id && s.moments.includes(m.id));
+          const portrait = portraitSrc(ch.portrait);
+          const name = characterName(id, s, content);
+          return (
+            <li key={id} className={active ? 'friend active' : 'friend'}>
+              <div className="friend-head">
+                {portrait && <img className="portrait" src={portrait} alt="" />}
+                <div>
+                  <p className="friend-name">{name}</p>
+                  <p className="muted">{isStart ? 'Dein Otter' : ch.friend?.about}</p>
+                </div>
+              </div>
+              {moments.length > 0 && (
+                <ul className="moments">
+                  {moments.map((m) => (
+                    <li key={m.id}>
+                      <strong>{m.title}</strong> – {fillText(m.text, s)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {active ? (
+                <p className="friend-status">Du spielst gerade {isStart ? 'als dein Otter' : `als ${name}`}.</p>
+              ) : playable ? (
+                <button
+                  className="btn primary"
+                  onClick={() => {
+                    sound.play('sfx.tipp');
+                    ui.close();
+                    session.dispatch({ type: 'switchCharacter', character: id });
+                  }}
+                >
+                  {isStart ? 'Wieder als Otter spielen' : `Als ${name} spielen`}
+                </button>
+              ) : (
+                <p className="muted small">Ihr lernt euch noch kennen.</p>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </Sheet>
   );
@@ -298,6 +366,8 @@ export function TechPanel() {
     ['Ton', sound.state],
     ['Inhalt', contentErrors.length ? `${contentErrors.length} Fehler` : 'geprüft, ok'],
     ['Grafik', warnings.length ? `${warnings.length} Hinweise` : 'ok'],
+    ['Ort', `${s.location.map} (${s.location.tile.x}, ${s.location.tile.y})`],
+    ['Figur', `${s.activeCharacter} · spielbar: ${s.unlocked.join(', ')}`],
     ['Quest', JSON.stringify(s.quests)],
   ];
   return (
@@ -330,15 +400,21 @@ export function TechPanel() {
 
 export function EndCard() {
   const { ui, session, content } = useApp();
+  const u = useUi();
   const s = session.getState();
+  if (u.panel?.kind !== 'endcard') return null;
+  const quest = content.quests[u.panel.quest];
+  const title = quest?.ending?.title ?? quest?.name ?? 'Geschafft';
   return (
     <div className="backdrop">
-      <div className="title-card end" role="dialog" aria-label="Der erste Abend">
-        <h2>Der erste Abend</h2>
-        <p>
-          Die Uferleuchte brennt, und {content.characters.schnabbi ? 'Schnabbi' : 'jemand'} sitzt bei dir am Steg
-          {s.player.name ? `, ${s.player.name}` : ''}. Bleib, solange du magst.
-        </p>
+      <div className="title-card end" role="dialog" aria-label={title}>
+        <h2>{title}</h2>
+        {quest?.ending && <p>{fillText(quest.ending.text, s)}</p>}
+        {u.panel.unlocked.map((id) => (
+          <p key={id} className="unlock">
+            Im Freundebuch kannst du jetzt auch als {characterName(id, s, content)} spielen.
+          </p>
+        ))}
         <button className="btn primary big" onClick={() => ui.close()}>
           Weiterspielen
         </button>

@@ -12,7 +12,8 @@ export type Panel =
   | { kind: 'name' }
   | { kind: 'saveExport' }
   | { kind: 'saveImport' }
-  | { kind: 'endcard' }
+  | { kind: 'friends' }
+  | { kind: 'endcard'; quest: string; unlocked: string[] }
   | { kind: 'tech' }
   | { kind: 'notice'; title: string; text: string };
 

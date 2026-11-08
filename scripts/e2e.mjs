@@ -1,4 +1,4 @@
-// Browser-Durchlauf des ersten Abends (Chromium, iPhone-16-Pro-Größe, echte Tipp-Ereignisse).
+// Browser-Durchlauf von Phase 1 und 2 (Chromium, iPhone-16-Pro-Größe, echte Tipp-Ereignisse).
 // Zählt ausschließlich als Browserprüfung – kein Ersatz für Tests auf Android oder dem iPhone.
 //
 // Aufruf: npm run e2e [-- <Ausgabeordner>]
@@ -221,20 +221,147 @@ try {
   await page.waitForTimeout(800);
   await shot('abend');
 
-  console.log('9. Nach Abschluss erneut mit Schnabbi sprechen: keine zweite Belohnung');
+  // ---------------- Phase 2: Ein Platz für zwei ----------------
+  const Q2 = 'quest.schnabbi.schilf';
+  const inMap = (id) => waitFor(`Map ${id}`, `window.__otterwelt.world()?.map === '${id}' && !window.__otterwelt.world().leaving`, 20000);
+  const npcBodies = async () => ((await hook('world()')).npcs ?? []).map((n) => n.body);
+
+  console.log('9. Erneut mit Schnabbi sprechen: keine zweite Belohnung, sein nächster Vorschlag beginnt');
+  check((await page.locator('.hint').textContent())?.includes('Schnabbi hat eine Idee'), 'Hinweis auf das zweite Erlebnis');
+  check((await button('Freunde').count()) === 1, 'Freundebuch ist in der Anzeige');
   await tapTile(9, 17);
   await panel('dialog');
+  await shot('ausflug');
   await advanceDialogUntil('false');
   await noPanel();
   s = await state();
   check(s.moments.length === 1, 'weiterhin genau ein Moment');
+  check(s.quests[Q2]?.step === 'hinueber' && s.recipesKnown.includes('recipe.schilfmatte'), 'Quest 2 gestartet, Rezept Schilfmatte gelernt');
+  await page.waitForTimeout(1200);
+  await shot('schnabbi-geht-vor');
+  await waitFor('Schnabbi ist vorgegangen', `window.__otterwelt.world().npcs.length === 0 && window.__otterwelt.world().leavers === 0`, 20000);
+  check(true, 'Schnabbi läuft zum Weg und verschwindet vom Startufer');
   await hook('flush()');
 
-  console.log('10. Neuladen am Ende');
+  console.log('10. Neuladen');
   await start();
   s = await state();
-  check(s.quests['quest.schnabbi.licht'].done && s.deco[0].on, 'Endstand bleibt nach Neuladen erhalten');
+  check(s.quests['quest.schnabbi.licht'].done && s.deco[0].on, 'Endstand des ersten Abends bleibt nach Neuladen erhalten');
+  check(s.quests[Q2].step === 'hinueber' && (await hook('world()')).npcs.length === 0, 'nach Neuladen: Schnabbi wartet weiterhin in der Bucht');
   check((await button('Weiterspielen').count()) === 1, 'Startbild bietet „Weiterspielen“');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  console.log('11. Über den Wegweiser in die Schilfbucht');
+  await tapTile(14, 20);
+  await inMap('map.schilfbucht');
+  await page.waitForTimeout(500);
+  s = await state();
+  check(s.location.map === 'map.schilfbucht' && s.location.tile.x === 2 && s.location.tile.y === 24, 'in der Schilfbucht am Ankunftspunkt');
+  check(s.quests[Q2].step === 'schilf', 'Ankunft schaltet die Quest weiter');
+  check(JSON.stringify(await npcBodies()) === '["body.schnabbi"]', 'Schnabbi wartet in der Bucht (genau einmal)');
+  await shot('schilfbucht');
+  await hook('flush()');
+
+  console.log('12. Unterbrechen in der zweiten Map (Neuladen)');
+  await start();
+  s = await state();
+  check(s.location.map === 'map.schilfbucht', 'nach Neuladen: wieder in der Schilfbucht');
+  check((await hook('world()')).map === 'map.schilfbucht', 'nach Neuladen: Welt zeigt die Schilfbucht');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  console.log('13. Schilf sammeln');
+  await tapTile(7, 17);
+  await panel('dialog');
+  await advanceDialogUntil('false');
+  await noPanel();
+  await tapTile(2, 12);
+  await idle();
+  await waitFor('Halm 1', `window.__otterwelt.state().inventory['item.schilfhalm'] === 1`);
+  await tapTile(2, 6);
+  await page.waitForTimeout(1200);
+  await shot('schilf-schwimmen');
+  await idle();
+  await waitFor('Halm 2', `window.__otterwelt.state().inventory['item.schilfhalm'] === 2`);
+  await tapTile(13, 12);
+  await idle();
+  await waitFor('Halm 3', `window.__otterwelt.state().inventory['item.schilfhalm'] === 3`);
+  s = await state();
+  check(s.quests[Q2].step === 'flechten', 'drei Halme: zurück zur Werkbank');
+  await waitFor('Schnabbi geht zurück', `window.__otterwelt.world().npcs.length === 0 && window.__otterwelt.world().leavers === 0`, 20000);
+  check(true, 'Schnabbi geht schon vor zum Ufer');
+
+  console.log('14. Zurück zum Startufer');
+  await tapTile(1, 24);
+  await inMap('map.startufer');
+  s = await state();
+  check(s.location.map === 'map.startufer' && s.location.tile.x === 13 && s.location.tile.y === 22, 'zurück am Startufer am Ankunftspunkt');
+  check(JSON.stringify(await npcBodies()) === '["body.schnabbi"]', 'Schnabbi sitzt wieder am Licht');
+  await shot('zurueck-am-ufer');
+
+  console.log('15. Matte flechten und hinlegen');
+  await tapTile(11, 24);
+  await panel('werkbank');
+  await page.locator('.recipe', { hasText: 'Schilfmatte' }).getByRole('button', { name: 'Bauen' }).tap();
+  await page.waitForTimeout(300);
+  await button('Jetzt aufstellen').tap();
+  await page.waitForTimeout(700);
+  await tapTile(5, 21);
+  await page.waitForTimeout(200);
+  await shot('matte-platz');
+  await button('Hier aufstellen').tap();
+  await page.waitForTimeout(300);
+  s = await state();
+  check(s.quests[Q2].step === 'gemeinsam' && s.deco.some((d) => d.item === 'item.schilfmatte'), 'Matte liegt, Quest bei „gemeinsam“');
+
+  console.log('16. Schnabbi kommt und vertraut dir');
+  await panel('dialog');
+  check(true, 'Schnabbi läuft zur Matte und spricht von selbst');
+  await shot('vertrauen');
+  await advanceDialogUntil('false');
+  await panel('endcard');
+  check((await page.locator('.unlock').textContent())?.includes('als Schnabbi spielen'), 'Abschlusskarte nennt die Freischaltung');
+  await shot('abschluss-2');
+  await button('Weiterspielen').tap();
+  await noPanel();
+  s = await state();
+  check(s.quests[Q2].done && JSON.stringify(s.unlocked) === '["otter","schnabbi"]', 'Quest 2 fertig, Schnabbi spielbar');
+  check(s.moments.length === 2, 'zwei Momente, keiner doppelt');
+
+  console.log('17. Freundebuch: als Schnabbi spielen');
+  await button('Freunde').tap();
+  await panel('friends');
+  await shot('freundebuch');
+  await button('Als Schnabbi spielen').tap();
+  await waitFor('als Schnabbi', `window.__otterwelt.world()?.player.body === 'body.schnabbi' && !window.__otterwelt.world().leaving`);
+  await page.waitForTimeout(500);
+  let w = await hook('world()');
+  check(w.npcs.length === 1 && w.npcs[0].body === 'body.otter' && w.npcs[0].tile.x === 5 && w.npcs[0].tile.y === 25, 'Otter ruht vor dem Bau, kein zweiter Schnabbi');
+  await shot('als-schnabbi');
+  await tapTile(8, 20);
+  await idle();
+  s = await state();
+  check(s.activeCharacter === 'schnabbi' && s.location.tile.x === 8 && s.location.tile.y === 20, 'Schnabbi läuft per Tippen');
+  await hook('flush()');
+
+  console.log('18. Neuladen als Schnabbi');
+  await start();
+  s = await state();
+  w = await hook('world()');
+  check(s.activeCharacter === 'schnabbi' && w.player.body === 'body.schnabbi', 'nach Neuladen: weiterhin als Schnabbi');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  console.log('19. Zurück zum Otter (Tipp auf den ruhenden Otter)');
+  await tapTile(5, 25);
+  await panel('friends');
+  await button('Wieder als Otter spielen').tap();
+  await waitFor('als Otter', `window.__otterwelt.world()?.player.body === 'body.otter' && !window.__otterwelt.world().leaving`);
+  await page.waitForTimeout(500);
+  w = await hook('world()');
+  check(JSON.stringify(w.npcs.map((n) => n.body)) === '["body.schnabbi"]', 'wieder als Otter, Schnabbi sitzt an der Matte');
+  await shot('wieder-otter');
 
   check(consoleErrors.length === 0, `keine Fehler in der Browserkonsole${consoleErrors.length ? ': ' + consoleErrors.join(' | ') : ''}`);
   console.log('\nBrowser-Durchlauf bestanden.');

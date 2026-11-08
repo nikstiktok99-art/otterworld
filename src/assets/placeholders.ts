@@ -166,6 +166,51 @@ function paintWerkbank(c: C) {
   rect(c, 18, 3, 6, 2, '#8a8f96');
 }
 
+function paintWegweiser(c: C) {
+  ell(c, 8, 31, 4, 1, SHADOW);
+  rect(c, 7, 9, 2, 22, '#6e4b2c');
+  rect(c, 7, 9, 1, 22, '#8a5f38');
+  // Schild mit Spitze nach rechts
+  rect(c, 2, 6, 10, 6, '#c8955c');
+  rect(c, 12, 7, 1, 4, '#c8955c');
+  rect(c, 13, 8, 1, 2, '#c8955c');
+  rect(c, 2, 6, 10, 1, '#e0b47c');
+  rect(c, 2, 11, 10, 1, '#5a3a20');
+  rect(c, 1, 6, 1, 6, '#5a3a20');
+  rect(c, 4, 8, 6, 1, '#7a5030');
+  rect(c, 4, 10, 4, 1, '#7a5030');
+}
+
+function paintSchilfhalm(c: C) {
+  // Ein liegendes Bündel heller Halme mit Band – bewusst anders als das stehende Schilf im Boden.
+  ell(c, 8, 13, 7, 1.5, SHADOW);
+  for (const [y, col] of [[7, '#e2e39a'], [8, '#c9d27a'], [9, '#e2e39a'], [10, '#b8c46a'], [11, '#d4da86']] as const) {
+    rect(c, 2, y, 12, 1, col);
+  }
+  rect(c, 1, 7, 1, 5, '#8c9a4c');
+  rect(c, 14, 8, 1, 3, '#8c9a4c');
+  // Kolben an den Spitzen
+  rect(c, 12, 5, 3, 2, '#7a4f2c');
+  rect(c, 11, 4, 2, 1, '#7a4f2c');
+  // Band
+  rect(c, 7, 6, 2, 7, '#b35a3a');
+  rect(c, 7, 6, 2, 1, '#d47a52');
+}
+
+function paintSchilfmatte(c: C) {
+  ell(c, 8, 12, 7, 1.5, SHADOW);
+  rect(c, 1, 5, 14, 7, '#d8c08a');
+  for (let y = 5; y < 12; y++) {
+    for (let x = 1; x < 15; x++) {
+      if ((x + y) % 3 === 0) rect(c, x, y, 1, 1, '#bfa36a');
+    }
+  }
+  rect(c, 1, 4, 14, 1, '#a88a52');
+  rect(c, 1, 12, 14, 1, '#8c7040');
+  rect(c, 0, 5, 1, 7, '#a88a52');
+  rect(c, 15, 5, 1, 7, '#a88a52');
+}
+
 function log(c: C, y: number) {
   rect(c, 2, y, 12, 4, '#8a6a4a');
   rect(c, 2, y - 1, 12, 1, '#4a3424');
@@ -272,6 +317,9 @@ export function paintFrame(c: C, def: SpriteDef, frame: number): void {
     schnabbi: () => paintSchnabbi(c, frame, String(args.state), String(args.dir)),
     bau: () => paintBau(c),
     werkbank: () => paintWerkbank(c),
+    wegweiser: () => paintWegweiser(c),
+    schilfhalm: () => paintSchilfhalm(c),
+    schilfmatte: () => paintSchilfmatte(c),
     treibholz: () => paintTreibholz(c),
     treibholzTreibend: () => paintTreibholzTreibend(c, frame),
     muschel: () => paintMuschel(c),
@@ -325,6 +373,29 @@ export function paintTerrain(grid: Grid, frame: number): HTMLCanvasElement {
       const px = x * T;
       const py = y * T;
       const h = hash(x, y, 1);
+      if (t === 'schilf') {
+        // Schilf steht im flachen Wasser: Wasser darunter, Halme und Kolben darüber.
+        rect(c, px, py, T, T, '#3f7f98');
+        for (let i = 0; i < 7; i++) {
+          const s = hash(x, y, i + 20);
+          const sx = px + (s % 15);
+          const top = py + ((s >> 4) % 6);
+          rect(c, sx + (frame && i % 3 === 0 ? 1 : 0), top, 1, T - (top - py), i % 2 ? '#6f8f3e' : '#86a84c');
+          if (i % 3 === 0) rect(c, sx, top, 1, 3, '#7a4f2c');
+        }
+        continue;
+      }
+      if (t === 'pfad') {
+        rect(c, px, py, T, T, '#b8956a');
+        for (let i = 0; i < 5; i++) {
+          const s = hash(x, y, i + 30);
+          rect(c, px + (s % 15), py + ((s >> 4) % 15), 2, 1, i % 2 ? '#a3825a' : '#cfae84');
+        }
+        const grassy = (n: string | null) => n === 'grass' || n === 'blocked';
+        if (grassy(at(x, y - 1))) for (let i = 0; i < T; i += 2) rect(c, px + i + (h % 2), py, 1, 1, '#76a453');
+        if (grassy(at(x, y + 1))) for (let i = 0; i < T; i += 2) rect(c, px + i + ((h >> 1) % 2), py + T - 1, 1, 1, '#76a453');
+        continue;
+      }
       if (t === 'water' || t === 'steg') {
         rect(c, px, py, T, T, '#3d86a8');
         const hx = (h % 9) + 2 + (frame ? 2 : 0);

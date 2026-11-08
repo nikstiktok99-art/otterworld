@@ -1,7 +1,7 @@
 import type { Content } from '../content/types';
 import type { GameState } from './types';
 
-export const SCHEMA = 1 as const;
+export const SCHEMA = 2 as const;
 
 export function newGame(content: Content): GameState {
   const map = content.maps[content.start.map];
@@ -10,6 +10,7 @@ export function newGame(content: Content): GameState {
     schema: SCHEMA,
     player: { name: null },
     activeCharacter: content.start.character,
+    unlocked: [content.start.character],
     location: { map: map.id, tile: { ...map.arrival }, facing: 'se' },
     inventory: {},
     recipesKnown: [],

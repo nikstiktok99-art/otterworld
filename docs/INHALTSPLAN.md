@@ -7,8 +7,8 @@ Persönliche Bezüge, Geschichten und weitere Details liefert der Nutzer – hie
 
 | Figuren-ID | Name | Körper-ID (geplant) | Stand | Feste Eigenschaften |
 |---|---|---|---|---|
-| otter | (Name der Spielerin) | body.otter | im Spiel | Erste steuerbare Figur; heißt so, wie sie sich im ersten Gespräch nennt |
-| schnabbi | Schnabbi | body.schnabbi | im Spiel | Erster Freund und Helfer; Schnabeltier-Kuscheltier, Aussehen nach Foto |
+| otter | (Name der Spielerin) | body.otter | im Spiel | Erste steuerbare Figur; heißt so, wie sie sich im ersten Gespräch nennt. Ruht vor dem Bau, während sie jemand anderen spielt |
+| schnabbi | Schnabbi | body.schnabbi | im Spiel, **spielbar ab Phase 2** | Erster Freund und Helfer; Schnabeltier-Kuscheltier, Aussehen nach Foto |
 | rosie | Rosie | body.rosie | geplant | Pinker Axolotl, Schwester von Bubbles |
 | bubbles | Bubbles | body.bubbles | geplant | Blauer Axolotl, Bruder von Rosie, macht immer wieder Blasen |
 | chamaron | Chamaron | body.chamaron | geplant | Chamäleon (Schreibweise beibehalten) |
@@ -18,21 +18,29 @@ Persönliche Bezüge, Geschichten und weitere Details liefert der Nutzer – hie
 | squichy | Squichy | body.squichy | geplant (Codex-Entwurf vorhanden) | Mini-Robbe, Schreibweise „Squichy“ |
 | otterprinzessin | (vielleicht „Lumi“) | body.otterprinzessin | geplant | Kleid und Krone; Begegnung nach Schnabbi |
 
-Das Datenmodell für geteilte Körper (Erbsentrio) ist bereits durch einen Test abgesichert (`tests/content.test.ts`).
+**Erbsentrio, geprüft an einem Datenbeispiel** (`tests/phase2.test.ts`, nur Testinhalt): In der Welt steht genau eine
+Schale mit allen drei Erbsen. Spielt sie eine Erbse, gehört die Schale ihr und steht nirgends zusätzlich. Ein Wechsel
+zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Speichern und Laden vervielfältigt die Schale nicht.
 
 ## Orte
 
 | Map-ID | Name | Stand |
 |---|---|---|
-| map.startufer | Startufer | im Spiel (vorläufiger Einstieg) |
+| map.startufer | Startufer | im Spiel (vorläufiger Einstieg), Weg zur Schilfbucht am Wegweiser rechts |
+| map.schilfbucht | Schilfbucht | im Spiel – **Vorschlag** für Phase 2: kleine Testkarte für Ortswechsel mit Hin- und Rückweg, kein persönlicher Ort, frei ersetzbar |
 | map.hotpot-restaurant | Hotpot-Restaurant | wartet auf deine Angaben |
 | map.tiramisu-stream | Tiramisu Stream | wartet auf deine Angaben (Eigenname, Gestaltung offen) |
 | map.zoo | Zoo | wartet auf deine Angaben |
 | map.cat-cafe | Cat Café | wartet auf deine Angaben |
 | map.fuchsbau | Fuchsbau | wartet auf deine Angaben |
 
-## Momente (Vertrauen)
+## Erlebnisse (Quests) und Momente
 
-| Moment-ID | Entsteht durch |
-|---|---|
-| moment.schnabbi.erster-abend | Abschluss „Ein Licht am Steg“ – Grundlage für die Freischaltung in Phase 2 |
+| Quest-ID | Name | Moment | Folge |
+|---|---|---|---|
+| quest.schnabbi.licht | Ein Licht am Steg (Phase 1, Vorschlag aus dem Masterprompt) | moment.schnabbi.erster-abend | – |
+| quest.schnabbi.schilf | Ein Platz für zwei (Phase 2, **Vorschlag**) | moment.schnabbi.platz-fuer-zwei | Schnabbi ist im Freundebuch spielbar |
+
+Ablauf „Ein Platz für zwei“: Schnabbi möchte eine Matte zum Sitzen und geht voraus in die Schilfbucht; dort drei
+Schilfhalme sammeln (einer im Wasser), zurück an der Werkbank die Matte flechten, irgendwo hinlegen, Schnabbi setzt sich
+dazu und sagt, dass er ihr vertraut. Alle Texte sind Entwürfe in `src/content/dialogues.ts` und `src/content/quests.ts`.

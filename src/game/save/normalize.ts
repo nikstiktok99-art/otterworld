@@ -6,8 +6,14 @@ import { newGame, SCHEMA } from '../state';
 import { cleanName } from '../rules/name';
 import { gridFor, inBounds, standable, terrainAt } from '../space';
 
-/** Migrationen: Schlüssel = Ausgangsversion. Beispiel für später: 1: (s) => ({ ...s, neuesFeld: [] }). */
-const migrations: Record<number, (s: Record<string, unknown>) => Record<string, unknown>> = {};
+/**
+ * Migrationen: Schlüssel = Ausgangsversion, Ergebnis = Stand der nächsten Version.
+ * Danach füllt normalizeState alles Fehlende mit Standardwerten und verwirft Unbekanntes.
+ */
+const migrations: Record<number, (s: Record<string, unknown>) => Record<string, unknown>> = {
+  // 1 -> 2 (Version 0.3.0): Figurenwechsel. Bisher war nur die Startfigur spielbar.
+  1: (s) => ({ ...s, unlocked: [] }),
+};
 
 export interface NormalizeResult {
   state: GameState;
@@ -33,11 +39,16 @@ export function normalizeState(raw: unknown, schema: number, content: Content): 
     s.player.name = cleanName(src.player.name);
   }
 
-  // Aktive Figur
-  if (typeof src.activeCharacter === 'string' && content.characters[src.activeCharacter]) {
+  // Spielbare Figuren (die Startfigur immer) und aktive Figur
+  if (Array.isArray(src.unlocked)) {
+    for (const c of src.unlocked) {
+      if (typeof c === 'string' && content.characters[c] && !s.unlocked.includes(c)) s.unlocked.push(c);
+    }
+  }
+  if (typeof src.activeCharacter === 'string' && content.characters[src.activeCharacter] && s.unlocked.includes(src.activeCharacter)) {
     s.activeCharacter = src.activeCharacter;
-  } else if (src.activeCharacter !== undefined) {
-    notes.push(`Unbekannte Figur ${String(src.activeCharacter)} – zurück zum Start-Otter.`);
+  } else if (src.activeCharacter !== undefined && src.activeCharacter !== s.activeCharacter) {
+    notes.push(`Figur ${String(src.activeCharacter)} ist nicht spielbar – zurück zur Startfigur.`);
   }
 
   // Inventar: nur bekannte Gegenstände mit positiver Ganzzahl

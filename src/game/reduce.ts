@@ -2,12 +2,14 @@
 // (Zustand, Aktion, Inhalt) -> (neuer Zustand, Ereignisse). Abgelehnte Aktionen ändern nichts.
 import type { Content, Effect, Trigger } from '../content/types';
 import type { Action, GameEvent, RejectReason } from './actions';
-import type { GameState } from './types';
+import type { GameState, Tile } from './types';
+import { sameTile } from './types';
 import { matches } from './conditions';
 import { checkPlacement } from './rules/placement';
 import { cleanName } from './rules/name';
 import { count } from './state';
-import { gridFor, standable, terrainAt } from './space';
+import { movementBlocked } from './occupancy';
+import { gridFor, key, nearestStandable, standable, terrainAt } from './space';
 
 export interface ReduceResult {
   state: GameState;
@@ -47,6 +49,7 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
       if (!map || !spot) return reject('unknown');
       const k = `${map.id}/${spot.id}`;
       if (s.gathered.includes(k)) return reject('alreadyGathered');
+      if (!matches(spot.availableWhen, state)) return reject('notYet');
       s.gathered.push(k);
       s.inventory[spot.item] = count(s, spot.item) + spot.count;
       d.touch();
@@ -142,9 +145,10 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
     }
 
     case 'arrive': {
+      // Nur die Position auf der aktuellen Map melden – den Ort wechseln nur 'travel' und nichts sonst.
       const map = content.maps[action.map];
       const body = content.bodies[content.characters[s.activeCharacter]?.body ?? ''];
-      if (!map || !body || !standable(terrainAt(gridFor(map), action.tile), body.moves)) {
+      if (!map || !body || map.id !== s.location.map || !standable(terrainAt(gridFor(map), action.tile), body.moves)) {
         return reject('invalidPosition');
       }
       const l = s.location;
@@ -152,6 +156,44 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
         s.location = { map: action.map, tile: { ...action.tile }, facing: action.facing };
         d.touch();
       }
+      break;
+    }
+
+    case 'travel': {
+      // Ortswechsel: nur von einer Ausgangskachel aus; die Figur landet sicher am Ankunftspunkt des Ziels.
+      const map = content.maps[s.location.map];
+      const exit = map?.exits.find((e) => e.id === action.exit);
+      if (!map || !exit) return reject('unknown');
+      if (!exit.tiles.some((t) => sameTile(t, s.location.tile))) return reject('invalidPosition');
+      const target = content.maps[exit.to.map];
+      const entry = target?.entries.find((e) => e.id === exit.to.entry);
+      const body = content.bodies[content.characters[s.activeCharacter]?.body ?? ''];
+      if (!target || !entry || !body) return reject('unknown');
+      const tile = safeTile(s, content, target.id, entry.tile, body.moves);
+      if (!tile) return reject('invalidPosition');
+      s.location = { map: target.id, tile, facing: entry.facing };
+      d.touch();
+      d.emit({ type: 'traveled', exit: exit.id, from: map.id, to: target.id });
+      break;
+    }
+
+    case 'switchCharacter': {
+      const ch = content.characters[action.character];
+      const body = ch ? content.bodies[ch.body] : undefined;
+      if (!ch || !body) return reject('unknown');
+      if (!s.unlocked.includes(ch.id)) return reject('locked');
+      if (s.activeCharacter === ch.id) break;
+      const before = content.characters[s.activeCharacter]?.body;
+      const bodyChanged = before !== ch.body;
+      // Derselbe Körper (z. B. eine andere Erbse in der Schale): Position bleibt, nur wer spricht, ändert sich.
+      if (bodyChanged) {
+        const tile = safeTile(s, content, s.location.map, s.location.tile, body.moves);
+        if (!tile) return reject('invalidPosition');
+        s.location = { ...s.location, tile };
+      }
+      s.activeCharacter = ch.id;
+      d.touch();
+      d.emit({ type: 'switched', character: ch.id, body: ch.body, bodyChanged });
       break;
     }
 
@@ -199,8 +241,24 @@ function applyEffects(d: Draft, effects: Effect[], content: Content) {
           d.emit({ type: 'toggled', uid: deco.uid, on: deco.on });
         }
       }
+    } else if ('unlockCharacter' in e) {
+      if (content.characters[e.unlockCharacter] && !s.unlocked.includes(e.unlockCharacter)) {
+        s.unlocked.push(e.unlockCharacter);
+        d.touch();
+        d.emit({ type: 'unlocked', character: e.unlockCharacter });
+      }
     }
   }
+}
+
+/** Sichere Kachel für eine Figur auf einer Map: die gewünschte, sonst die nächste freie, auf der sie stehen kann. */
+function safeTile(s: GameState, content: Content, mapId: string, wanted: Tile, moves: readonly ('land' | 'water')[]): Tile | null {
+  const map = content.maps[mapId];
+  if (!map) return null;
+  const g = gridFor(map);
+  const blocked = movementBlocked(s, map);
+  const t = nearestStandable(g, blocked, wanted, moves) ?? nearestStandable(g, blocked, map.arrival, moves);
+  return t && !blocked.has(key(g, t)) ? { x: t.x, y: t.y } : null;
 }
 
 function triggerMet(t: Trigger, d: Draft): boolean {
@@ -208,6 +266,7 @@ function triggerMet(t: Trigger, d: Draft): boolean {
   if ('crafted' in t) return d.events.some((e) => e.type === 'crafted' && e.recipe === t.crafted);
   if ('placed' in t) return d.events.some((e) => e.type === 'placed' && e.item === t.placed);
   if ('dialogue' in t) return d.events.some((e) => e.type === 'dialogueFinished' && e.dialogue === t.dialogue);
+  if ('atMap' in t) return d.s.location.map === t.atMap;
   return false;
 }
 

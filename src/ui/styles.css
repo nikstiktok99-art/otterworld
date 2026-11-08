@@ -373,6 +373,58 @@ h2 {
   background: #e3efd6;
 }
 
+.muted.small {
+  font-size: 14px;
+}
+
+/* ---------------- Freundebuch ---------------- */
+
+.friend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #f6ecdb;
+}
+
+.friend.active {
+  background: #e3efd6;
+}
+
+.friend-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.friend-head .muted {
+  font-size: 16px;
+}
+
+.friend-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.friend-status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.moments {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.unlock {
+  font-weight: 650;
+  color: var(--akzent-dunkel);
+}
+
 .recipe {
   display: flex;
   flex-direction: column;

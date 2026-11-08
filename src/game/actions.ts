@@ -10,6 +10,8 @@ export type Action =
   | { type: 'finishDialogue'; dialogue: string }
   | { type: 'setPlayerName'; name: string }
   | { type: 'arrive'; map: string; tile: Tile; facing: Dir }
+  | { type: 'travel'; exit: string }
+  | { type: 'switchCharacter'; character: string }
   | { type: 'setSetting'; key: 'sound' | 'haptics'; value: boolean };
 
 export type RejectReason =
@@ -24,7 +26,8 @@ export type RejectReason =
   | 'blocksPath'
   | 'notYet'
   | 'invalidName'
-  | 'invalidPosition';
+  | 'invalidPosition'
+  | 'locked';
 
 export type GameEvent =
   | { type: 'itemGained'; item: string; count: number; total: number }
@@ -40,4 +43,7 @@ export type GameEvent =
   | { type: 'questDone'; quest: string }
   | { type: 'momentGained'; moment: string }
   | { type: 'nameSet'; name: string }
+  | { type: 'traveled'; exit: string; from: string; to: string }
+  | { type: 'switched'; character: string; body: string; bodyChanged: boolean }
+  | { type: 'unlocked'; character: string }
   | { type: 'rejected'; action: Action['type']; reason: RejectReason; detail?: string };

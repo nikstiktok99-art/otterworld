@@ -27,7 +27,8 @@ Bild (kein Mix aus Bild und Testform).
 |---|---|---|---|---|
 | objects.bau | 48 × 40 | 24, 39 | P | Bau unter Wurzeln, karierte Gardine; Grundfläche 3 × 2 Kacheln |
 | objects.werkbank | 32 × 24 | 16, 23 | P | Grundfläche 2 × 1 Kacheln |
-| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Sand, Wasser (2 Frames), Uferkanten, Steg, Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
+| objects.wegweiser | 16 × 32 | 8, 31 | P | Holzpfosten mit Schild, Spitze nach rechts (das Spiel spiegelt für links); Grundfläche 1 Kachel; steht an jedem Ausgang |
+| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Sand, Wasser (2 Frames), Uferkanten, Steg, Pfad, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
 
 ## Gegenstände und Deko
 
@@ -38,6 +39,8 @@ Bild (kein Mix aus Bild und Testform).
 | items.muschelschale | 16 × 16 | 8, 13 | 1 | P | natürliche Muschel, ohne Aufhängung |
 | deco.uferleuchte.aus | 16 × 32 | 8, 30 | 1 | P | Treibholzpfosten mit Muschel |
 | deco.uferleuchte.an | 16 × 32 | 8, 30 | 3 · 4 | P | eingeschaltet, sanftes Flackern |
+| items.schilfhalm | 16 × 16 | 8, 13 | 1 | P | Phase 2: Bündel heller Schilfhalme (liegt am Ufer oder treibt am Schilf); muss sich vom stehenden Schilf im Boden abheben |
+| deco.schilfmatte | 16 × 16 | 8, 12 | 1 | P | Phase 2: geflochtene Matte, flach auf dem Boden, 1 Kachel |
 
 ## Effekte
 
@@ -58,11 +61,12 @@ Bild (kein Mix aus Bild und Testform).
 ## Ton (Platzhalter: synthetisch erzeugt, `src/app/sound.ts`)
 
 `sfx.tipp`, `sfx.dialog`, `sfx.aufheben`, `sfx.platsch`, `sfx.bauen`, `sfx.aufstellen`, `sfx.leuchte`, `sfx.nein`;
-Ambiente-Slot `ambience.startufer.abend` (noch stumm).
+Ambiente-Slots `ambience.startufer.abend` und `ambience.schilfbucht.abend` (noch stumm).
 
 ## Nächste sinnvolle Pakete
 
 1. **Starter-Otter**: idle, walk, swim in se und ne (größter sichtbarer Gewinn, kein Foto nötig).
-2. **Startufer**: Kachelbogen, Bau, Werkbank, Steg.
-3. **Dinge**: Treibholz (2), Muschelschale, Uferleuchte aus/an.
-4. **Schnabbi** komplett (Größe abgestimmt) inkl. Porträt.
+2. **Schnabbi** komplett (Größe abgestimmt) inkl. Porträt – seit Phase 2 ist er auch spielbar, also braucht er
+   laufen und schwimmen in beiden Richtungen genauso wie der Otter.
+3. **Startufer**: Kachelbogen (inkl. Pfad und Schilf), Bau, Werkbank, Steg, Wegweiser.
+4. **Dinge**: Treibholz (2), Muschelschale, Uferleuchte aus/an, Schilfhalme, Schilfmatte.

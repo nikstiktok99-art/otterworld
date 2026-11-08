@@ -1,4 +1,4 @@
-import { activeHint } from '../game/text';
+import { activeHint, friendList } from '../game/text';
 import type { RejectReason } from '../game/actions';
 import { useApp, useGameState, useUi } from './context';
 
@@ -8,7 +8,9 @@ export function Hud() {
   const u = useUi();
   if (u.panel?.kind === 'title' || u.decorate) return null;
   const hint = activeHint(state, content);
-  const open = (kind: 'bag' | 'menu') => {
+  // Das Freundebuch erscheint, sobald sie jemanden kennt.
+  const hasFriends = friendList(state, content).length > 1;
+  const open = (kind: 'bag' | 'menu' | 'friends') => {
     sound.play('sfx.tipp');
     ui.open({ kind });
   };
@@ -18,6 +20,11 @@ export function Hud() {
         <button className="pill" onClick={() => open('bag')}>
           Beutel
         </button>
+        {hasFriends && (
+          <button className="pill" onClick={() => open('friends')}>
+            Freunde
+          </button>
+        )}
         <button className="pill" onClick={() => open('menu')}>
           Menü
         </button>
@@ -43,7 +50,7 @@ export function Toasts() {
 
 const PROBLEM_TEXT: Partial<Record<RejectReason, string>> = {
   outsideZone: 'Hier ist kein Platz für Deko.',
-  notPlaceable: 'Auf Wasser oder dem Steg kann sie nicht stehen.',
+  notPlaceable: 'Auf Wasser, dem Steg oder dem Pfad geht das nicht.',
   occupied: 'Da ist schon etwas.',
 };
 
