@@ -10,7 +10,8 @@ Automatisch geprüft am 09.11.2026:
   Becken, beide vorher „beschäftigt“, Meerkats Wimpel (Treibholz vom Ufer, Federn aus dem Zoo) mit Geschenk, Moment und
   Rezept genau einmal, Stein zeigt danach den Wimpel, Sonnenblumentopf, Squichys Ball mit Schilf aus der Bucht.
 - **Typprüfung:** fehlerfrei.
-- **Cloud:** CLOUD_ERGEBNIS
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b7), „Android-Testbuild (.apk)“ (a7) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
 
 | Test | Browser (`npm run e2e`, 86 Prüfungen, zweimal bestanden) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
 |---|---|---|---|---|
@@ -21,7 +22,7 @@ Automatisch geprüft am 09.11.2026:
 | Squichy: Sprechblase, Aufgabe annehmen | ok | offen | – | offen |
 | Squichys Ball bis zum Ende (Schilf aus der Bucht) | – (Unit-Test ok) | offen | – | offen |
 | Unterste Reihe am Startufer (Wegweiser zum Zoo) antippbar | ok | offen | – | offen |
-| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
 
 ## Kapitel Tiramisu Stream (Version 0.5.0, Commit 04528b6)
 
