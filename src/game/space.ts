@@ -41,11 +41,11 @@ export function terrainAt(g: Grid, t: Tile): Terrain {
 export function standable(terrain: Terrain, moves: readonly Movement[]): boolean {
   if (terrain === 'blocked' || terrain === 'schilf') return false;
   if (terrain === 'water') return moves.includes('water');
-  return moves.includes('land'); // Sand, Gras, Steg, Pfad
+  return moves.includes('land'); // Sand, Gras, Blumen, Steg, Pfad
 }
 
 /** Boden, auf dem Deko stehen darf (Steg und Pfade bleiben frei). */
-export const isLand = (t: Terrain): boolean => t === 'sand' || t === 'grass';
+export const isLand = (t: Terrain): boolean => t === 'sand' || t === 'grass' || t === 'blumen';
 
 /**
  * Nächste Kachel ab `from` (Breitensuche über das ganze Raster), auf der ein Körper sicher stehen kann.

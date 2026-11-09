@@ -27,7 +27,18 @@ export type PainterId =
   | 'glitzer'
   | 'ziel'
   | 'spritzer'
-  | 'portrait';
+  | 'portrait'
+  | 'prinzessin'
+  | 'axolotl'
+  | 'picknickdecke'
+  | 'bastelstumpf'
+  | 'wiesenbluete'
+  | 'glitzerkiesel'
+  | 'seerosenblatt'
+  | 'bluetengirlande'
+  | 'seerosenkissen'
+  | 'kiesellicht'
+  | 'blase';
 
 export interface SpriteDef {
   key: string;
@@ -52,6 +63,7 @@ function character(
   frame: { w: number; h: number; anchorX: number; anchorY: number },
   states: Record<string, { frames: number; fps: number; note: string }>,
   files: Record<string, SpriteDef['file']> = {},
+  extraArgs: Record<string, string> = {},
 ): SpriteDef[] {
   const out: SpriteDef[] = [];
   for (const [state, cfg] of Object.entries(states)) {
@@ -66,7 +78,7 @@ function character(
         fps: cfg.fps,
         anchor: { x: frame.anchorX, y: frame.anchorY },
         ...(file ? { file } : {}),
-        placeholder: { painter, args: { state, dir } },
+        placeholder: { painter, args: { ...extraArgs, state, dir } },
         note: `${cfg.note}, Blick ${dir === 'se' ? 'vorne rechts' : 'hinten rechts'}`,
       });
     }
@@ -101,11 +113,45 @@ export const sprites: SpriteDef[] = [
       'idle.se': { path: 'art/characters/schnabbi/idle-se.png', frames: 1, status: 'entwurf' },
     },
   ),
+  ...character(
+    'otterprinzessin',
+    'prinzessin',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Otterprinzessin (Lumi) mit Kleid und Krone, steht' },
+      walk: { frames: 4, fps: 8, note: 'Otterprinzessin läuft, Kleid schwingt' },
+      swim: { frames: 4, fps: 5, note: 'Otterprinzessin schwimmt, Krone bleibt über Wasser (Anker = Wasserlinie)' },
+    },
+  ),
+  ...character(
+    'rosie',
+    'axolotl',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Rosie, pinker Axolotl, ruht im Wasser' },
+      swim: { frames: 4, fps: 4, note: 'Rosie schwimmt, Kiemenbüschel wippen (Anker = Wasserlinie)' },
+    },
+    {},
+    { farbe: 'rosa' },
+  ),
+  ...character(
+    'bubbles',
+    'axolotl',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Bubbles, blauer Axolotl, ruht im Wasser' },
+      swim: { frames: 4, fps: 4, note: 'Bubbles schwimmt (die Blasen erzeugt das Spiel extra, fx.blase)' },
+    },
+    {},
+    { farbe: 'blau' },
+  ),
 
   // ---- Umgebung ----
   { key: 'objects.bau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'bau' }, note: 'Otterbau unter Wurzeln mit karierter Gardine, Grundfläche 3 × 2 Kacheln' },
   { key: 'objects.werkbank', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'werkbank' }, note: 'Werkbank, Grundfläche 2 × 1 Kacheln' },
   { key: 'objects.wegweiser', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'wegweiser' }, note: 'Wegweiser aus Holz, Schild zeigt nach rechts (das Spiel spiegelt für links), Grundfläche 1 Kachel' },
+  { key: 'objects.picknickdecke', frameW: 48, frameH: 32, frames: 1, anchor: { x: 24, y: 31 }, placeholder: { painter: 'picknickdecke' }, note: 'Karierte Picknickdecke mit Körbchen (Tiramisu Stream), Grundfläche 3 × 2 Kacheln' },
+  { key: 'objects.bastelstumpf', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 23 }, placeholder: { painter: 'bastelstumpf' }, note: 'Baumstumpf mit Garn und Schere zum Basteln (Station wie die Werkbank), Grundfläche 1 Kachel' },
 
   // ---- Gegenstände in der Welt ----
   { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand' },
@@ -117,17 +163,28 @@ export const sprites: SpriteDef[] = [
   { key: 'deco.schilfmatte', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'schilfmatte' }, note: 'Geflochtene Schilfmatte, flach auf dem Boden' },
   { key: 'deco.treibholzbank', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 21 }, placeholder: { painter: 'bank' }, note: 'Kleine Bank aus Treibholz, 1 Kachel breit' },
   { key: 'deco.muschelwindspiel', frameW: 16, frameH: 32, frames: 3, fps: 2, anchor: { x: 8, y: 30 }, placeholder: { painter: 'windspiel' }, note: 'Windspiel aus Muscheln an einem Treibholzpfosten, Muscheln schaukeln leicht' },
+  { key: 'items.wiesenbluete', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'wiesenbluete' }, note: 'Kleiner Strauß bunter Wiesenblüten (Fundstelle)' },
+  { key: 'items.glitzerkiesel', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'glitzerkiesel' }, note: 'Runder, funkelnder Kiesel im Sand (Fundstelle)' },
+  { key: 'items.seerosenblatt', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'seerosenblatt' }, note: 'Seerosenblatt, schwimmt und wippt leicht (Fundstelle im Teich)' },
+  { key: 'deco.bluetengirlande', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'bluetengirlande' }, note: 'Blütengirlande zwischen zwei Stäbchen, Glitzerkiesel in der Mitte' },
+  { key: 'deco.seerosenkissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'seerosenkissen' }, note: 'Rundes grünes Kissen aus Seerosenblättern mit Blüte' },
+  { key: 'deco.kiesellicht.aus', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'kiesellicht', args: { an: false } }, note: 'Muschel mit Glitzerkieseln, aus' },
+  { key: 'deco.kiesellicht.an', frameW: 16, frameH: 16, frames: 2, fps: 3, anchor: { x: 8, y: 13 }, placeholder: { painter: 'kiesellicht', args: { an: true } }, note: 'Muschel mit Glitzerkieseln, leuchtet sanft' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },
   { key: 'fx.glitzer', frameW: 8, frameH: 8, frames: 4, fps: 8, anchor: { x: 4, y: 4 }, placeholder: { painter: 'glitzer' }, note: 'Glitzern an Fundstellen' },
   { key: 'fx.ziel', frameW: 16, frameH: 8, frames: 1, anchor: { x: 8, y: 4 }, placeholder: { painter: 'ziel' }, note: 'Markierung des Tippziels' },
   { key: 'fx.hinweis', frameW: 12, frameH: 12, frames: 1, anchor: { x: 6, y: 11 }, placeholder: { painter: 'hinweis' }, note: 'Kleine Sprechblase über einer Figur, die etwas Neues für sie hat (Aufgabe, nächster Schritt)' },
+  { key: 'fx.blase', frameW: 6, frameH: 6, frames: 1, anchor: { x: 3, y: 3 }, placeholder: { painter: 'blase' }, note: 'Kleine Luftblase (Bubbles macht immer wieder welche); das Spiel lässt sie aufsteigen' },
   { key: 'fx.spritzer', frameW: 16, frameH: 8, frames: 3, fps: 10, anchor: { x: 8, y: 6 }, placeholder: { painter: 'spritzer' }, note: 'Spritzer beim Ein- und Aussteigen' },
 
   // ---- Porträts (Dialog) ----
   { key: 'portraits.schnabbi', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'schnabbi' } }, note: 'Schnabbi-Porträt, neutral' },
   { key: 'portraits.otter', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'otter' } }, note: 'Starter-Otter-Porträt, neutral' },
+  { key: 'portraits.otterprinzessin', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'prinzessin' } }, note: 'Otterprinzessin-Porträt mit Krone, neutral' },
+  { key: 'portraits.rosie', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'rosie' } }, note: 'Rosie-Porträt (pinker Axolotl), neutral' },
+  { key: 'portraits.bubbles', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'bubbles' } }, note: 'Bubbles-Porträt (blauer Axolotl) mit einer Blase, neutral' },
 ];
 
 /** Bodenkacheln: vorerst prozedural gezeichnet (Platzhalter). Kachelbogen-Layout wird mit Codex abgestimmt. */

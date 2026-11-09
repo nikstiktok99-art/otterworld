@@ -1,5 +1,5 @@
 import type { ItemDef, RecipeDef } from './types';
-import { Q_LICHT, R_BANK, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
+import { Q_LICHT, R_BANK, R_GIRLANDE, R_KIESELLICHT, R_KISSEN, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
 
 // ENTWURF: Namen und Beschreibungen sind Vorschläge.
 export const items: Record<string, ItemDef> = {
@@ -66,6 +66,56 @@ export const items: Record<string, ItemDef> = {
     description: 'Klimpert leise, wenn Wind vom Wasser kommt.',
     sprite: 'deco.muschelwindspiel',
   },
+  // Kapitel Tiramisu Stream (Vorschlag)
+  'item.wiesenbluete': {
+    id: 'item.wiesenbluete',
+    name: 'Wiesenblüte',
+    plural: 'Wiesenblüten',
+    kind: 'material',
+    description: 'Klein, bunt und duftet nach Sommer.',
+    sprite: 'items.wiesenbluete',
+  },
+  'item.glitzerkiesel': {
+    id: 'item.glitzerkiesel',
+    name: 'Glitzerkiesel',
+    plural: 'Glitzerkiesel',
+    kind: 'material',
+    description: 'Ein runder Kiesel, der im Licht funkelt.',
+    sprite: 'items.glitzerkiesel',
+  },
+  'item.seerosenblatt': {
+    id: 'item.seerosenblatt',
+    name: 'Seerosenblatt',
+    plural: 'Seerosenblätter',
+    kind: 'material',
+    description: 'Groß, rund und ganz glatt. Schwimmt oben auf dem Teich.',
+    sprite: 'items.seerosenblatt',
+  },
+  'item.bluetengirlande': {
+    id: 'item.bluetengirlande',
+    name: 'Blütengirlande',
+    plural: 'Blütengirlanden',
+    kind: 'deco',
+    description: 'Wiesenblüten an einer Schnur, mit einem Glitzerkiesel in der Mitte.',
+    sprite: 'deco.bluetengirlande',
+  },
+  'item.seerosenkissen': {
+    id: 'item.seerosenkissen',
+    name: 'Seerosenkissen',
+    plural: 'Seerosenkissen',
+    kind: 'deco',
+    description: 'Weich gepolstert mit Seerosenblättern.',
+    sprite: 'deco.seerosenkissen',
+  },
+  'item.kiesellicht': {
+    id: 'item.kiesellicht',
+    name: 'Kiesellicht',
+    plural: 'Kiesellichter',
+    kind: 'deco',
+    description: 'Glitzerkiesel in einer Muschel. Antippen schaltet das sanfte Licht an und aus.',
+    sprite: 'deco.kiesellicht.aus',
+    deco: { spriteOn: 'deco.kiesellicht.an', glow: { x: 0, y: -6, scale: 0.9 } },
+  },
 };
 
 export const recipes: Record<string, RecipeDef> = {
@@ -92,5 +142,23 @@ export const recipes: Record<string, RecipeDef> = {
     name: 'Muschelwindspiel',
     inputs: { 'item.treibholz': 1, 'item.muschelschale': 2 },
     output: { item: 'item.muschelwindspiel', count: 1 },
+  },
+  [R_GIRLANDE]: {
+    id: R_GIRLANDE,
+    name: 'Blütengirlande',
+    inputs: { 'item.wiesenbluete': 3, 'item.glitzerkiesel': 1 },
+    output: { item: 'item.bluetengirlande', count: 1 },
+  },
+  [R_KISSEN]: {
+    id: R_KISSEN,
+    name: 'Seerosenkissen',
+    inputs: { 'item.seerosenblatt': 2, 'item.wiesenbluete': 1 },
+    output: { item: 'item.seerosenkissen', count: 1 },
+  },
+  [R_KIESELLICHT]: {
+    id: R_KIESELLICHT,
+    name: 'Kiesellicht',
+    inputs: { 'item.glitzerkiesel': 2, 'item.muschelschale': 1 },
+    output: { item: 'item.kiesellicht', count: 1 },
   },
 };

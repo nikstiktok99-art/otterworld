@@ -50,6 +50,20 @@ const DEPTH_GLOW = 50001;
 const DEPTH_UI = 50010;
 // Höhe der Dekorier-Leiste unten (CSS-Pixel, großzügig inkl. Home-Indikator)
 const DECO_BAR_PX = 190;
+// Höhe der Anzeige oben ohne Safe Area (Knöpfe und Hinweis, CSS-Pixel)
+const HUD_PX = 120;
+
+let safeTopCache: number | null = null;
+/** Safe Area oben in CSS-Pixeln (Kamera-Aussparung, Statusleiste); im Browser meist 0. */
+function safeTopPx(): number {
+  if (safeTopCache !== null) return safeTopCache;
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top)';
+  document.body.appendChild(probe);
+  safeTopCache = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+  probe.remove();
+  return safeTopCache;
+}
 // Überblendung bei Orts- und Figurenwechsel (Abendblau)
 const FADE = { ms: 260, r: 28, g: 42, b: 90 };
 
@@ -76,6 +90,8 @@ export class WorldScene extends Phaser.Scene {
   private unsub: Array<() => void> = [];
   /** Figuren, die gerade zu einem Ausgang gehen und danach verschwinden. */
   private leavers: Actor[] = [];
+  private bubbleClock = new WeakMap<Actor, number>();
+  private bubblesMade = 0;
   /** Sprechblase pro Körper-ID, solange die Figur etwas Neues hat. */
   private markers = new Map<string, Phaser.GameObjects.Image>();
   /** Orts- oder Figurenwechsel läuft: keine Tipps, keine Positionsmeldungen. */
@@ -166,7 +182,7 @@ export class WorldScene extends Phaser.Scene {
 
     const cam = this.cameras.main;
     cam.setBackgroundColor('#3d86a8');
-    cam.setBounds(0, 0, this.grid.w * TILE, this.grid.h * TILE);
+    this.applyNormalBounds();
     cam.setRoundPixels(true);
     this.applyZoom();
     cam.startFollow(this.player.sprite, true, 0.12, 0.12);
@@ -218,10 +234,21 @@ export class WorldScene extends Phaser.Scene {
 
   // ------------------------------------------------------------ Kamera
 
+  /**
+   * Kamera-Grenzen im normalen Spiel: Oben darf die Kamera um die Höhe der Anzeige (Knöpfe, Hinweis und
+   * Kamera-Aussparung des iPhones) über den Kartenrand hinaus, damit auch die oberste Reihe antippbar bleibt.
+   */
+  private applyNormalBounds(): void {
+    const cam = this.cameras.main;
+    const top = (safeTopPx() + HUD_PX) / (cam.zoom || 1);
+    cam.setBounds(0, -top, this.grid.w * TILE, this.grid.h * TILE + top);
+  }
+
   private applyZoom(): void {
     const cam = this.cameras.main;
     const z = this.deps.ui.getState().zoomOverride ?? Math.max(2, Math.floor(this.scale.width / 190));
     cam.setZoom(z);
+    if (!this.decoActive) this.applyNormalBounds();
     this.updateFollowOffset();
   }
 
@@ -279,9 +306,9 @@ export class WorldScene extends Phaser.Scene {
 
   private pick(wx: number, wy: number): Target | null {
     const hits: Array<{ depth: number; target: Target }> = [];
-    const test = (sprite: Phaser.GameObjects.Sprite, target: Target) => {
+    const test = (sprite: Phaser.GameObjects.Sprite, target: Target, box?: Phaser.Geom.Rectangle) => {
       if (!sprite.visible) return;
-      const b = sprite.getBounds();
+      const b = box ?? sprite.getBounds();
       const padX = Math.max(0, (22 - b.width) / 2);
       const padY = Math.max(0, (22 - b.height) / 2);
       if (wx >= b.x - padX && wx <= b.right + padX && wy >= b.y - padY && wy <= b.bottom + padY) {
@@ -289,7 +316,11 @@ export class WorldScene extends Phaser.Scene {
       }
     };
     for (const { actor, placement } of this.npcs.values()) {
-      test(actor.sprite, { kind: 'npc', actor, character: placement.characters[0]! });
+      // Figuren-Bilder haben großzügige Rahmen (z. B. 48 × 48 für einen kleinen Axolotl). Getroffen wird nur der
+      // Bereich um den Körper, damit ein Tipp auf eine Fundstelle daneben nicht das Gespräch startet.
+      const w = Math.min(actor.sprite.width, 28);
+      const box = new Phaser.Geom.Rectangle(actor.pos.x - w / 2, actor.pos.y - 26, w, 30);
+      test(actor.sprite, { kind: 'npc', actor, character: placement.characters[0]! }, box);
     }
     for (const [uid, d] of this.decos) test(d.sprite, { kind: 'deco', uid });
     for (const spot of this.map.gatherSpots) {
@@ -588,32 +619,36 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private setGlow(
-    entry: { sprite: Phaser.GameObjects.Sprite; glow: Phaser.GameObjects.Image | null },
+    entry: { sprite: Phaser.GameObjects.Sprite; glow: Phaser.GameObjects.Image | null; item: string },
     on: boolean,
     x: number,
     y: number,
   ): void {
+    // Lichtschein je Gegenstand (Standard: Uferleuchte)
+    const g = this.deps.content.items[entry.item]?.deco?.glow ?? { x: 4, y: -19, scale: 1.6 };
     if (on && !entry.glow) {
       entry.glow = this.add
-        .image(x + 4, y - 19, 'fx.leuchtschein', 0)
+        .image(x + g.x, y + g.y, 'fx.leuchtschein', 0)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(DEPTH_GLOW)
-        .setScale(1.6)
+        .setScale(g.scale)
         .setAlpha(0);
       this.tweens.add({ targets: entry.glow, alpha: 0.7, duration: 900 });
-      this.tweens.add({ targets: entry.glow, scale: 1.75, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      this.tweens.add({ targets: entry.glow, scale: g.scale * 1.1, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     } else if (!on && entry.glow) {
       entry.glow.destroy();
       entry.glow = null;
     }
-    entry.glow?.setPosition(x + 4, y - 19);
+    entry.glow?.setPosition(x + g.x, y + g.y);
   }
 
+  /** Signal aus einem Gespräch, z. B. „an:item.uferleuchte“ – die Leuchte geht genau in diesem Moment an. */
   private onCue(cue: string): void {
-    if (cue !== 'leuchteAn') return;
+    const [kind, itemId] = cue.split(':');
+    if (kind !== 'an' || !itemId) return;
     for (const entry of this.decos.values()) {
       const item = this.deps.content.items[entry.item];
-      if (!item?.deco?.spriteOn) continue;
+      if (entry.item !== itemId || !item?.deco?.spriteOn) continue;
       entry.sprite.setTexture(item.deco.spriteOn, 0);
       this.setGlow(entry, true, entry.sprite.x, entry.sprite.y);
       this.burst(entry.sprite.x + 4, entry.sprite.y - 20);
@@ -728,7 +763,7 @@ export class WorldScene extends Phaser.Scene {
       this.preview?.destroy();
       this.preview = null;
       for (const e of this.decos.values()) e.sprite.setAlpha(1);
-      cam.setBounds(0, 0, this.grid.w * TILE, this.grid.h * TILE);
+      this.applyNormalBounds();
       cam.startFollow(this.player.sprite, true, 0.12, 0.12);
     } else if (d) {
       this.drawDecoLayer();
@@ -782,6 +817,22 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  private bubble(actor: Actor): void {
+    const x = actor.pos.x + Math.round((Math.random() - 0.5) * 10);
+    const y = actor.pos.y - 8;
+    const sprite = this.add.image(x, y, 'fx.blase', 0).setDepth(actor.pos.y + 2).setAlpha(0.9);
+    this.bubblesMade++;
+    this.tweens.add({
+      targets: sprite,
+      y: y - 16,
+      x: x + (Math.random() - 0.5) * 6,
+      alpha: 0,
+      duration: 1500,
+      ease: 'Sine.easeOut',
+      onComplete: () => sprite.destroy(),
+    });
+  }
+
   private splash(x: number, y: number): void {
     const o = this.tex.origin('fx.spritzer');
     const sprite = this.add.sprite(x, y, 'fx.spritzer', 0).setOrigin(o.x, o.y).setDepth(y + 1);
@@ -806,6 +857,17 @@ export class WorldScene extends Phaser.Scene {
     }
     for (const actor of [...[...this.npcs.values()].map((n) => n.actor), ...this.leavers]) {
       if (actor.update(dt) === 'splash') this.splash(actor.pos.x, actor.pos.y);
+    }
+    // Eigenheiten: Bubbles macht immer wieder Blasen (als Nachbar und wenn sie ihn spielt).
+    for (const actor of [this.player, ...[...this.npcs.values()].map((n) => n.actor)]) {
+      if (!actor.body.traits?.includes('blasen')) continue;
+      const t = (this.bubbleClock.get(actor) ?? Math.random()) + dt;
+      if (t >= 0.9) {
+        this.bubble(actor);
+        this.bubbleClock.set(actor, 0);
+      } else {
+        this.bubbleClock.set(actor, t);
+      }
     }
     const talking = this.deps.ui.getState().panel?.kind === 'dialog';
     for (const [bodyId, marker] of this.markers) {
@@ -853,6 +915,7 @@ export class WorldScene extends Phaser.Scene {
         news: this.markers.has(placement.body),
       })),
       spotsVisible: [...this.spots.entries()].filter(([, sp]) => sp.visible).map(([id]) => id),
+      bubblesMade: this.bubblesMade,
       warnings: this.tex.warnings,
       spriteKeys: spriteDef('characters.schnabbi.idle.se')?.file ? 'schnabbi:datei' : 'schnabbi:platzhalter',
     };

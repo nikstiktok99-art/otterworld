@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER, NACHWACHSEN_MIN } from '../ids';
+import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, NACHWACHSEN_MIN } from '../ids';
 
 // Vorläufiges Startufer (Vorschlag aus dem Startplan). 16 × 32 Kacheln à 16 px.
 // Legende: ~ Wasser · : Sand · , Gras · = Steg · - Pfad · # Büsche/Wurzeln (nicht begehbar)
@@ -30,9 +30,9 @@ const grid = [
   '#,,,,,,,,,,,,,,#', // 23  Bau
   '#,,,,,,,,,,,,,,#', // 24  Bau, Werkbank
   '#,,,,,,,,,,,,,,#', // 25  vor dem Bau
-  '#,,,,,,,,,,,,,,#', // 26
-  '#,,,,,,,,,,,,,,#', // 27
-  '#,,,,,,,,,,,,,,#', // 28
+  '#,,,,,,,,,,,,,,#', // 26  Wegweiser zum Tiramisu Stream
+  '--,,,,,,,,,,,,,#', // 27  Pfad zum Tiramisu Stream
+  '--,,,,,,,,,,,,,#', // 28
   '#,,,,,,,,,,,,,,#', // 29
   '#,,,,,,,,,,,,,,#', // 30
   '################', // 31
@@ -70,6 +70,15 @@ export const startufer: MapDef = {
       footprint: { w: 1, h: 1 },
       interaction: { kind: 'exit', exit: 'exit.zur-bucht' },
     },
+    {
+      id: 'obj.wegweiser.bach',
+      name: 'Wegweiser',
+      sprite: 'objects.wegweiser',
+      tile: { x: 1, y: 26 },
+      footprint: { w: 1, h: 1 },
+      flip: true,
+      interaction: { kind: 'exit', exit: 'exit.zum-bach' },
+    },
   ],
   gatherSpots: [
     { id: 'spot.treibholz.strand', item: 'item.treibholz', count: 1, tile: { x: 4, y: 17 }, sprite: 'items.treibholz', regrowMinutes: NACHWACHSEN_MIN },
@@ -89,8 +98,23 @@ export const startufer: MapDef = {
       to: { map: MAP_SCHILFBUCHT, entry: 'entry.vom-ufer' },
       keepName: 'den Weg zur Schilfbucht',
     },
+    {
+      id: 'exit.zum-bach',
+      label: 'Tiramisu Stream',
+      tiles: [
+        { x: 0, y: 27 },
+        { x: 1, y: 27 },
+        { x: 0, y: 28 },
+        { x: 1, y: 28 },
+      ],
+      to: { map: MAP_TIRAMISU, entry: 'entry.vom-ufer' },
+      keepName: 'den Weg zum Tiramisu Stream',
+    },
   ],
-  entries: [{ id: 'entry.von-der-bucht', tile: { x: 13, y: 22 }, facing: 'sw' }],
+  entries: [
+    { id: 'entry.von-der-bucht', tile: { x: 13, y: 22 }, facing: 'sw' },
+    { id: 'entry.vom-bach', tile: { x: 2, y: 27 }, facing: 'se' },
+  ],
   decorZone: { x: 1, y: 15, w: 14, h: 16 },
   keepReachable: [
     // name im Akkusativ: „Hier würde sie ___ versperren.“

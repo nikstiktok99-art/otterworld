@@ -1,7 +1,10 @@
 // Typen der Inhaltsdaten. Inhalte sind reine Daten: Figuren, Körper, Orte, Gegenstände, Rezepte, Quests, Dialoge.
 import type { Dir, Tile } from '../game/types';
 
-export type Terrain = 'water' | 'sand' | 'grass' | 'steg' | 'pfad' | 'schilf' | 'blocked';
+export type Terrain = 'water' | 'sand' | 'grass' | 'blumen' | 'steg' | 'pfad' | 'schilf' | 'blocked';
+
+/** Kleine sichtbare Eigenheit eines Körpers (z. B. Bubbles macht immer wieder Blasen). */
+export type BodyTrait = 'blasen';
 export type Movement = 'land' | 'water';
 
 /** Bedingungen über den Spielstand – für Dialogauswahl, Aufenthaltsorte und Freischaltungen. */
@@ -60,6 +63,7 @@ export interface BodyDef {
   /** Geschwindigkeit in Weltpixeln pro Sekunde. */
   speed: { land: number; water: number };
   seats?: number;
+  traits?: BodyTrait[];
 }
 
 /** Ein gemeinsames Erlebnis mit einer Figur (Grundlage für Vertrauen und Freischaltungen). */
@@ -85,6 +89,8 @@ export interface ItemDef {
     /** Darf erst ein- und ausgeschaltet werden, wenn diese Bedingung gilt. */
     toggleWhen?: Condition;
     toggleNotYetText?: string;
+    /** Lichtschein im eingeschalteten Zustand: Versatz zum Bodenpunkt und Größe (Standard: wie die Uferleuchte). */
+    glow?: { x: number; y: number; scale: number };
   };
 }
 

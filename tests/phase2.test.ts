@@ -192,8 +192,10 @@ describe('Figurenwechsel', () => {
     expect(r.state.activeCharacter).toBe('schnabbi');
     expect(r.events).toContainEqual({ type: 'switched', character: 'schnabbi', body: 'body.schnabbi', bodyChanged: true });
     const npcs = resolveAllNpcs(r.state, content);
-    expect(npcs.map((n) => n.body)).toEqual(['body.otter']);
-    expect(npcs[0]).toMatchObject({ map: MAP, tile: { x: 5, y: 25 } });
+    const bodies = npcs.map((n) => n.body);
+    expect(bodies).not.toContain('body.schnabbi');
+    expect(new Set(bodies).size).toBe(bodies.length); // jeder Körper höchstens einmal
+    expect(npcs.find((n) => n.body === 'body.otter')).toMatchObject({ map: MAP, tile: { x: 5, y: 25 } });
   });
 
   it('steht am Ruheplatz des Otters schon Deko (alter Spielstand), ruht er daneben', () => {
@@ -299,7 +301,10 @@ describe('Erbsentrio (Datenbeispiel vor der Produktion)', () => {
     const c = trio();
     const r = playWith(c, withTrio(c), { type: 'switchCharacter', character: 'beano' });
     expect(r.state.activeCharacter).toBe('beano');
-    expect(resolveAllNpcs(r.state, c).map((n) => n.body).sort()).toEqual(['body.otter', 'body.schnabbi']);
+    const bodies = resolveAllNpcs(r.state, c).map((n) => n.body);
+    expect(bodies).not.toContain('body.erbsenschale');
+    expect(bodies).toEqual(expect.arrayContaining(['body.otter', 'body.schnabbi']));
+    expect(new Set(bodies).size).toBe(bodies.length);
   });
 
   it('von Beano zu Beani: gleicher Körper, gleicher Platz – nur wer spricht, ändert sich', () => {

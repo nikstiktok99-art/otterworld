@@ -1,5 +1,21 @@
 import type { MomentDef, QuestDef } from './types';
-import { M_ERSTER_ABEND, M_PLATZ_FUER_ZWEI, MAP_SCHILFBUCHT, Q_LICHT, Q_SCHILF, R_LEUCHTE, R_MATTE } from './ids';
+import {
+  M_BUBBLES_KISSEN,
+  M_ERSTER_ABEND,
+  M_PICKNICK,
+  M_PLATZ_FUER_ZWEI,
+  M_ROSIE_KISSEN,
+  MAP_SCHILFBUCHT,
+  Q_KISSEN,
+  Q_LICHT,
+  Q_PICKNICK,
+  Q_SCHILF,
+  R_GIRLANDE,
+  R_KIESELLICHT,
+  R_KISSEN,
+  R_LEUCHTE,
+  R_MATTE,
+} from './ids';
 
 // Vorschläge, austauschbar. Phase 1: Am Steg fehlt abends ein Licht.
 // Phase 2: Ein zweites gemeinsames Erlebnis – Schnabbi zeigt dir die Schilfbucht, ihr flechtet eine Matte,
@@ -79,6 +95,69 @@ export const quests: Record<string, QuestDef> = {
       text: 'Die Schilfmatte liegt am Ufer, und Schnabbi hat es sich dort gemütlich gemacht. Er vertraut dir jetzt, {name}.',
     },
   },
+
+  // ---- Kapitel Tiramisu Stream (Vorschlag) ----
+  [Q_PICKNICK]: {
+    id: Q_PICKNICK,
+    name: 'Ein Picknick am Bach',
+    giver: 'otterprinzessin',
+    offer: { when: { questDone: Q_SCHILF }, hint: 'Am Tiramisu Stream ist jemand Neues – der Weg beginnt links neben deinem Bau' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Picknick: Wiesenblüten {count:item.wiesenbluete}/3 · Glitzerkiesel {count:item.glitzerkiesel}/1',
+        completeWhen: { hasItems: { 'item.wiesenbluete': 3, 'item.glitzerkiesel': 1 } },
+      },
+      {
+        id: 'basteln',
+        hint: 'Eine Blütengirlande basteln – am Bastelstumpf',
+        completeWhen: { crafted: R_GIRLANDE },
+      },
+      {
+        id: 'aufhaengen',
+        hint: 'Blütengirlande beim Picknickplatz aufhängen – im Beutel',
+        completeWhen: { placed: 'item.bluetengirlande' },
+      },
+      {
+        id: 'picknick',
+        hint: 'Lumi wartet zum Picknick',
+        completeWhen: { dialogue: 'dlg.lumi.picknick' },
+        onComplete: [{ addMoment: M_PICKNICK }, { learnRecipe: R_KIESELLICHT }, { unlockCharacter: 'otterprinzessin' }],
+      },
+    ],
+    ending: {
+      title: 'Ein Picknick am Bach',
+      text: 'Die Blütengirlande schaukelt im Wind, und Lumi teilt ihre Kekse mit dir, {name}. Gleich nebenan blubbert es im Teich.',
+    },
+  },
+  [Q_KISSEN]: {
+    id: Q_KISSEN,
+    name: 'Ein Kissen für Rosie',
+    giver: 'rosie',
+    offer: { when: { questDone: Q_PICKNICK }, hint: 'Im Teich am Tiramisu Stream blubbert es – sag Hallo' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Seerosenkissen: Seerosenblätter {count:item.seerosenblatt}/2 · Wiesenblüte {count:item.wiesenbluete}/1',
+        completeWhen: { hasItems: { 'item.seerosenblatt': 2, 'item.wiesenbluete': 1 } },
+      },
+      {
+        id: 'basteln',
+        hint: 'Ein Seerosenkissen basteln – am Bastelstumpf',
+        completeWhen: { crafted: R_KISSEN },
+      },
+      {
+        id: 'bringen',
+        hint: 'Bring Rosie das Seerosenkissen',
+        completeWhen: { dialogue: 'dlg.rosie.danke' },
+        onComplete: [{ addMoment: M_ROSIE_KISSEN }, { addMoment: M_BUBBLES_KISSEN }],
+      },
+    ],
+    ending: {
+      title: 'Ein Kissen für Rosie',
+      text: 'Rosie kuschelt sich ins Seerosenkissen, und Bubbles blubbert vor Freude. Jetzt hast du zwei Freunde im Teich.',
+    },
+  },
 };
 
 /** Gemeinsame Erlebnisse (Vertrauen). Sie stehen im Freundebuch. */
@@ -94,5 +173,23 @@ export const moments: Record<string, MomentDef> = {
     character: 'schnabbi',
     title: 'Ein Platz für zwei',
     text: 'Mit Schilf aus der Bucht habt ihr eine Matte geflochten, auf der ihr abends zusammen sitzt.',
+  },
+  [M_PICKNICK]: {
+    id: M_PICKNICK,
+    character: 'otterprinzessin',
+    title: 'Ein Picknick am Bach',
+    text: 'Mit einer Blütengirlande wurde Lumis Picknick erst richtig schön. Danach hat sie dir gezeigt, wie Kiesel leuchten.',
+  },
+  [M_ROSIE_KISSEN]: {
+    id: M_ROSIE_KISSEN,
+    character: 'rosie',
+    title: 'Ein Kissen für Rosie',
+    text: 'Für Rosies Seerosenbett hast du ein weiches Kissen gebastelt.',
+  },
+  [M_BUBBLES_KISSEN]: {
+    id: M_BUBBLES_KISSEN,
+    character: 'bubbles',
+    title: 'Blasen vor Freude',
+    text: 'Als Rosie ihr Kissen bekam, hat Bubbles dir zwei Glitzerkiesel vom Teichgrund geschenkt.',
   },
 };

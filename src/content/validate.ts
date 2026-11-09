@@ -124,6 +124,9 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     }
     for (const line of d.lines) {
       if ('speaker' in line && line.speaker && !c.characters[line.speaker]) err(`Dialog ${d.id}: Sprecher ${line.speaker} fehlt`);
+      if ('cue' in line && line.cue?.startsWith('an:') && !c.items[line.cue.slice(3)]?.deco?.spriteOn) {
+        err(`Dialog ${d.id}: Signal ${line.cue} – Gegenstand fehlt oder hat keinen eingeschalteten Zustand`);
+      }
       if ('choices' in line && line.choices) {
         if (line.choices.length === 0 || line.choices.some((ch) => !ch.label.trim())) err(`Dialog ${d.id}: leere Antwortmöglichkeit`);
         if (!line.choices.some((ch) => ch.then === 'weiter')) err(`Dialog ${d.id}: Antworten brauchen mindestens ein „weiter“`);

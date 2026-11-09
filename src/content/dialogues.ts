@@ -1,5 +1,5 @@
 import type { DialogueDef } from './types';
-import { Q_LICHT, Q_SCHILF, R_BANK, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
+import { Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_SCHILF, R_BANK, R_GIRLANDE, R_KISSEN, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
 
 // ENTWURF: Alle Texte sind Vorschläge und dürfen frei ersetzt werden.
 // {name} wird durch den Namen ersetzt, den die Spielerin im ersten Gespräch wählt.
@@ -71,7 +71,7 @@ export const dialogues: DialogueDef[] = [
     when: { questStep: { quest: Q_LICHT, step: 'abend' } },
     lines: [
       { speaker: 'schnabbi', text: 'Da steht sie ja. Darf ich?' },
-      { speaker: null, text: 'Schnabbi stupst die Leuchte mit dem Schnabel an. Sie beginnt warm zu leuchten.', cue: 'leuchteAn' },
+      { speaker: null, text: 'Schnabbi stupst die Leuchte mit dem Schnabel an. Sie beginnt warm zu leuchten.', cue: 'an:item.uferleuchte' },
       { speaker: 'schnabbi', text: 'So ist der Abend am Ufer gleich viel gemütlicher.' },
       { speaker: 'schnabbi', text: 'Danke, {name}. Bleibst du noch ein bisschen?' },
     ],
@@ -141,6 +141,15 @@ export const dialogues: DialogueDef[] = [
     effects: [{ learnRecipe: R_BANK }, { learnRecipe: R_WINDSPIEL }],
   },
   {
+    id: 'dlg.schnabbi.lumi',
+    character: 'schnabbi',
+    when: { all: [{ questDone: Q_SCHILF }, { questNotStarted: Q_PICKNICK }] },
+    lines: [
+      { speaker: 'schnabbi', text: 'Warst du schon am Tiramisu Stream? Der Weg beginnt links neben deinem Bau.' },
+      { speaker: 'schnabbi', text: 'Da wohnt Lumi – eine Otter mit Kleid und Krone. Ich hab ihr schon von dir erzählt!' },
+    ],
+  },
+  {
     id: 'dlg.schnabbi.plaudern2',
     character: 'schnabbi',
     when: { questDone: Q_SCHILF },
@@ -156,6 +165,146 @@ export const dialogues: DialogueDef[] = [
     lines: [
       { speaker: 'schnabbi', text: 'Hörst du das Wasser, {name}? Ich könnte hier ewig sitzen.' },
       { speaker: 'schnabbi', text: 'Wenn du magst, kannst du die Leuchte im Beutel versetzen. Ich setz mich dann einfach wieder dazu.' },
+    ],
+  },
+
+  // ---- Kapitel Tiramisu Stream (Vorschlag): Lumi ----
+  {
+    id: 'dlg.lumi.hallo',
+    character: 'otterprinzessin',
+    when: { all: [{ questDone: Q_SCHILF }, { questNotStarted: Q_PICKNICK }] },
+    lines: [
+      { speaker: 'otterprinzessin', text: 'Oh, Besuch! Du musst {name} sein – Schnabbi hat mir schon von dir erzählt. Ich bin Lumi.' },
+      { speaker: 'otterprinzessin', text: 'Ich möchte heute ein Picknick am Bach machen, aber es sieht noch so schlicht aus.' },
+      {
+        speaker: 'otterprinzessin',
+        text: 'Hilfst du mir, eine Blütengirlande zu basteln?',
+        choices: [
+          { label: 'Na klar!', then: 'weiter' },
+          { label: 'Später vielleicht', then: 'spaeter' },
+        ],
+      },
+      {
+        speaker: 'otterprinzessin',
+        text: 'Wunderbar! Wir brauchen drei Wiesenblüten und einen Glitzerkiesel. Basteln kannst du am Stumpf da unten.',
+      },
+    ],
+    effects: [{ startQuest: Q_PICKNICK }, { learnRecipe: R_GIRLANDE }],
+  },
+  {
+    id: 'dlg.lumi.sammeln',
+    character: 'otterprinzessin',
+    when: { questStep: { quest: Q_PICKNICK, step: 'sammeln' } },
+    lines: [
+      { speaker: 'otterprinzessin', text: 'Wiesenblüten wachsen überall auf der Wiese. Glitzerkiesel liegen am Bach im Sand.' },
+      { speaker: 'otterprinzessin', text: 'Eine Blüte wächst sogar ganz oben hinter dem Teich – da kommst du nur schwimmend hin.' },
+    ],
+  },
+  {
+    id: 'dlg.lumi.basteln',
+    character: 'otterprinzessin',
+    when: { questStep: { quest: Q_PICKNICK, step: 'basteln' } },
+    lines: [{ speaker: 'otterprinzessin', text: 'Du hast alles? Dann ab zum Bastelstumpf!' }],
+  },
+  {
+    id: 'dlg.lumi.aufhaengen',
+    character: 'otterprinzessin',
+    when: { questStep: { quest: Q_PICKNICK, step: 'aufhaengen' } },
+    lines: [{ speaker: 'otterprinzessin', text: 'Oh, ist die schön! Häng sie doch hier bei der Picknickdecke auf.' }],
+  },
+  {
+    id: 'dlg.lumi.picknick',
+    character: 'otterprinzessin',
+    when: { questStep: { quest: Q_PICKNICK, step: 'picknick' } },
+    lines: [
+      { speaker: 'otterprinzessin', text: 'Perfekt! Jetzt ist es ein richtiges Picknick.' },
+      { speaker: null, text: 'Lumi legt ein paar Kekse auf die Decke und rückt ihre Krone zurecht.' },
+      { speaker: 'otterprinzessin', text: 'Ich zeig dir noch einen Trick: Zwei Glitzerkiesel in einer Muschel ergeben ein kleines Licht.' },
+      { speaker: 'otterprinzessin', text: 'Und wenn du magst, darfst du auch mal mit Kleid und Krone herumspazieren. Schau ins Freundebuch!' },
+    ],
+  },
+  {
+    id: 'dlg.lumi.teich',
+    character: 'otterprinzessin',
+    when: { all: [{ questDone: Q_PICKNICK }, { questNotStarted: Q_KISSEN }] },
+    lines: [{ speaker: 'otterprinzessin', text: 'Im Teich wohnen übrigens Rosie und Bubbles. Sag ihnen doch mal Hallo!' }],
+  },
+  {
+    id: 'dlg.lumi.plaudern',
+    character: 'otterprinzessin',
+    when: { questDone: Q_PICKNICK },
+    lines: [{ speaker: 'otterprinzessin', text: 'Schön, dass du da bist, {name}. Der Bach klingt heute besonders fröhlich.' }],
+  },
+
+  // ---- Kapitel Tiramisu Stream (Vorschlag): Rosie und Bubbles ----
+  {
+    id: 'dlg.rosie.hallo',
+    character: 'rosie',
+    when: { all: [{ questDone: Q_PICKNICK }, { questNotStarted: Q_KISSEN }] },
+    lines: [
+      { speaker: 'rosie', text: 'Hallo! Ich bin Rosie. Und das hier ist mein Bruder Bubbles.' },
+      { speaker: 'bubbles', text: 'Blubb! Hallo!' },
+      { speaker: 'rosie', text: 'Bubbles macht dauernd Blasen, sogar im Schlaf. Da wackelt mein Seerosenbett ganz schön.' },
+      {
+        speaker: 'rosie',
+        text: 'Ein weiches Kissen aus Seerosenblättern wäre toll. Bastelst du mir eins?',
+        choices: [
+          { label: 'Mach ich!', then: 'weiter' },
+          { label: 'Gerade nicht', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'rosie', text: 'Danke! Seerosenblätter schwimmen hier im Teich, und eine Wiesenblüte macht es schön weich.' },
+    ],
+    effects: [{ startQuest: Q_KISSEN }, { learnRecipe: R_KISSEN }],
+  },
+  {
+    id: 'dlg.rosie.danke',
+    character: 'rosie',
+    when: { all: [{ questStep: { quest: Q_KISSEN, step: 'bringen' } }, { hasItems: { 'item.seerosenkissen': 1 } }] },
+    lines: [
+      { speaker: 'rosie', text: 'Das Kissen! Ist das für mich?' },
+      { speaker: null, text: 'Rosie kuschelt sich hinein. Bubbles dreht eine Runde und blubbert vor Freude.' },
+      { speaker: 'bubbles', text: 'Blubb blubb! Die sind für dich – haben wir am Teichgrund gefunden.' },
+    ],
+    effects: [{ takeItems: { 'item.seerosenkissen': 1 } }, { giveItems: { 'item.glitzerkiesel': 2 } }],
+  },
+  {
+    id: 'dlg.rosie.bringen',
+    character: 'rosie',
+    when: { questStep: { quest: Q_KISSEN, step: 'bringen' } },
+    lines: [
+      { speaker: 'rosie', text: 'Hast du das Kissen dabei? Wenn es schon irgendwo liegt, kannst du es im Beutel wieder einpacken.' },
+    ],
+  },
+  {
+    id: 'dlg.rosie.sammeln',
+    character: 'rosie',
+    when: { questStep: { quest: Q_KISSEN, step: 'sammeln' } },
+    lines: [{ speaker: 'rosie', text: 'Seerosenblätter schwimmen hier im Teich. Wiesenblüten findest du drüben auf der Wiese.' }],
+  },
+  {
+    id: 'dlg.rosie.basteln',
+    character: 'rosie',
+    when: { questStep: { quest: Q_KISSEN, step: 'basteln' } },
+    lines: [{ speaker: 'rosie', text: 'Am Bastelstumpf geht das ganz leicht!' }],
+  },
+  {
+    id: 'dlg.rosie.plaudern',
+    character: 'rosie',
+    when: { questDone: Q_KISSEN },
+    lines: [{ speaker: 'rosie', text: 'So gemütlich! Danke noch mal, {name}.' }],
+  },
+  {
+    id: 'dlg.rosie.fremd',
+    character: 'rosie',
+    lines: [{ speaker: 'rosie', text: 'Oh, hallo! Wir kennen uns ja noch gar nicht. Komm doch bald mal wieder vorbei!' }],
+  },
+  {
+    id: 'dlg.bubbles.blubb',
+    character: 'bubbles',
+    lines: [
+      { speaker: 'bubbles', text: 'Blubb!' },
+      { speaker: null, text: 'Bubbles dreht sich einmal im Kreis. Eine Blase steigt auf und macht leise plopp.' },
     ],
   },
 ];

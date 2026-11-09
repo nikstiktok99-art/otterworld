@@ -6,6 +6,7 @@ import { dialogues } from './dialogues';
 import { encounters } from './encounters';
 import { startufer } from './maps/startufer';
 import { schilfbucht } from './maps/schilfbucht';
+import { tiramisuStream } from './maps/tiramisu-stream';
 import { MAP_STARTUFER } from './ids';
 
 // Zentrale Sammlung aller Inhaltspakete. Eine neue Map kommt als weiterer Eintrag in `maps` hinzu
@@ -15,7 +16,7 @@ export const content: Content = {
   bodies,
   items,
   recipes,
-  maps: { [startufer.id]: startufer, [schilfbucht.id]: schilfbucht },
+  maps: { [startufer.id]: startufer, [schilfbucht.id]: schilfbucht, [tiramisuStream.id]: tiramisuStream },
   encounters,
   quests,
   moments,

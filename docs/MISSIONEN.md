@@ -6,7 +6,9 @@ den Tests und beim Start im Entwicklungsmodus) meldet fehlende Verweise, unerrei
 
 ## Was ich von dir pro Freund oder Mission brauche (Steckbrief)
 
-Kopieren, ausfüllen, mir schicken. Alles Ungefüllte schlage ich vor und markiere es als Vorschlag.
+Nicht nötig (Entscheidung 09.11.2026): Freunde und Orte entwerfe ich aus dem Masterprompt nach `docs/WELTPLAN.md`.
+Der Steckbrief ist nur für den Fall, dass du bei einem Freund etwas Bestimmtes willst oder es eine echte gemeinsame
+Erinnerung gibt.
 
 ```
 Freund: (Name, Tier, Schreibweise)
@@ -59,7 +61,8 @@ schnellem Tippen, Neuladen oder Unterbrechen:
 
 - Pro Figur gilt das **erste** Gespräch, dessen `when`-Bedingung passt (Reihenfolge = Vorrang).
 - Bedingungen: `questNotStarted`, `questStep`, `questDone`, `hasMoment`, `hasItems`, `hasName`, kombinierbar mit `all`, `any`, `not`.
-- `{name}` wird durch ihren Namen ersetzt. `speaker: null` ist Erzähltext. `cue` gibt der Welt ein Signal (z. B. Leuchte geht an).
+- `{name}` wird durch ihren Namen ersetzt. `speaker: null` ist Erzähltext. `cue: 'an:item.uferleuchte'` schaltet in genau
+  diesem Moment eine Deko an (Signal an die Welt).
 - **Antworten:** `choices: [{ label: 'Gern!', then: 'weiter' }, { label: 'Lieber später', then: 'spaeter' }]`.
   „später“ beendet das Gespräch ohne Folgen; beim nächsten Ansprechen kommt es wieder.
 - **Sprechblase:** Eine Figur zeigt automatisch eine kleine Sprechblase, wenn ihr aktuelles Gespräch etwas Neues bringt

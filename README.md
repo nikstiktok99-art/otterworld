@@ -2,10 +2,11 @@
 
 Kleines, persönliches Otterspiel. **Hauptplattform: ihr iPhone 16 Pro.** Android = dein Testgerät, Browser = schnelle Vorschau.
 
-Aktueller Stand: **Version 0.4.0** – Phase 2 (Vertrauen und Figurenwechsel) plus Grundbau für Missionen und Crafting
+Aktueller Stand: **Version 0.5.0** – Kapitel Tiramisu Stream (Lumi, Rosie, Bubbles) auf dem Grundbau für Missionen und Crafting
 (Aufgabenbuch, Sprechblasen über Figuren, Antworten im Gespräch, Abgeben/Geschenke, nachwachsende Fundstellen,
-freies Bauen, Deko einpacken, Stationen; Baukasten in `docs/MISSIONEN.md`). Spielbar: der erste Abend, danach ein zweites
-Erlebnis mit Schnabbi in der Schilfbucht (zweite Map mit Hin- und Rückweg), Freundebuch und Spielen als Schnabbi.
+freies Bauen, Deko einpacken, Stationen; Baukasten in `docs/MISSIONEN.md`, Plan in `docs/WELTPLAN.md`). Spielbar: der erste Abend, danach ein zweites
+Erlebnis mit Schnabbi in der Schilfbucht, Freundebuch und Spielen als Schnabbi, danach der Tiramisu Stream mit Lumis
+Picknick (Lumi wird spielbar) und einem Kissen für Rosie und Bubbles.
 Alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf; Geschichte und Texte von Phase 2 sind Vorschläge.
 
 ## Selbst spielen

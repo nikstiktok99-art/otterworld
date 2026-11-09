@@ -17,6 +17,9 @@ Status: **P** = Platzhalter im Code · **E** = Codex-Entwurf eingebaut · **F** 
 | characters.schnabbi.walk.se / .ne | 88 × 48 | 44, 40 | 4 · 6 | P | tapst |
 | characters.schnabbi.swim.se / .ne | 88 × 48 | 44, 40 | 2 · 3 | P | paddelt, Anker = Wasserlinie |
 | characters.schnabbi.sit.se / .ne | 88 × 48 | 44, 40 | 2 · 2 | P | sitzt neben der Leuchte |
+| characters.otterprinzessin.idle/.walk/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·8 / 4·5 | P | Lumi: Otter mit Kleid und Krone; Krone bleibt beim Schwimmen über Wasser |
+| characters.rosie.idle/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·4 | P | pinker Axolotl, lebt nur im Wasser (Anker = Wasserlinie), Kiemenbüschel wippen |
+| characters.bubbles.idle/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·4 | P | blauer Axolotl; die Blasen erzeugt das Spiel selbst (fx.blase) |
 
 Solange von einer Figur nur einzelne Zustände geliefert sind, nutzt das Spiel für die fehlenden Zustände das gelieferte
 Bild (kein Mix aus Bild und Testform).
@@ -28,7 +31,9 @@ Bild (kein Mix aus Bild und Testform).
 | objects.bau | 48 × 40 | 24, 39 | P | Bau unter Wurzeln, karierte Gardine; Grundfläche 3 × 2 Kacheln |
 | objects.werkbank | 32 × 24 | 16, 23 | P | Grundfläche 2 × 1 Kacheln |
 | objects.wegweiser | 16 × 32 | 8, 31 | P | Holzpfosten mit Schild, Spitze nach rechts (das Spiel spiegelt für links); Grundfläche 1 Kachel; steht an jedem Ausgang |
-| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Sand, Wasser (2 Frames), Uferkanten, Steg, Pfad, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
+| objects.picknickdecke | 48 × 32 | 24, 31 | P | Tiramisu Stream: karierte Picknickdecke mit Körbchen, Grundfläche 3 × 2 Kacheln |
+| objects.bastelstumpf | 16 × 24 | 8, 23 | P | Tiramisu Stream: Baumstumpf mit Garn und Schere, Bastel-Station, 1 Kachel |
+| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Blumenwiese, Sand, Wasser (2 Frames), Uferkanten, Steg (längs) und Brücke (quer), Pfad, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
 
 ## Gegenstände und Deko
 
@@ -43,6 +48,12 @@ Bild (kein Mix aus Bild und Testform).
 | deco.schilfmatte | 16 × 16 | 8, 12 | 1 | P | Phase 2: geflochtene Matte, flach auf dem Boden, 1 Kachel |
 | deco.treibholzbank | 16 × 24 | 8, 21 | 1 | P | freies Bauen: kleine Bank aus Treibholz, 1 Kachel breit |
 | deco.muschelwindspiel | 16 × 32 | 8, 30 | 3 · 2 | P | freies Bauen: Windspiel aus Muscheln am Treibholzpfosten, Muscheln schaukeln |
+| items.wiesenbluete | 16 × 16 | 8, 13 | 1 | P | kleiner bunter Blütenstrauß (Fundstelle) |
+| items.glitzerkiesel | 16 × 16 | 8, 13 | 1 | P | runder funkelnder Kiesel (Fundstelle) |
+| items.seerosenblatt | 16 × 16 | 8, 12 | 2 · 1 | P | schwimmendes Seerosenblatt (Fundstelle im Teich) |
+| deco.bluetengirlande | 16 × 32 | 8, 30 | 1 | P | Blütengirlande zwischen zwei Stäbchen |
+| deco.seerosenkissen | 16 × 16 | 8, 13 | 1 | P | rundes Kissen aus Seerosenblättern |
+| deco.kiesellicht.aus / .an | 16 × 16 | 8, 13 | 1 / 2 · 3 | P | Muschel mit Glitzerkieseln, an: leuchtet sanft |
 
 ## Effekte
 
@@ -53,6 +64,7 @@ Bild (kein Mix aus Bild und Testform).
 | fx.ziel | 16 × 8 | 8, 4 | 1 | P |
 | fx.spritzer | 16 × 8 | 8, 6 | 3 · 10 | P |
 | fx.hinweis | 12 × 12 | 6, 11 | 1 | P (kleine Sprechblase über einer Figur, die etwas Neues hat; keine Schrift, kein Ausrufezeichen-Emoji) |
+| fx.blase | 6 × 6 | 3, 3 | 1 | P (Luftblase, steigt auf – Bubbles' Eigenheit) |
 
 ## Porträts (Dialog, angezeigt mit 64 CSS-Pixeln)
 
@@ -60,6 +72,9 @@ Bild (kein Mix aus Bild und Testform).
 |---|---|---|---|
 | portraits.schnabbi | 64 × 64 | P | neutral; nach Foto |
 | portraits.otter | 64 × 64 | P | neutral |
+| portraits.otterprinzessin | 64 × 64 | P | Lumi mit Krone |
+| portraits.rosie | 64 × 64 | P | pinker Axolotl |
+| portraits.bubbles | 64 × 64 | P | blauer Axolotl mit Blase |
 
 ## Ton (Platzhalter: synthetisch erzeugt, `src/app/sound.ts`)
 
@@ -73,3 +88,6 @@ Ambiente-Slots `ambience.startufer.abend` und `ambience.schilfbucht.abend` (noch
    laufen und schwimmen in beiden Richtungen genauso wie der Otter.
 3. **Startufer**: Kachelbogen (inkl. Pfad und Schilf), Bau, Werkbank, Steg, Wegweiser.
 4. **Dinge**: Treibholz (2), Muschelschale, Uferleuchte aus/an, Schilfhalme, Schilfmatte.
+5. **Tiramisu Stream** (neu, Version 0.5.0): Lumi (Otter mit Kleid und Krone), Rosie und Bubbles (Axolotl, rosa und
+   blau, nur im Wasser), Porträts der drei, Picknickdecke, Bastelstumpf, Blumenwiese, Querbrücke, Wiesenblüten,
+   Glitzerkiesel, Seerosenblätter, Blütengirlande, Seerosenkissen, Kiesellicht aus/an. Gleicher Stil wie das Startufer.
