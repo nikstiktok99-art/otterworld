@@ -1,5 +1,26 @@
 import type { DialogueDef } from './types';
-import { Q_BALL, Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_SCHILF, Q_WIMPEL, R_BALL, R_BANK, R_GIRLANDE, R_KISSEN, R_LEUCHTE, R_MATTE, R_WIMPEL, R_WINDSPIEL } from './ids';
+import {
+  Q_BALL,
+  Q_FESTESSEN,
+  Q_KISSEN,
+  Q_KLETTER,
+  Q_KRANZ,
+  Q_LICHT,
+  Q_PICKNICK,
+  Q_SCHILF,
+  Q_WIMPEL,
+  R_BALL,
+  R_BANK,
+  R_GIRLANDE,
+  R_KISSEN,
+  R_KLETTER,
+  R_KRANZ,
+  R_LEUCHTE,
+  R_MATTE,
+  R_TEIGTASCHEN,
+  R_WIMPEL,
+  R_WINDSPIEL,
+} from './ids';
 
 // ENTWURF: Alle Texte sind Vorschläge und dürfen frei ersetzt werden.
 // {name} wird durch den Namen ersetzt, den die Spielerin im ersten Gespräch wählt.
@@ -429,5 +450,203 @@ export const dialogues: DialogueDef[] = [
     id: 'dlg.squichy.fremd',
     character: 'squichy',
     lines: [{ speaker: 'squichy', text: 'Huiii! Hallo! Ich schwimm gerade Kreise. Komm doch bald mal wieder!' }],
+  },
+
+  // ---- Kapitel Cat Café (Vorschlag): Chamaron ----
+  {
+    id: 'dlg.chamaron.hallo',
+    character: 'chamaron',
+    when: { all: [{ questDone: Q_WIMPEL }, { questNotStarted: Q_KLETTER }] },
+    lines: [
+      { speaker: null, text: 'Zwischen den Blättern blinzeln dich zwei runde Augen an.' },
+      { speaker: 'chamaron', text: 'Oh! Du hast mich gefunden? Das schafft sonst fast niemand. Ich bin Chamaron.' },
+      { speaker: 'chamaron', text: 'Ich wechsle die Farbe, wenn ich mich wohlfühle – und wenn ich mich verstecke. Meistens verstecke ich mich.' },
+      {
+        speaker: 'chamaron',
+        text: 'Eine eigene Kletterpflanze wäre schön. Dann wüssten meine Freunde immer, wo sie mich suchen müssen.',
+        choices: [
+          { label: 'Ich bastel dir eine!', then: 'weiter' },
+          { label: 'Später', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'chamaron', text: 'Wirklich? Zwei Teeblätter und ein Wollfaden zum Festbinden. Der Basteltisch steht hinten im Café.' },
+    ],
+    effects: [{ startQuest: Q_KLETTER }, { learnRecipe: R_KLETTER }],
+  },
+  {
+    id: 'dlg.chamaron.sammeln',
+    character: 'chamaron',
+    when: { questStep: { quest: Q_KLETTER, step: 'sammeln' } },
+    lines: [{ speaker: 'chamaron', text: 'Die Teepflanzen stehen an den Fenstern. Wollfäden lassen die Katzen überall liegen.' }],
+  },
+  {
+    id: 'dlg.chamaron.basteln',
+    character: 'chamaron',
+    when: { questStep: { quest: Q_KLETTER, step: 'basteln' } },
+    lines: [{ speaker: 'chamaron', text: 'Am Basteltisch geht das ganz leicht. Ich warte hier. Unsichtbar natürlich.' }],
+  },
+  {
+    id: 'dlg.chamaron.aufstellen',
+    character: 'chamaron',
+    when: { questStep: { quest: Q_KLETTER, step: 'aufstellen' } },
+    lines: [{ speaker: 'chamaron', text: 'Sie ist fertig? Stell sie irgendwo im Café auf – ich klettere dann hinein.' }],
+  },
+  {
+    id: 'dlg.chamaron.danke',
+    character: 'chamaron',
+    when: { questStep: { quest: Q_KLETTER, step: 'gemeinsam' } },
+    lines: [
+      { speaker: 'chamaron', text: 'Meine eigene Pflanze!' },
+      { speaker: null, text: 'Chamaron klettert hinein und färbt sich vor Freude rosa, dann himmelblau.' },
+      { speaker: 'chamaron', text: 'Jetzt findest du mich immer, {name}. Und die Wollfäden der Katzen? Daraus wird ein schönes Kissen.' },
+    ],
+  },
+  {
+    id: 'dlg.chamaron.plaudern',
+    character: 'chamaron',
+    when: { questDone: Q_KLETTER },
+    lines: [{ speaker: 'chamaron', text: 'Psst … ich bin getarnt. Na gut, nicht sehr. Schön, dass du da bist.' }],
+  },
+  {
+    id: 'dlg.chamaron.fremd',
+    character: 'chamaron',
+    lines: [{ speaker: null, text: 'Zwischen den Blättern raschelt es kurz. Dann ist es wieder still.' }],
+  },
+
+  // ---- Kapitel Hotpot-Restaurant (Vorschlag): Beano, Beani und Beanz ----
+  {
+    id: 'dlg.beano.hallo',
+    character: 'beano',
+    when: { all: [{ questDone: Q_KLETTER }, { questNotStarted: Q_FESTESSEN }] },
+    lines: [
+      { speaker: 'beano', text: 'Hallo hallo! Wir sind die Erbsen! Ich bin Beano!' },
+      { speaker: 'beani', text: 'Und ich bin Beani … hallo …' },
+      { speaker: 'beanz', text: 'Ich bin Beanz! Wer bist du? Woher kommst du? Magst du Teigtaschen?' },
+      { speaker: 'beano', text: 'Wir wollten heute selbst kochen, aber der große Topf ist viel zu hoch für uns!' },
+      {
+        speaker: 'beani',
+        text: 'Kochst du für uns? Dann essen wir alle zusammen …',
+        choices: [
+          { label: 'Na klar, ich koche!', then: 'weiter' },
+          { label: 'Später', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'beanz', text: 'Teigtaschen! Zwei Säckchen Mehl und ein Möhrchen. Der Kochtopf steht oben in der Küche. Weißt du, wie heiß der wird?' },
+    ],
+    effects: [{ startQuest: Q_FESTESSEN }, { learnRecipe: R_TEIGTASCHEN }],
+  },
+  {
+    id: 'dlg.beano.danke',
+    character: 'beano',
+    when: { all: [{ questStep: { quest: Q_FESTESSEN, step: 'bringen' } }, { hasItems: { 'item.teigtaschen': 1 } }] },
+    lines: [
+      { speaker: 'beano', text: 'Teigtaschen!! Alle für uns?' },
+      { speaker: 'beani', text: 'Wir teilen … mit dir.' },
+      { speaker: null, text: 'Die drei Erbsen rücken in ihrer Schale zusammen, damit du auch einen Bissen abbekommst.' },
+      { speaker: 'beanz', text: 'Mmmh! Weißt du, wie man Kräutersuppe kocht? Wir zeigen es dir! Kräuter, ein Möhrchen und eine Muschel als Schale.' },
+    ],
+    effects: [{ takeItems: { 'item.teigtaschen': 1 } }],
+  },
+  {
+    id: 'dlg.beano.bringen',
+    character: 'beano',
+    when: { questStep: { quest: Q_FESTESSEN, step: 'bringen' } },
+    lines: [
+      { speaker: 'beanz', text: 'Wo sind die Teigtaschen? Hast du sie schon hingestellt?' },
+      { speaker: 'beano', text: 'Dann pack sie im Beutel wieder ein und bring sie her!' },
+    ],
+  },
+  {
+    id: 'dlg.beano.sammeln',
+    character: 'beano',
+    when: { questStep: { quest: Q_FESTESSEN, step: 'sammeln' } },
+    lines: [
+      { speaker: 'beano', text: 'Mehl steht in Säckchen bei der Küche, Möhrchen liegen in der Gemüsekiste!' },
+      { speaker: 'beanz', text: 'Und warum sind Möhrchen eigentlich orange?' },
+    ],
+  },
+  {
+    id: 'dlg.beano.kochen',
+    character: 'beano',
+    when: { questStep: { quest: Q_FESTESSEN, step: 'kochen' } },
+    lines: [{ speaker: 'beani', text: 'Der Kochtopf ist oben … wir warten hier … ganz gespannt …' }],
+  },
+  {
+    id: 'dlg.beano.plaudern',
+    character: 'beano',
+    when: { questDone: Q_FESTESSEN },
+    lines: [
+      { speaker: 'beano', text: 'Da ist ja unsere Köchin!' },
+      { speaker: 'beanz', text: 'Kochst du bald wieder was? Was kochst du als Nächstes?' },
+    ],
+  },
+  {
+    id: 'dlg.beano.fremd',
+    character: 'beano',
+    lines: [
+      { speaker: 'beano', text: 'Hallo! Wir sind gerade sehr beschäftigt!' },
+      { speaker: 'beani', text: '… mit Ausruhen …' },
+    ],
+  },
+
+  // ---- Kapitel Fuchsbau (Vorschlag): Bean ----
+  {
+    id: 'dlg.bean.hallo',
+    character: 'bean',
+    when: { all: [{ questDone: Q_FESTESSEN }, { questNotStarted: Q_KRANZ }] },
+    lines: [
+      { speaker: 'bean', text: 'Oh, hallo. Ich habe dich schon von Weitem gehört. Ich bin Bean.' },
+      { speaker: 'bean', text: 'Ich wohne hier im Wald, gleich beim Fuchsbau. Es ist sehr ruhig hier. Das mag ich.' },
+      {
+        speaker: 'bean',
+        text: 'Nur mein Geweih sieht so kahl aus. Ein Kranz aus Tannenzapfen würde schön darin hängen. Magst du mir einen basteln?',
+        choices: [
+          { label: 'Sehr gern!', then: 'weiter' },
+          { label: 'Später', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'bean', text: 'Danke. Drei Tannenzapfen und eine Waldbeere. Am Baumstumpf auf der Lichtung kannst du basteln.' },
+    ],
+    effects: [{ startQuest: Q_KRANZ }, { learnRecipe: R_KRANZ }],
+  },
+  {
+    id: 'dlg.bean.danke',
+    character: 'bean',
+    when: { all: [{ questStep: { quest: Q_KRANZ, step: 'bringen' } }, { hasItems: { 'item.zapfenkranz': 1 } }] },
+    lines: [
+      { speaker: 'bean', text: 'Der ist ja wunderschön.' },
+      { speaker: null, text: 'Bean senkt den Kopf, und du hängst den Kranz vorsichtig ins Geweih.' },
+      { speaker: 'bean', text: 'Danke, {name}. Ich zeig dir dafür zwei Sachen aus dem Wald: ein Beerenlicht und ein Mooskissen.' },
+    ],
+    effects: [{ takeItems: { 'item.zapfenkranz': 1 } }],
+  },
+  {
+    id: 'dlg.bean.bringen',
+    character: 'bean',
+    when: { questStep: { quest: Q_KRANZ, step: 'bringen' } },
+    lines: [{ speaker: 'bean', text: 'Hast du den Kranz dabei? Wenn er schon irgendwo hängt, kannst du ihn im Beutel wieder einpacken.' }],
+  },
+  {
+    id: 'dlg.bean.sammeln',
+    character: 'bean',
+    when: { questStep: { quest: Q_KRANZ, step: 'sammeln' } },
+    lines: [{ speaker: 'bean', text: 'Tannenzapfen liegen unter den Bäumen. Waldbeeren wachsen an den Sträuchern beim Fuchsbau.' }],
+  },
+  {
+    id: 'dlg.bean.basteln',
+    character: 'bean',
+    when: { questStep: { quest: Q_KRANZ, step: 'basteln' } },
+    lines: [{ speaker: 'bean', text: 'Der Baumstumpf zum Basteln steht unten auf der Lichtung.' }],
+  },
+  {
+    id: 'dlg.bean.plaudern',
+    character: 'bean',
+    when: { questDone: Q_KRANZ },
+    lines: [{ speaker: 'bean', text: 'Hörst du den Wald, {name}? Ganz leise. Schön, dass du vorbeikommst.' }],
+  },
+  {
+    id: 'dlg.bean.fremd',
+    character: 'bean',
+    lines: [{ speaker: 'bean', text: 'Hallo. Es ist schön ruhig hier, nicht wahr?' }],
   },
 ];

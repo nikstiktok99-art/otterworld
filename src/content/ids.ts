@@ -37,3 +37,28 @@ export const R_BALL = 'recipe.schilfball';
 export const R_TOPF = 'recipe.sonnenblumentopf';
 export const M_WIMPEL = 'moment.meerkat.wimpel';
 export const M_BALL = 'moment.squichy.ball';
+
+// Kapitel Cat Café (Vorschlag): Chamaron.
+export const MAP_CAFE = 'map.cat-cafe';
+export const Q_KLETTER = 'quest.chamaron.kletterpflanze';
+export const R_KLETTER = 'recipe.kletterpflanze';
+export const R_WOLLKISSEN = 'recipe.wollkissen';
+export const M_KLETTER = 'moment.chamaron.kletterpflanze';
+
+// Kapitel Hotpot-Restaurant (Vorschlag): Beano, Beani und Beanz.
+export const MAP_HOTPOT = 'map.hotpot-restaurant';
+export const Q_FESTESSEN = 'quest.erbsen.festessen';
+export const R_TEIGTASCHEN = 'recipe.teigtaschen';
+export const R_SUPPE = 'recipe.kraeutersuppe';
+export const M_FEST_BEANO = 'moment.beano.festessen';
+export const M_FEST_BEANI = 'moment.beani.festessen';
+export const M_FEST_BEANZ = 'moment.beanz.festessen';
+export const STATION_KOCHTOPF = 'kochtopf';
+
+// Kapitel Fuchsbau (Vorschlag): Bean.
+export const MAP_FUCHSBAU = 'map.fuchsbau';
+export const Q_KRANZ = 'quest.bean.kranz';
+export const R_KRANZ = 'recipe.zapfenkranz';
+export const R_BEERENLICHT = 'recipe.beerenlicht';
+export const R_MOOSKISSEN = 'recipe.mooskissen';
+export const M_KRANZ = 'moment.bean.kranz';

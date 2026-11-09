@@ -95,6 +95,7 @@ export class WorldScene extends Phaser.Scene {
   /** Figuren, die gerade zu einem Ausgang gehen und danach verschwinden. */
   private leavers: Actor[] = [];
   private bubbleClock = new WeakMap<Actor, number>();
+  private camouflaged = new Set<string>();
   private bubblesMade = 0;
   /** Sprechblase pro Körper-ID, solange die Figur etwas Neues hat. */
   private markers = new Map<string, Phaser.GameObjects.Image>();
@@ -594,8 +595,18 @@ export class WorldScene extends Phaser.Scene {
   private syncMarkers(): void {
     const { session, content } = this.deps;
     const s = session.getState();
+    // Getarnt ist, wen sie noch nicht kennt (für die Eigenheit Farbwechsel).
+    this.camouflaged = new Set(
+      [...this.npcs.values()]
+        .filter(({ actor, placement }) => actor.body.traits?.includes('farbwechsel') && !placement.characters.some((c) => {
+          const f = content.characters[c]?.friend;
+          return f ? matches(f.metWhen, s) : true;
+        }))
+        .map(({ placement }) => placement.body),
+    );
     for (const [bodyId, { placement }] of this.npcs) {
-      const news = placement.characters.some((c) => hasNews(c, s, content));
+      // Getarnte Figuren verraten ihr Versteck nicht durch eine Sprechblase.
+      const news = !this.camouflaged.has(bodyId) && placement.characters.some((c) => hasNews(c, s, content));
       const marker = this.markers.get(bodyId);
       if (news && !marker) {
         const o = this.tex.origin('fx.hinweis');
@@ -892,6 +903,17 @@ export class WorldScene extends Phaser.Scene {
         this.bubbleClock.set(actor, t);
       }
     }
+    // Eigenheit Farbwechsel (Chamaron): getarnt, bis man sich kennt – danach wechselt er gemütlich die Farbe.
+    for (const actor of [this.player, ...[...this.npcs.values()].map((n) => n.actor)]) {
+      if (!actor.body.traits?.includes('farbwechsel')) continue;
+      if (actor !== this.player && this.camouflaged.has(actor.body.id)) {
+        actor.sprite.setAlpha(0.45).setTint(0x7fbf6a);
+      } else {
+        const col = Phaser.Display.Color.HSVToRGB((this.time0 * 0.04) % 1, 0.35, 1) as Phaser.Types.Display.ColorObject;
+        actor.sprite.setTint(col.color);
+        if (actor.sprite.alpha < 1 && !this.tweens.isTweening(actor.sprite)) actor.sprite.setAlpha(1);
+      }
+    }
     const talking = this.deps.ui.getState().panel?.kind === 'dialog';
     for (const [bodyId, marker] of this.markers) {
       const npc = this.npcs.get(bodyId);
@@ -940,6 +962,7 @@ export class WorldScene extends Phaser.Scene {
       spotsVisible: [...this.spots.entries()].filter(([, sp]) => sp.visible).map(([id]) => id),
       objects: this.objects.map(({ obj, sprite }) => ({ id: obj.id, sprite: sprite.texture.key })),
       bubblesMade: this.bubblesMade,
+      camouflaged: [...this.camouflaged],
       warnings: this.tex.warnings,
       spriteKeys: spriteDef('characters.schnabbi.idle.se')?.file ? 'schnabbi:datei' : 'schnabbi:platzhalter',
     };

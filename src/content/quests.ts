@@ -2,6 +2,11 @@ import type { MomentDef, QuestDef } from './types';
 import {
   M_BALL,
   M_BUBBLES_KISSEN,
+  M_FEST_BEANI,
+  M_FEST_BEANO,
+  M_FEST_BEANZ,
+  M_KLETTER,
+  M_KRANZ,
   M_ERSTER_ABEND,
   M_PICKNICK,
   M_PLATZ_FUER_ZWEI,
@@ -9,19 +14,29 @@ import {
   M_WIMPEL,
   MAP_SCHILFBUCHT,
   Q_BALL,
+  Q_FESTESSEN,
   Q_KISSEN,
+  Q_KLETTER,
+  Q_KRANZ,
   Q_LICHT,
   Q_PICKNICK,
   Q_SCHILF,
   Q_WIMPEL,
   R_BALL,
+  R_BEERENLICHT,
   R_GIRLANDE,
   R_KIESELLICHT,
   R_KISSEN,
+  R_KLETTER,
+  R_KRANZ,
   R_LEUCHTE,
   R_MATTE,
+  R_MOOSKISSEN,
+  R_SUPPE,
+  R_TEIGTASCHEN,
   R_TOPF,
   R_WIMPEL,
+  R_WOLLKISSEN,
 } from './ids';
 
 // Vorschläge, austauschbar. Phase 1: Am Steg fehlt abends ein Licht.
@@ -215,6 +230,85 @@ export const quests: Record<string, QuestDef> = {
       text: 'Squichy balanciert den Schilfball auf der Nase und will gar nicht mehr aufhören. Jetzt hat das Becken seinen kleinsten Star.',
     },
   },
+
+  // ---- Kapitel Cat Café (Vorschlag) ----
+  [Q_KLETTER]: {
+    id: Q_KLETTER,
+    name: 'Ein Versteck für Chamaron',
+    giver: 'chamaron',
+    offer: { when: { questDone: Q_WIMPEL }, hint: 'Im Cat Café raschelt es zwischen den Pflanzen – der Weg beginnt unten im Zoo' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Kletterpflanze: Teeblätter {count:item.teeblatt}/2 · Wollfaden {count:item.wollfaden}/1',
+        completeWhen: { hasItems: { 'item.teeblatt': 2, 'item.wollfaden': 1 } },
+      },
+      { id: 'basteln', hint: 'Eine Kletterpflanze basteln – am Basteltisch', completeWhen: { crafted: R_KLETTER } },
+      { id: 'aufstellen', hint: 'Die Kletterpflanze im Café aufstellen – im Beutel', completeWhen: { placed: 'item.kletterpflanze' } },
+      {
+        id: 'gemeinsam',
+        hint: 'Chamaron wartet an der Kletterpflanze',
+        completeWhen: { dialogue: 'dlg.chamaron.danke' },
+        onComplete: [{ addMoment: M_KLETTER }, { learnRecipe: R_WOLLKISSEN }],
+      },
+    ],
+    ending: {
+      title: 'Ein Versteck für Chamaron',
+      text: 'Chamaron sitzt in seiner Kletterpflanze und leuchtet abwechselnd rosa und himmelblau. Jetzt weißt du immer, wo du ihn findest.',
+    },
+  },
+
+  // ---- Kapitel Hotpot-Restaurant (Vorschlag) ----
+  [Q_FESTESSEN]: {
+    id: Q_FESTESSEN,
+    name: 'Ein Festessen für drei',
+    giver: 'beano',
+    offer: { when: { questDone: Q_KLETTER }, hint: 'Im Hotpot-Restaurant duftet es – der Weg beginnt rechts im Zoo' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Teigtaschen: Mehl {count:item.mehl}/2 · Möhrchen {count:item.moehrchen}/1',
+        completeWhen: { hasItems: { 'item.mehl': 2, 'item.moehrchen': 1 } },
+      },
+      { id: 'kochen', hint: 'Teigtaschen kochen – am Kochtopf', completeWhen: { crafted: R_TEIGTASCHEN } },
+      {
+        id: 'bringen',
+        hint: 'Bring den Erbsen die Teigtaschen',
+        completeWhen: { dialogue: 'dlg.beano.danke' },
+        onComplete: [{ addMoment: M_FEST_BEANO }, { addMoment: M_FEST_BEANI }, { addMoment: M_FEST_BEANZ }, { learnRecipe: R_SUPPE }],
+      },
+    ],
+    ending: {
+      title: 'Ein Festessen für drei',
+      text: 'Beano, Beani und Beanz rücken in ihrer Schale zusammen, und alle teilen die Teigtaschen. Ein richtiges Festessen, {name}.',
+    },
+  },
+
+  // ---- Kapitel Fuchsbau (Vorschlag) ----
+  [Q_KRANZ]: {
+    id: Q_KRANZ,
+    name: 'Ein Kranz für Bean',
+    giver: 'bean',
+    offer: { when: { questDone: Q_FESTESSEN }, hint: 'Im Wald hinter dem Tiramisu Stream wartet jemand mit Geweih' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Zapfenkranz: Tannenzapfen {count:item.tannenzapfen}/3 · Waldbeere {count:item.beere}/1',
+        completeWhen: { hasItems: { 'item.tannenzapfen': 3, 'item.beere': 1 } },
+      },
+      { id: 'basteln', hint: 'Einen Zapfenkranz basteln – am Baumstumpf im Wald', completeWhen: { crafted: R_KRANZ } },
+      {
+        id: 'bringen',
+        hint: 'Bring Bean den Zapfenkranz',
+        completeWhen: { dialogue: 'dlg.bean.danke' },
+        onComplete: [{ addMoment: M_KRANZ }, { learnRecipe: R_BEERENLICHT }, { learnRecipe: R_MOOSKISSEN }],
+      },
+    ],
+    ending: {
+      title: 'Ein Kranz für Bean',
+      text: 'Der Zapfenkranz hängt jetzt in Beans Geweih und schaukelt bei jedem Schritt. Bean sieht sehr zufrieden aus.',
+    },
+  },
 };
 
 /** Gemeinsame Erlebnisse (Vertrauen). Sie stehen im Freundebuch. */
@@ -260,5 +354,35 @@ export const moments: Record<string, MomentDef> = {
     character: 'squichy',
     title: 'Ein Ball für Squichy',
     text: 'Squichy hat zum ersten Mal einen eigenen Ball – aus Schilf, mit einem Glitzerkiesel, der raschelt.',
+  },
+  [M_KLETTER]: {
+    id: M_KLETTER,
+    character: 'chamaron',
+    title: 'Ein Versteck für Chamaron',
+    text: 'Du hast Chamaron zwischen den Pflanzen entdeckt und ihm eine eigene Kletterpflanze gebastelt.',
+  },
+  [M_FEST_BEANO]: {
+    id: M_FEST_BEANO,
+    character: 'beano',
+    title: 'Ein Festessen für drei',
+    text: 'Beano hat die erste Teigtasche bekommen und vor Freude so laut gejubelt, dass die Schale wackelte.',
+  },
+  [M_FEST_BEANI]: {
+    id: M_FEST_BEANI,
+    character: 'beani',
+    title: 'Ein Festessen für drei',
+    text: 'Beani hat ganz leise „danke“ gesagt und ein Stück mit dir geteilt.',
+  },
+  [M_FEST_BEANZ]: {
+    id: M_FEST_BEANZ,
+    character: 'beanz',
+    title: 'Ein Festessen für drei',
+    text: 'Beanz wollte alles über Teigtaschen wissen – und hat dir dafür gezeigt, wie Kräutersuppe geht.',
+  },
+  [M_KRANZ]: {
+    id: M_KRANZ,
+    character: 'bean',
+    title: 'Ein Kranz für Bean',
+    text: 'Dein Zapfenkranz hängt in Beans Geweih. Dafür zeigte Bean dir das Beerenlicht und das Mooskissen.',
   },
 };

@@ -1,12 +1,12 @@
 import type { MapDef } from '../types';
-import { MAP_STARTUFER, MAP_TIRAMISU, NACHWACHSEN_MIN } from '../ids';
+import { MAP_FUCHSBAU, MAP_STARTUFER, MAP_TIRAMISU, NACHWACHSEN_MIN } from '../ids';
 
 // Tiramisu Stream (Eigenname aus dem Masterprompt; Gestaltung offen, Bild macht Codex).
 // Vorschlag für den Aufbau: ein Bach mit Teich oben links (Rosie und Bubbles), zwei kleinen Brücken und einer
 // Blumenwiese rechts mit Lumis Picknickplatz. 16 × 32 Kacheln.
 // Legende: ~ Wasser · : Sand/Kies · , Gras · * Blumenwiese · = Brücke · - Pfad · # Büsche (nicht begehbar)
 const grid = [
-  '#####~~~~#######', //  0
+  '#####~~~~##--###', //  0  Weg zum Fuchsbau
   '#,,,,~~~~,,*,,,#', //  1
   '#,*,:~~~~:,,,,,#', //  2  Blüte hinter dem Teich (nur schwimmend)
   '#,,::~~~~:,,*,,#', //  3
@@ -72,6 +72,14 @@ export const tiramisuStream: MapDef = {
       footprint: { w: 1, h: 1 },
       interaction: { kind: 'exit', exit: 'exit.zum-ufer' },
     },
+    {
+      id: 'obj.wegweiser.wald',
+      name: 'Wegweiser',
+      sprite: 'objects.wegweiser',
+      tile: { x: 13, y: 1 },
+      footprint: { w: 1, h: 1 },
+      interaction: { kind: 'exit', exit: 'exit.zum-wald' },
+    },
   ],
   gatherSpots: [
     { id: 'spot.bluete.oben', item: 'item.wiesenbluete', count: 1, tile: { x: 2, y: 2 }, sprite: 'items.wiesenbluete', regrowMinutes: NACHWACHSEN_MIN },
@@ -96,8 +104,21 @@ export const tiramisuStream: MapDef = {
       to: { map: MAP_STARTUFER, entry: 'entry.vom-bach' },
       keepName: 'den Weg zurück zum Ufer',
     },
+    {
+      id: 'exit.zum-wald',
+      label: 'Fuchsbau',
+      tiles: [
+        { x: 11, y: 0 },
+        { x: 12, y: 0 },
+      ],
+      to: { map: MAP_FUCHSBAU, entry: 'entry.vom-bach' },
+      keepName: 'den Weg zum Fuchsbau',
+    },
   ],
-  entries: [{ id: 'entry.vom-ufer', tile: { x: 13, y: 27 }, facing: 'sw' }],
+  entries: [
+    { id: 'entry.vom-ufer', tile: { x: 13, y: 27 }, facing: 'sw' },
+    { id: 'entry.vom-wald', tile: { x: 11, y: 1 }, facing: 'se' },
+  ],
   decorZone: { x: 10, y: 1, w: 5, h: 30 },
   keepReachable: [
     { tile: { x: 9, y: 13 }, name: 'die Brücke' },

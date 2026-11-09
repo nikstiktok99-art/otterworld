@@ -22,6 +22,9 @@ Status: **P** = Platzhalter im Code · **E** = Codex-Entwurf eingebaut · **F** 
 | characters.bubbles.idle/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·4 | P | blauer Axolotl; die Blasen erzeugt das Spiel selbst (fx.blase) |
 | characters.meerkat.idle/.walk (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·10 | P | Meerkat: Erdmännchen, steht aufrecht Wache, flitzt auf allen vieren; nur an Land |
 | characters.squichy.idle/.walk/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·6 / 4·5 | P | Squichy: Mini-Robbe, große Augen; Codex-Entwurf vorhanden, Maße bitte hierauf abstimmen |
+| characters.chamaron.idle/.walk (se, ne) | 48 × 48 | 24, 40 | 2·1 / 4·5 | P | Chamaron (Chamäleon): bitte in hellen, neutralen Farben – das Spiel tönt ihn (getarnt grün, später Farbwechsel) |
+| characters.erbsenschale.idle/.walk (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·6 | P | Schale mit Beano (links, fröhlich), Beani (Mitte, verträumt), Beanz (rechts, neugierig) – ein Körper |
+| characters.bean.idle/.walk (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·7 | P | Bean (Rentier) mit Geweih |
 
 Solange von einer Figur nur einzelne Zustände geliefert sind, nutzt das Spiel für die fehlenden Zustände das gelieferte
 Bild (kein Mix aus Bild und Testform).
@@ -36,7 +39,16 @@ Bild (kein Mix aus Bild und Testform).
 | objects.picknickdecke | 48 × 32 | 24, 31 | P | Tiramisu Stream: karierte Picknickdecke mit Körbchen, Grundfläche 3 × 2 Kacheln |
 | objects.bastelstumpf | 16 × 24 | 8, 23 | P | Tiramisu Stream: Baumstumpf mit Garn und Schere, Bastel-Station, 1 Kachel |
 | objects.aussichtsstein / .wimpel | 32 × 24 | 16, 23 | P | Zoo: Meerkats Aussichtsstein; zweite Fassung mit Federwimpel obendrauf (nach der Aufgabe) |
-| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Blumenwiese, Sand, Wasser (2 Frames), Uferkanten, Steg (längs) und Brücke (quer), Pfad, Holzzaun, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
+| objects.theke | 80 × 32 | 40, 31 | P | Cat Café und Hotpot-Restaurant: Theke, Grundfläche 5 × 1 |
+| objects.basteltisch | 32 × 24 | 16, 23 | P | Cat Café: Basteltisch (Station wie die Werkbank), 2 × 1 |
+| objects.cafetisch | 32 × 24 | 16, 23 | P | Cat Café: kleiner runder Tisch mit Tasse, 2 × 1 |
+| objects.katze.grau / .rot | 16 × 16 | 8, 14 | P | Cat Café: schlafende Katze (2 Frames, atmet), nur Kulisse |
+| objects.zimmerpflanze | 16 × 32 | 8, 31 | P | Cat Café: große Zimmerpflanze, 1 Kachel |
+| objects.kochtopf | 32 × 40 | 16, 39 | P | Hotpot-Restaurant: Kochtopf auf dem Herd, dampft (2 Frames), Station „Kochtopf“, 2 × 2 |
+| objects.hotpottisch | 32 × 40 | 16, 39 | P | Hotpot-Restaurant: runder Tisch mit kleinem Topf, 2 × 2 |
+| objects.laterne | 16 × 32 | 8, 31 | P | Hotpot-Restaurant: rote Papierlaterne, 1 Kachel |
+| objects.fuchsbau | 48 × 40 | 24, 39 | P | Fuchsbau: Erdhügel mit Eingang unter Wurzeln, 3 × 2 |
+| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Blumenwiese, Sand, Wasser (2 Frames), Uferkanten, Steg (längs) und Brücke (quer), Pfad, Holzzaun, Holzboden und Wand (Innenräume), Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
 
 ## Gegenstände und Deko
 
@@ -62,6 +74,21 @@ Bild (kein Mix aus Bild und Testform).
 | deco.federwimpel | 16 × 32 | 8, 30 | 2 · 2 | P | Wimpel mit Federn am Treibholzstab, flattert |
 | deco.schilfball | 16 × 16 | 8, 13 | 1 | P | geflochtener Ball aus Schilf |
 | deco.sonnenblumentopf | 16 × 32 | 8, 30 | 1 | P | kleine Sonnenblume in einer Muschel |
+| items.teepflanze | 16 × 24 | 8, 22 | 1 | P | Teepflanze im Topf (Fundstelle Teeblätter) |
+| items.wollfaden | 16 × 16 | 8, 13 | 1 | P | bunter Wollfaden (Fundstelle) |
+| items.mehlsack | 16 × 16 | 8, 14 | 1 | P | Mehlsäckchen (Fundstelle) |
+| items.gemuesekiste | 16 × 16 | 8, 14 | 1 | P | Kiste mit Möhrchen (Fundstelle) |
+| items.kraeutertopf | 16 × 16 | 8, 14 | 1 | P | Kräutertopf (Fundstelle) |
+| items.tannenzapfen | 16 × 16 | 8, 13 | 1 | P | Tannenzapfen (Fundstelle) |
+| items.beerenstrauch | 16 × 24 | 8, 22 | 1 | P | Strauch mit Waldbeeren (Fundstelle) |
+| items.moos | 16 × 16 | 8, 13 | 1 | P | Moospolster (Fundstelle) |
+| deco.kletterpflanze | 16 × 32 | 8, 30 | 1 | P | Rankpflanze am Stab, mit Wollfaden |
+| deco.wollkissen | 16 × 16 | 8, 13 | 1 | P | buntes Wollkissen |
+| deco.teigtaschen | 16 × 16 | 8, 13 | 2 · 2 | P | Teller mit dampfenden Teigtaschen |
+| deco.kraeutersuppe | 16 × 16 | 8, 13 | 2 · 2 | P | Kräutersuppe in einer Muschelschale, dampft |
+| deco.zapfenkranz | 16 × 32 | 8, 30 | 1 | P | Kranz aus Tannenzapfen mit Beere auf einem Ständer |
+| deco.beerenlicht.aus / .an | 16 × 24 | 8, 22 | 1 / 2 · 3 | P | Glas mit Waldbeeren und Glitzerkiesel; an: leuchtet |
+| deco.mooskissen | 16 × 16 | 8, 13 | 1 | P | Kissen aus Moos mit Feder |
 
 ## Effekte
 
@@ -85,6 +112,9 @@ Bild (kein Mix aus Bild und Testform).
 | portraits.bubbles | 64 × 64 | P | blauer Axolotl mit Blase |
 | portraits.meerkat | 64 × 64 | P | Erdmännchen |
 | portraits.squichy | 64 × 64 | P | Mini-Robbe |
+| portraits.chamaron | 64 × 64 | P | Chamäleon |
+| portraits.beano / .beani / .beanz | 64 × 64 | P | je eine Erbse: fröhlich, verträumt, neugierig |
+| portraits.bean | 64 × 64 | P | Rentier |
 
 ## Ton (Platzhalter: synthetisch erzeugt, `src/app/sound.ts`)
 
@@ -103,3 +133,6 @@ Ambiente-Slots `ambience.startufer.abend` und `ambience.schilfbucht.abend` (noch
    Glitzerkiesel, Seerosenblätter, Blütengirlande, Seerosenkissen, Kiesellicht aus/an. Gleicher Stil wie das Startufer.
 6. **Zoo** (neu, Version 0.6.0): Meerkat (Erdmännchen), Squichy (Mini-Robbe – Codex-Entwurf vorhanden), Porträts,
    Aussichtsstein mit und ohne Wimpel, Holzzaun, Feder, Sonnenblume, Federwimpel, Schilfball, Sonnenblumentopf.
+7. **Cat Café, Hotpot-Restaurant, Fuchsbau** (neu, Version 0.7.0): Chamaron, Erbsenschale mit Beano/Beani/Beanz,
+   Bean, fünf Porträts, Innenraum-Boden und Wände, Möbel (Theke, Tische, Kochtopf, Laterne), zwei schlafende Katzen,
+   Fuchsbau-Hügel, alle neuen Fundstellen und Deko (siehe Tabellen oben).

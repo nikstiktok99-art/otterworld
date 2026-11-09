@@ -46,7 +46,34 @@ export type PainterId =
   | 'sonnenblume'
   | 'federwimpel'
   | 'schilfball'
-  | 'sonnenblumentopf';
+  | 'sonnenblumentopf'
+  | 'chamaron'
+  | 'erbsenschale'
+  | 'bean'
+  | 'theke'
+  | 'basteltisch'
+  | 'cafetisch'
+  | 'katze'
+  | 'zimmerpflanze'
+  | 'kochtopf'
+  | 'hotpottisch'
+  | 'laterne'
+  | 'fuchsbauhuegel'
+  | 'teepflanze'
+  | 'wollfaden'
+  | 'mehlsack'
+  | 'gemuesekiste'
+  | 'kraeutertopf'
+  | 'tannenzapfen'
+  | 'beerenstrauch'
+  | 'moos'
+  | 'kletterpflanze'
+  | 'wollkissen'
+  | 'teigtaschen'
+  | 'kraeutersuppe'
+  | 'zapfenkranz'
+  | 'beerenlicht'
+  | 'mooskissen';
 
 export interface SpriteDef {
   key: string;
@@ -172,6 +199,33 @@ export const sprites: SpriteDef[] = [
       swim: { frames: 4, fps: 5, note: 'Squichy schwimmt, Kopf über Wasser (Anker = Wasserlinie)' },
     },
   ),
+  ...character(
+    'chamaron',
+    'chamaron',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 1, note: 'Chamaron (Chamäleon) sitzt still, Ringelschwanz, rollende Augen; die Farbe tönt das Spiel' },
+      walk: { frames: 4, fps: 5, note: 'Chamaron schreitet langsam und bedächtig' },
+    },
+  ),
+  ...character(
+    'erbsenschale',
+    'erbsenschale',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Schale mit drei Erbsen (Beano, Beani, Beanz), Sitzplätze links, Mitte, rechts' },
+      walk: { frames: 4, fps: 6, note: 'die Schale hüpft vorwärts, alle drei Erbsen wippen mit' },
+    },
+  ),
+  ...character(
+    'bean',
+    'bean',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Bean (Rentier) steht ruhig, Geweih' },
+      walk: { frames: 4, fps: 7, note: 'Bean läuft' },
+    },
+  ),
 
   // ---- Umgebung ----
   { key: 'objects.bau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'bau' }, note: 'Otterbau unter Wurzeln mit karierter Gardine, Grundfläche 3 × 2 Kacheln' },
@@ -181,6 +235,16 @@ export const sprites: SpriteDef[] = [
   { key: 'objects.bastelstumpf', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 23 }, placeholder: { painter: 'bastelstumpf' }, note: 'Baumstumpf mit Garn und Schere zum Basteln (Station wie die Werkbank), Grundfläche 1 Kachel' },
   { key: 'objects.aussichtsstein', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: false } }, note: 'Zoo: flacher Aussichtsstein in Meerkats Gehege, Grundfläche 2 × 1 Kacheln' },
   { key: 'objects.aussichtsstein.wimpel', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: true } }, note: 'Zoo: derselbe Stein mit dem Federwimpel obendrauf (nach „Ein Wimpel für Meerkat“)' },
+  { key: 'objects.theke', frameW: 80, frameH: 32, frames: 1, anchor: { x: 40, y: 31 }, placeholder: { painter: 'theke' }, note: 'Theke (Cat Café und Hotpot-Restaurant), Grundfläche 5 × 1 Kacheln' },
+  { key: 'objects.basteltisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'basteltisch' }, note: 'Cat Café: Basteltisch mit Wolle und Schere, Grundfläche 2 × 1' },
+  { key: 'objects.cafetisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'cafetisch' }, note: 'Cat Café: kleiner runder Tisch mit Teetasse, Grundfläche 2 × 1' },
+  { key: 'objects.katze.grau', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'katze', args: { farbe: 'grau' } }, note: 'Cat Café: schlafende graue Katze (atmet), 1 Kachel – Kulisse, keine Figur' },
+  { key: 'objects.katze.rot', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'katze', args: { farbe: 'rot' } }, note: 'Cat Café: schlafende rote Katze (atmet), 1 Kachel – Kulisse, keine Figur' },
+  { key: 'objects.zimmerpflanze', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'zimmerpflanze' }, note: 'Cat Café: große Zimmerpflanze im Topf, 1 Kachel' },
+  { key: 'objects.kochtopf', frameW: 32, frameH: 40, frames: 2, fps: 2, anchor: { x: 16, y: 39 }, placeholder: { painter: 'kochtopf' }, note: 'Hotpot-Restaurant: großer Kochtopf auf dem Herd, dampft (Station „Kochtopf“), Grundfläche 2 × 2' },
+  { key: 'objects.hotpottisch', frameW: 32, frameH: 40, frames: 1, anchor: { x: 16, y: 39 }, placeholder: { painter: 'hotpottisch' }, note: 'Hotpot-Restaurant: runder Tisch mit kleinem Topf, Grundfläche 2 × 2' },
+  { key: 'objects.laterne', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'laterne' }, note: 'Hotpot-Restaurant: rote Papierlaterne auf einem Ständer, 1 Kachel' },
+  { key: 'objects.fuchsbau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'fuchsbauhuegel' }, note: 'Fuchsbau: Erdhügel mit Eingang unter Wurzeln, Grundfläche 3 × 2' },
 
   // ---- Gegenstände in der Welt ----
   { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand' },
@@ -204,6 +268,22 @@ export const sprites: SpriteDef[] = [
   { key: 'deco.federwimpel', frameW: 16, frameH: 32, frames: 2, fps: 2, anchor: { x: 8, y: 30 }, placeholder: { painter: 'federwimpel' }, note: 'Wimpel an einem Treibholzstab mit zwei Federn, flattert' },
   { key: 'deco.schilfball', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'schilfball' }, note: 'Geflochtener Ball aus Schilf' },
   { key: 'deco.sonnenblumentopf', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'sonnenblumentopf' }, note: 'Kleine Sonnenblume in einer Muschel als Topf' },
+  { key: 'items.teepflanze', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 22 }, placeholder: { painter: 'teepflanze' }, note: 'Teepflanze im Topf am Fenster (Fundstelle Teeblätter)' },
+  { key: 'items.wollfaden', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'wollfaden' }, note: 'Bunter Wollfaden auf dem Boden (Fundstelle)' },
+  { key: 'items.mehlsack', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'mehlsack' }, note: 'Kleines Mehlsäckchen (Fundstelle)' },
+  { key: 'items.gemuesekiste', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'gemuesekiste' }, note: 'Holzkiste mit Möhrchen (Fundstelle)' },
+  { key: 'items.kraeutertopf', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'kraeutertopf' }, note: 'Topf mit frischen Kräutern (Fundstelle)' },
+  { key: 'items.tannenzapfen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'tannenzapfen' }, note: 'Tannenzapfen am Boden (Fundstelle)' },
+  { key: 'items.beerenstrauch', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 22 }, placeholder: { painter: 'beerenstrauch' }, note: 'Kleiner Strauch mit roten Waldbeeren (Fundstelle)' },
+  { key: 'items.moos', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'moos' }, note: 'Weiches Mooskissen am Boden (Fundstelle)' },
+  { key: 'deco.kletterpflanze', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'kletterpflanze' }, note: 'Rankpflanze an einem Stab, mit Wollfaden festgebunden' },
+  { key: 'deco.wollkissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'wollkissen' }, note: 'Buntes Wollkissen' },
+  { key: 'deco.teigtaschen', frameW: 16, frameH: 16, frames: 2, fps: 2, anchor: { x: 8, y: 13 }, placeholder: { painter: 'teigtaschen' }, note: 'Teller mit dampfenden Teigtaschen' },
+  { key: 'deco.kraeutersuppe', frameW: 16, frameH: 16, frames: 2, fps: 2, anchor: { x: 8, y: 13 }, placeholder: { painter: 'kraeutersuppe' }, note: 'Kräutersuppe in einer Muschelschale, dampft' },
+  { key: 'deco.zapfenkranz', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'zapfenkranz' }, note: 'Kranz aus Tannenzapfen mit roter Beere auf einem Ständer' },
+  { key: 'deco.beerenlicht.aus', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 22 }, placeholder: { painter: 'beerenlicht', args: { an: false } }, note: 'Glas mit Waldbeeren und Glitzerkiesel, aus' },
+  { key: 'deco.beerenlicht.an', frameW: 16, frameH: 24, frames: 2, fps: 3, anchor: { x: 8, y: 22 }, placeholder: { painter: 'beerenlicht', args: { an: true } }, note: 'Glas mit Waldbeeren und Glitzerkiesel, leuchtet warm' },
+  { key: 'deco.mooskissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'mooskissen' }, note: 'Kissen aus Moos mit einer Feder' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },
@@ -221,6 +301,11 @@ export const sprites: SpriteDef[] = [
   { key: 'portraits.bubbles', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'bubbles' } }, note: 'Bubbles-Porträt (blauer Axolotl) mit einer Blase, neutral' },
   { key: 'portraits.meerkat', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'meerkat' } }, note: 'Meerkat-Porträt (Erdmännchen), neutral' },
   { key: 'portraits.squichy', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'squichy' } }, note: 'Squichy-Porträt (Mini-Robbe), neutral' },
+  { key: 'portraits.chamaron', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'chamaron' } }, note: 'Chamaron-Porträt (Chamäleon), neutral' },
+  { key: 'portraits.beano', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'beano' } }, note: 'Beano-Porträt (fröhliche Erbse)' },
+  { key: 'portraits.beani', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'beani' } }, note: 'Beani-Porträt (sanfte, verträumte Erbse)' },
+  { key: 'portraits.beanz', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'beanz' } }, note: 'Beanz-Porträt (neugierige Erbse)' },
+  { key: 'portraits.bean', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'bean' } }, note: 'Bean-Porträt (Rentier), neutral' },
 ];
 
 /** Bodenkacheln: vorerst prozedural gezeichnet (Platzhalter). Kachelbogen-Layout wird mit Codex abgestimmt. */

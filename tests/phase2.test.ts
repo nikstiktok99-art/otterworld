@@ -265,21 +265,11 @@ describe('Migration', () => {
   });
 });
 
-describe('Erbsentrio (Datenbeispiel vor der Produktion)', () => {
-  // Drei Figuren, ein Schalenkörper. Nur als Testinhalt – im Spiel gibt es das Trio noch nicht.
-  const trio = (): Content => {
-    const c: Content = JSON.parse(JSON.stringify(content));
-    c.bodies['body.erbsenschale'] = { id: 'body.erbsenschale', sprite: 'characters.otter', moves: ['land'], speed: { land: 28, water: 0 }, seats: 3 };
-    for (const [i, id] of ['beano', 'beani', 'beanz'].entries()) {
-      c.characters[id] = { id, name: id[0]!.toUpperCase() + id.slice(1), body: 'body.erbsenschale', seat: i };
-    }
-    c.encounters.push({
-      id: 'enc.erbsen',
-      characters: ['beano', 'beani', 'beanz'],
-      placements: [{ map: MAP, at: { tile: { x: 7, y: 27 } }, pose: 'idle', facing: 'se' }],
-    });
-    return c;
-  };
+describe('Erbsentrio: eine Schale, drei Erbsen', () => {
+  // Drei Figuren, ein Schalenkörper.
+  // Seit dem Hotpot-Kapitel ist das Trio echter Inhalt (Schale im Hotpot-Restaurant). Die Prüfungen laufen jetzt
+  // gegen den echten Inhalt; die Kopie erlaubt kleine Änderungen für die Negativtests.
+  const trio = (): Content => JSON.parse(JSON.stringify(content)) as Content;
   const withTrio = (c: Content) => {
     const s = newGame(c);
     s.unlocked.push('beano', 'beani', 'beanz');

@@ -65,7 +65,7 @@ const noPanel = () => waitFor('kein Fenster', `window.__otterwelt.ui().panel ===
 // Sichtbarer Bereich ohne Anzeige oben und ohne Leisten unten.
 const VIEW = { left: 24, right: 378, top: 150, bottom: 790 };
 const tapTile = async (x, y) => {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     const p = await hook(`tileToScreen(${x}, ${y})`);
     if (!p) throw new Error('Welt nicht bereit');
     // Im Dekoriermodus liegt unten die Leiste – dort nicht in die Welt tippen.
@@ -661,6 +661,138 @@ try {
   s = await state();
   check(s.location.map === 'map.zoo' && s.quests['quest.meerkat.wimpel'].done, 'nach Neuladen: im Zoo, Meerkats Aufgabe bleibt erledigt');
   check(((await hook('world()')).objects.find((o) => o.id === 'obj.aussichtsstein'))?.sprite === 'objects.aussichtsstein.wimpel', 'nach Neuladen: Wimpel auf dem Stein');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  // ---------------- Kapitel Cat Café: Chamaron ----------------
+  console.log('38. Ins Cat Café: Chamaron ist getarnt');
+  await tapTile(6, 30);
+  await inMap('map.cat-cafe');
+  await page.waitForTimeout(600);
+  w = await hook('world()');
+  check(w.camouflaged.includes('body.chamaron') && !(await figur('body.chamaron'))?.news, 'Chamaron ist getarnt und verrät sich nicht durch eine Sprechblase');
+  await shot('cat-cafe');
+  await tapTile(13, 13);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await button('Ich bastel dir eine!').tap();
+  await advanceDialogUntil('false');
+  await noPanel();
+  await page.waitForTimeout(300);
+  check(!(await hook('world()')).camouflaged.includes('body.chamaron'), 'gefunden: Chamaron ist nicht mehr getarnt (wechselt die Farbe)');
+
+  console.log('39. Kletterpflanze für Chamaron');
+  await tapTile(2, 2);
+  await idle();
+  await has('item.teeblatt', 1);
+  await tapTile(13, 2);
+  await idle();
+  await has('item.teeblatt', 2);
+  await tapTile(7, 9);
+  await idle();
+  await has('item.wollfaden', 1);
+  await tapTile(11, 4);
+  await panel('werkbank');
+  check((await page.locator('.sheet h2').textContent()) === 'Basteltisch', 'Basteltisch im Café');
+  await page.locator('.recipe', { hasText: 'Kletterpflanze' }).getByRole('button', { name: 'Bauen' }).tap();
+  await page.waitForTimeout(300);
+  await button('Jetzt aufstellen').tap();
+  await page.waitForTimeout(700);
+  await tapTile(8, 14);
+  await page.waitForTimeout(200);
+  await button('Hier aufstellen').tap();
+  await panel('dialog');
+  check(true, 'Chamaron klettert hinein und spricht von selbst');
+  await shot('chamaron-pflanze');
+  await advanceDialogUntil('false');
+  await panel('endcard');
+  await button('Weiterspielen').tap();
+  await noPanel();
+  s = await state();
+  check(s.quests['quest.chamaron.kletterpflanze'].done && s.recipesKnown.includes('recipe.wollkissen'), 'Chamarons Aufgabe erledigt, Rezept Wollkissen');
+
+  // ---------------- Kapitel Hotpot-Restaurant: Beano, Beani, Beanz ----------------
+  console.log('40. Ins Hotpot-Restaurant');
+  await tapTile(7, 29);
+  await inMap('map.zoo');
+  await tapTile(10, 27);
+  await idle();
+  await tapTile(14, 23);
+  await inMap('map.hotpot-restaurant');
+  await page.waitForTimeout(600);
+  const schale = await figur('body.erbsenschale');
+  check(schale?.news === true, 'die Erbsenschale mit Sprechblase');
+  await shot('hotpot');
+  await tapTile(8, 9);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await shot('erbsen-frage');
+  await button('Na klar, ich koche!').tap();
+  await advanceDialogUntil('false');
+  await noPanel();
+  await tapTile(11, 3);
+  await idle();
+  await has('item.mehl', 1);
+  await tapTile(13, 3);
+  await idle();
+  await has('item.mehl', 2);
+  await tapTile(2, 3);
+  await idle();
+  await has('item.moehrchen', 1);
+  await tapTile(7, 3);
+  await panel('werkbank');
+  check((await page.locator('.sheet h2').textContent()) === 'Kochtopf', 'der Kochtopf ist eine eigene Station');
+  await page.locator('.recipe', { hasText: 'Teigtaschen' }).getByRole('button', { name: 'Bauen' }).tap();
+  await page.waitForTimeout(300);
+  await button('Später').tap();
+  await noPanel();
+  await tapTile(8, 9);
+  await panel('dialog');
+  await advanceDialogUntil('false');
+  await panel('endcard');
+  await shot('festessen');
+  await button('Weiterspielen').tap();
+  await noPanel();
+  s = await state();
+  check(
+    s.quests['quest.erbsen.festessen'].done && ['beano', 'beani', 'beanz'].every((e) => s.moments.includes(`moment.${e}.festessen`)),
+    'Festessen: ein Moment für jede Erbse',
+  );
+
+  // ---------------- Kapitel Fuchsbau: Bean ----------------
+  console.log('41. Durch Zoo, Ufer und Bach in den Wald');
+  await tapTile(7, 29);
+  await inMap('map.zoo');
+  await tapTile(9, 1); // Wegweiser oben im Zoo
+  await inMap('map.startufer');
+  await tapTile(1, 26);
+  await inMap('map.tiramisu-stream');
+  await tapTile(13, 1);
+  await inMap('map.fuchsbau');
+  await page.waitForTimeout(600);
+  check((await figur('body.bean'))?.news === true, 'Bean mit Sprechblase');
+  await shot('fuchsbau');
+  await tapTile(8, 12);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await button('Sehr gern!').tap();
+  await advanceDialogUntil('false');
+  await noPanel();
+  s = await state();
+  check(s.quests['quest.bean.kranz']?.step === 'sammeln', 'Beans Kranz-Aufgabe angenommen');
+
+  console.log('42. Freundebuch und Neuladen im Wald');
+  await button('Freunde').tap();
+  await panel('friends');
+  const namen = await page.locator('.friend-name').allTextContents();
+  check(namen.length === 12 && ['Chamaron', 'Beano', 'Beani', 'Beanz', 'Bean'].every((n) => namen.includes(n)), `Freundebuch: zwölf Figuren (${namen.join(', ')})`);
+  await shot('freundebuch-alle');
+  await button('Zurück').tap();
+  await noPanel();
+  await hook('flush()');
+  await start();
+  s = await state();
+  check(s.location.map === 'map.fuchsbau' && s.quests['quest.bean.kranz']?.step === 'sammeln', 'nach Neuladen: im Wald, Aufgabe bleibt');
 
   check(consoleErrors.length === 0, `keine Fehler in der Browserkonsole${consoleErrors.length ? ': ' + consoleErrors.join(' | ') : ''}`);
   console.log('\nBrowser-Durchlauf bestanden.');

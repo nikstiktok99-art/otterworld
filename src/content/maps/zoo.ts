@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_STARTUFER, MAP_ZOO, NACHWACHSEN_MIN, Q_WIMPEL } from '../ids';
+import { MAP_CAFE, MAP_HOTPOT, MAP_STARTUFER, MAP_ZOO, NACHWACHSEN_MIN, Q_WIMPEL } from '../ids';
 
 // Zoo (Ort aus dem Masterprompt; Gestaltung offen, Bild macht Codex).
 // Vorschlag für den Aufbau: ein Weg von oben nach unten, links Meerkats Gehege mit Aussichtsstein, rechts das
@@ -30,14 +30,14 @@ const grid = [
   '#,,,,,,--,,,,,,#', // 21
   '#,*,,,,--,,,,,,#', // 22
   '#,,,,,,--,,,,,,#', // 23  Werkbank
-  '#,,,,,,--,,,,,,#', // 24
-  '#,,,,,,--,,,,,,#', // 25
+  '#,,,,,,--,,,,,--', // 24  Weg zum Hotpot-Restaurant
+  '#,,,,,,--,,,,,--', // 25
   '#,,,,,,--,,,,,,#', // 26
   '#,,*,,,--,,,*,,#', // 27
   '#,,,,,,--,,,,,,#', // 28
   '#,,,,,,--,,,,,,#', // 29
-  '#,,,,,,,,,,,,,,#', // 30
-  '################', // 31
+  '#,,,,,,,,,,,,,,#', // 30  Wegweiser zum Cat Café
+  '#######--#######', // 31  Weg zum Cat Café
 ];
 
 export const zoo: MapDef = {
@@ -73,6 +73,22 @@ export const zoo: MapDef = {
       footprint: { w: 1, h: 1 },
       interaction: { kind: 'exit', exit: 'exit.zum-ufer' },
     },
+    {
+      id: 'obj.wegweiser.cafe',
+      name: 'Wegweiser',
+      sprite: 'objects.wegweiser',
+      tile: { x: 6, y: 30 },
+      footprint: { w: 1, h: 1 },
+      interaction: { kind: 'exit', exit: 'exit.zum-cafe' },
+    },
+    {
+      id: 'obj.wegweiser.hotpot',
+      name: 'Wegweiser',
+      sprite: 'objects.wegweiser',
+      tile: { x: 14, y: 23 },
+      footprint: { w: 1, h: 1 },
+      interaction: { kind: 'exit', exit: 'exit.zum-hotpot' },
+    },
   ],
   gatherSpots: [
     { id: 'spot.feder.gehege', item: 'item.feder', count: 1, tile: { x: 4, y: 10 }, sprite: 'items.feder', regrowMinutes: NACHWACHSEN_MIN },
@@ -93,8 +109,34 @@ export const zoo: MapDef = {
       to: { map: MAP_STARTUFER, entry: 'entry.vom-zoo' },
       keepName: 'den Weg zurück zum Ufer',
     },
+    {
+      id: 'exit.zum-cafe',
+      label: 'Cat Café',
+      tiles: [
+        { x: 7, y: 31 },
+        { x: 8, y: 31 },
+      ],
+      to: { map: MAP_CAFE, entry: 'entry.vom-zoo' },
+      keepName: 'den Weg zum Cat Café',
+    },
+    {
+      id: 'exit.zum-hotpot',
+      label: 'Hotpot-Restaurant',
+      tiles: [
+        { x: 14, y: 24 },
+        { x: 15, y: 24 },
+        { x: 14, y: 25 },
+        { x: 15, y: 25 },
+      ],
+      to: { map: MAP_HOTPOT, entry: 'entry.vom-zoo' },
+      keepName: 'den Weg zum Hotpot-Restaurant',
+    },
   ],
-  entries: [{ id: 'entry.vom-ufer', tile: { x: 7, y: 2 }, facing: 'se' }],
+  entries: [
+    { id: 'entry.vom-ufer', tile: { x: 7, y: 2 }, facing: 'se' },
+    { id: 'entry.vom-cafe', tile: { x: 7, y: 30 }, facing: 'ne' },
+    { id: 'entry.vom-hotpot', tile: { x: 13, y: 24 }, facing: 'sw' },
+  ],
   decorZone: { x: 9, y: 19, w: 6, h: 11 },
   keepReachable: [
     { tile: { x: 6, y: 6 }, name: 'das Gehege' },

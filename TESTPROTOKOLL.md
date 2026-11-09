@@ -2,6 +2,28 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Cat Café, Hotpot-Restaurant, Fuchsbau (Version 0.7.0)
+
+Automatisch geprüft am 09.11.2026:
+
+- **Unit-Tests:** 118 bestanden, davon 10 neu (`tests/orte.test.ts`): Wege zu allen drei Orten hin und zurück, Chamaron
+  erst nach Meerkats Wimpel, Kletterpflanze mit Hinsetzen und Selbst-Ansprechen, genau eine Erbsenschale mit allen drei
+  Erbsen (jede spricht mit eigener Stimme), Teigtaschen nur am Kochtopf (Werkbank lehnt ab), drei Momente beim
+  Festessen, Beans Kranz mit zwei Rezepten genau einmal. Das Erbsentrio ist jetzt echter Inhalt; die Trio-Prüfungen
+  aus Phase 2 laufen gegen ihn.
+- **Typprüfung:** fehlerfrei. **Inhaltsprüfung:** alle sieben Orte erreichbar, jeder Weg hin und zurück.
+- **Cloud:** CLOUD_ERGEBNIS
+
+| Test | Browser (`npm run e2e`, 98 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Alles aus 0.6.0 wie bisher | ok | offen | – | offen |
+| Cat Café: Chamaron getarnt ohne Sprechblase, finden, danach Farbwechsel | ok | offen | – | offen |
+| Kletterpflanze am Basteltisch, aufstellen, Chamaron klettert hinein und spricht | ok | offen | – | offen |
+| Hotpot: Erbsenschale mit Sprechblase, drei Stimmen, Kochtopf als eigene Station, Festessen | ok | offen | – | offen |
+| Durch Zoo, Ufer und Bach in den Wald, Bean kennenlernen | ok | offen | – | offen |
+| Freundebuch mit zwölf Figuren, Neuladen im Wald | ok | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+
 ## Kapitel Zoo (Version 0.6.0)
 
 Automatisch geprüft am 09.11.2026:
@@ -63,7 +85,7 @@ Automatisch geprüft am 08.11.2026:
   Bekannt: Zu Spielbeginn sitzt die Sprechblase über Schnabbi (Stegende) am oberen Rand unter der Statusleiste; sobald
   sie Richtung Steg läuft, ist sie gut sichtbar.
 
-| Test | Browser (`npm run e2e`) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+| Test | Browser (`npm run e2e`, 98 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
 |---|---|---|---|---|
 | Phase 1 und 2 wie bisher (alle früheren Prüfungen) | ok | offen | – | offen |
 | Hinweis zum Einstieg, Sprechblase über Schnabbi | ok | offen | – | offen |

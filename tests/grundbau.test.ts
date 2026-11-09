@@ -273,8 +273,8 @@ describe('Stationen', () => {
 
   it('die Prüfung meldet Rezepte für eine Station, die es nirgends gibt', () => {
     const c: Content = JSON.parse(JSON.stringify(content));
-    c.recipes['recipe.uferleuchte']!.station = 'kochtopf';
-    expect(validateContent(c, assetKeys())).toEqual([expect.stringContaining('kochtopf')]);
+    c.recipes['recipe.uferleuchte']!.station = 'backofen';
+    expect(validateContent(c, assetKeys())).toEqual([expect.stringContaining('backofen')]);
   });
 });
 

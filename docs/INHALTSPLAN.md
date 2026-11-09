@@ -11,14 +11,14 @@ Persönliche Bezüge, Geschichten und weitere Details liefert der Nutzer – hie
 | schnabbi | Schnabbi | body.schnabbi | im Spiel, **spielbar ab Phase 2** | Erster Freund und Helfer; Schnabeltier-Kuscheltier, Aussehen nach Foto |
 | rosie | Rosie | body.rosie | im Spiel (Tiramisu Stream, Teich, nur Wasser) | Pinker Axolotl, Schwester von Bubbles |
 | bubbles | Bubbles | body.bubbles | im Spiel (Tiramisu Stream, Teich, nur Wasser) | Blauer Axolotl, Bruder von Rosie, macht immer wieder Blasen (im Spiel sichtbar) |
-| chamaron | Chamaron | body.chamaron | geplant | Chamäleon (Schreibweise beibehalten) |
+| chamaron | Chamaron | body.chamaron | im Spiel (Cat Café, getarnt bis gefunden, dann Farbwechsel) | Chamäleon (Schreibweise beibehalten) |
 | meerkat | Meerkat | body.meerkat | im Spiel (Zoo, Gehege, nur an Land) | Erdmännchen, „Meerkat“ ist der Name |
-| bean | Bean | body.bean | geplant | Rentier, unabhängig vom Erbsentrio |
-| beano, beani, beanz | Beano, Beani, Beanz | **body.erbsenschale** (gemeinsam, 3 Sitze) | geplant | Drei eigene Figuren, eigene Stimmen, ein gemeinsamer Körper |
+| bean | Bean | body.bean | im Spiel (Fuchsbau) | Rentier, unabhängig vom Erbsentrio |
+| beano, beani, beanz | Beano, Beani, Beanz | **body.erbsenschale** (gemeinsam, 3 Sitze) | im Spiel (Hotpot-Restaurant) | Drei eigene Figuren, eigene Stimmen (Vorschlag: fröhlich, verträumt, neugierig), ein gemeinsamer Körper |
 | squichy | Squichy | body.squichy | im Spiel (Zoo, Robbenbecken; Codex-Entwurf vorhanden, noch nicht eingebaut) | Mini-Robbe, Schreibweise „Squichy“ |
 | otterprinzessin | Lumi (Vorschlag aus dem Masterprompt) | body.otterprinzessin | im Spiel, **spielbar** (Tiramisu Stream) | Kleid und Krone; Begegnung nach Schnabbi |
 
-**Erbsentrio, geprüft an einem Datenbeispiel** (`tests/phase2.test.ts`, nur Testinhalt): In der Welt steht genau eine
+**Erbsentrio, geprüft** (`tests/phase2.test.ts`, `tests/orte.test.ts`): In der Welt steht genau eine
 Schale mit allen drei Erbsen. Spielt sie eine Erbse, gehört die Schale ihr und steht nirgends zusätzlich. Ein Wechsel
 zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Speichern und Laden vervielfältigt die Schale nicht.
 
@@ -28,11 +28,11 @@ zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Sp
 |---|---|---|
 | map.startufer | Startufer | im Spiel (vorläufiger Einstieg), Weg zur Schilfbucht am Wegweiser rechts |
 | map.schilfbucht | Schilfbucht | im Spiel – **Vorschlag** für Phase 2: kleine Testkarte für Ortswechsel mit Hin- und Rückweg, kein persönlicher Ort, frei ersetzbar |
-| map.hotpot-restaurant | Hotpot-Restaurant | geplant, Aufbau nach docs/WELTPLAN.md (Vorschlag) |
+| map.hotpot-restaurant | Hotpot-Restaurant | im Spiel – Küche mit Kochtopf, Theke, Tische (**Vorschlag**), Weg rechts im Zoo |
 | map.tiramisu-stream | Tiramisu Stream | im Spiel – Bach mit Teich und Blumenwiese (**Vorschlag**, Eigenname bleibt), Weg links neben dem Bau |
 | map.zoo | Zoo | im Spiel – Gehege, Robbenbecken, Wiese (**Vorschlag**), Weg unten am Startufer |
-| map.cat-cafe | Cat Café | geplant, Aufbau nach docs/WELTPLAN.md (Vorschlag) |
-| map.fuchsbau | Fuchsbau | geplant, Aufbau nach docs/WELTPLAN.md (Vorschlag) |
+| map.cat-cafe | Cat Café | im Spiel – Innenraum mit schlafenden Katzen (**Vorschlag**), Weg unten im Zoo |
+| map.fuchsbau | Fuchsbau | im Spiel – Waldlichtung (**Vorschlag**), Weg oben am Tiramisu Stream |
 
 ## Erlebnisse (Quests) und Momente
 
@@ -44,6 +44,9 @@ zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Sp
 | quest.rosie.kissen | Ein Kissen für Rosie (**Vorschlag**, mit Abgeben) | moment.rosie.kissen, moment.bubbles.kissen | Rosie und Bubbles im Freundebuch, Geschenk: 2 Glitzerkiesel |
 | quest.meerkat.wimpel | Ein Wimpel für Meerkat (**Vorschlag**) | moment.meerkat.wimpel | Wimpel auf dem Aussichtsstein, Geschenk: 2 Sonnenblumenkerne, Rezept Sonnenblumentopf |
 | quest.squichy.ball | Ein Ball für Squichy (**Vorschlag**, Schilf aus der Bucht) | moment.squichy.ball | Geschenk: 2 Muschelschalen |
+| quest.chamaron.kletterpflanze | Ein Versteck für Chamaron (**Vorschlag**) | moment.chamaron.kletterpflanze | Rezept Wollkissen |
+| quest.erbsen.festessen | Ein Festessen für drei (**Vorschlag**, Kochtopf) | moment.beano/beani/beanz.festessen | Rezept Kräutersuppe |
+| quest.bean.kranz | Ein Kranz für Bean (**Vorschlag**) | moment.bean.kranz | Rezepte Beerenlicht, Mooskissen |
 
 Nach „Ein Platz für zwei“ zeigt Schnabbi zwei Rezepte zum freien Bauen (**Vorschlag**): Treibholzbank (3 Treibholz) und
 Muschelwindspiel (1 Treibholz, 2 Muschelschalen). Treibholz, Muscheln und Schilf wachsen nach 10 Minuten nach

@@ -1,5 +1,5 @@
 import type { BodyDef, CharacterDef } from './types';
-import { Q_BALL, Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_WIMPEL } from './ids';
+import { Q_BALL, Q_FESTESSEN, Q_KISSEN, Q_KLETTER, Q_KRANZ, Q_LICHT, Q_PICKNICK, Q_WIMPEL } from './ids';
 
 // Figuren-ID, Weltkörper-ID und Grafikschlüssel sind bewusst getrennt.
 // Weitere Figuren aus dem Kanon (Chamaron, Meerkat, Bean, Erbsentrio, Squichy) kommen hinzu, sobald ihre Kapitel
@@ -64,6 +64,51 @@ export const characters: Record<string, CharacterDef> = {
     portrait: 'portraits.squichy',
     friend: { about: 'Eine Mini-Robbe, die Kleinste im Becken des Zoos.', metWhen: { not: { questNotStarted: Q_BALL } } },
   },
+  // Kanon: Chamäleon, Schreibweise „Chamaron“.
+  chamaron: {
+    id: 'chamaron',
+    name: 'Chamaron',
+    body: 'body.chamaron',
+    portrait: 'portraits.chamaron',
+    friend: {
+      about: 'Ein Chamäleon im Cat Café. Versteckt sich gern zwischen den Pflanzen und wechselt die Farbe, wenn es sich wohlfühlt.',
+      metWhen: { not: { questNotStarted: Q_KLETTER } },
+    },
+  },
+  // Kanon: Beano, Beani und Beanz – drei eigenständige Erbsen, immer gemeinsam in einer Schale.
+  // Stimmen (Vorschlag): Beano fröhlich und laut, Beani sanft und verträumt, Beanz neugierig und voller Fragen.
+  beano: {
+    id: 'beano',
+    name: 'Beano',
+    body: 'body.erbsenschale',
+    seat: 0,
+    portrait: 'portraits.beano',
+    friend: { about: 'Die fröhlichste der drei Erbsen. Wohnt mit Beani und Beanz in einer Schale.', metWhen: { not: { questNotStarted: Q_FESTESSEN } } },
+  },
+  beani: {
+    id: 'beani',
+    name: 'Beani',
+    body: 'body.erbsenschale',
+    seat: 1,
+    portrait: 'portraits.beani',
+    friend: { about: 'Die sanfte, verträumte Erbse. Wohnt mit Beano und Beanz in einer Schale.', metWhen: { not: { questNotStarted: Q_FESTESSEN } } },
+  },
+  beanz: {
+    id: 'beanz',
+    name: 'Beanz',
+    body: 'body.erbsenschale',
+    seat: 2,
+    portrait: 'portraits.beanz',
+    friend: { about: 'Die neugierigste der drei Erbsen – hat immer eine Frage. Wohnt mit Beano und Beani in einer Schale.', metWhen: { not: { questNotStarted: Q_FESTESSEN } } },
+  },
+  // Kanon: Bean ist ein Rentier, unabhängig vom Erbsentrio.
+  bean: {
+    id: 'bean',
+    name: 'Bean',
+    body: 'body.bean',
+    portrait: 'portraits.bean',
+    friend: { about: 'Ein Rentier, das im Wald beim Fuchsbau wohnt. Ruhig und freundlich.', metWhen: { not: { questNotStarted: Q_KRANZ } } },
+  },
 };
 
 export const bodies: Record<string, BodyDef> = {
@@ -112,5 +157,27 @@ export const bodies: Record<string, BodyDef> = {
     sprite: 'characters.squichy',
     moves: ['land', 'water'],
     speed: { land: 18, water: 46 },
+  },
+  // Chamäleon: langsam und bedächtig, wechselt die Farbe.
+  'body.chamaron': {
+    id: 'body.chamaron',
+    sprite: 'characters.chamaron',
+    moves: ['land'],
+    speed: { land: 22, water: 0 },
+    traits: ['farbwechsel'],
+  },
+  // Die Schale des Erbsentrios: ein Körper, drei Sitze.
+  'body.erbsenschale': {
+    id: 'body.erbsenschale',
+    sprite: 'characters.erbsenschale',
+    moves: ['land'],
+    speed: { land: 24, water: 0 },
+    seats: 3,
+  },
+  'body.bean': {
+    id: 'body.bean',
+    sprite: 'characters.bean',
+    moves: ['land'],
+    speed: { land: 40, water: 0 },
   },
 };

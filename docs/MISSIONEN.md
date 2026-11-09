@@ -78,6 +78,8 @@ Wechselt eine Figur den Ort, läuft sie sichtbar zum passenden Ausgang.
 
 `friend: { about, metWhen }` bringt die Figur ins Freundebuch. Momente (`moments`) erscheinen dort als gemeinsame
 Erlebnisse. `unlockCharacter` macht sie spielbar. Mehrere Figuren können einen Körper teilen (Erbsentrio, getestet).
+Körper haben Bewegungsarten (`moves`: Land, Wasser) und kleine Eigenheiten (`traits`): `blasen` (Bubbles) und
+`farbwechsel` (Chamaron: getarnt und ohne Sprechblase, bis man sich kennt, danach wechselt er langsam die Farbe).
 
 ### Sammeln und Bauen – `maps/*.ts` und `items.ts`
 
@@ -89,7 +91,8 @@ Erlebnisse. `unlockCharacter` macht sie spielbar. Mehrere Figuren können einen 
 
 ### Orte – `maps/*.ts`
 
-Raster, Legende, sicherer Platz, Objekte, Fundstellen, Ausgänge mit Ankunftspunkten, Deko-Fläche. Die Prüfung verlangt
+Raster, Legende, sicherer Platz, Objekte, Fundstellen, Ausgänge mit Ankunftspunkten, Deko-Fläche. Böden: Gras, Blumen,
+Sand, Wasser, Steg, Pfad, Schilf, Zaun, Büsche; für Innenräume Holzboden und Wand. Die Prüfung verlangt
 Hin- und Rückweg und dass Ziele, Ausgänge und Ankunftspunkte zu Fuß erreichbar sind. Objekte können mit `variants`
 ihr Aussehen nach dem Spielverlauf wechseln (z. B. Meerkats Stein mit Wimpel); `backdrop` ist die Farbe außerhalb der Karte.
 

@@ -1,10 +1,10 @@
 // Typen der Inhaltsdaten. Inhalte sind reine Daten: Figuren, Körper, Orte, Gegenstände, Rezepte, Quests, Dialoge.
 import type { Dir, Tile } from '../game/types';
 
-export type Terrain = 'water' | 'sand' | 'grass' | 'blumen' | 'steg' | 'pfad' | 'schilf' | 'zaun' | 'blocked';
+export type Terrain = 'water' | 'sand' | 'grass' | 'blumen' | 'boden' | 'steg' | 'pfad' | 'schilf' | 'zaun' | 'wand' | 'blocked';
 
 /** Kleine sichtbare Eigenheit eines Körpers (z. B. Bubbles macht immer wieder Blasen). */
-export type BodyTrait = 'blasen';
+export type BodyTrait = 'blasen' | 'farbwechsel';
 export type Movement = 'land' | 'water';
 
 /** Bedingungen über den Spielstand – für Dialogauswahl, Aufenthaltsorte und Freischaltungen. */

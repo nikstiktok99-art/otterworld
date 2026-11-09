@@ -246,6 +246,291 @@ function paintSquichy(c: C, f: number, state: string, dir: string) {
   draw(state === 'walk' ? (f % 2 === 0 ? 0 : -1) : 0);
 }
 
+/** Chamäleon: Grundfarbe neutral (das Spiel tönt sie), Ringelschwanz, Kamm, Kulleraugen. */
+function paintChamaron(c: C, f: number, state: string, dir: string) {
+  const back = dir === 'ne';
+  const body = '#d8e8c8';
+  const out = '#4f6b40';
+  const dy = state === 'walk' ? (f % 2 === 0 ? 0 : -1) : 0;
+  ell(c, 24, 41, 10, 1.5, SHADOW);
+  // Ringelschwanz
+  ring(c, 12, 33 + dy, 4, 4, out);
+  ellOut(c, 23, 33 + dy, 9, 5, body, out);
+  for (const x of [17, 21, 25, 29]) rect(c, x, 28 + dy, 2, 1, out); // Kamm
+  const lift = state === 'walk' ? f % 4 : 0;
+  for (const [x, l] of [[18, lift === 1 ? 1 : 0], [27, lift === 3 ? 1 : 0]] as const) rect(c, x, 37 - l + dy, 2, 4, out);
+  ellOut(c, 33, 31 + dy, 5.5, 4.5, body, out);
+  if (!back) {
+    ellOut(c, 34, 29 + dy, 2.5, 2.5, '#f6f6e8', out);
+    rect(c, 34 + (f % 2), 29 + dy, 1, 1, EYE);
+    rect(c, 36, 33 + dy, 2, 1, out);
+  }
+}
+
+/** Schale mit drei Erbsen: links Beano, Mitte Beani, rechts Beanz. */
+function paintErbsenschale(c: C, f: number, state: string, dir: string) {
+  const back = dir === 'ne';
+  const hop = state === 'walk' ? [0, -2, 0, -1][f % 4]! : 0;
+  ell(c, 24, 41, 12, 2, SHADOW);
+  const pea = (x: number, y: number, mood: 'froh' | 'sanft' | 'neugierig', bob: number) => {
+    ellOut(c, x, y + bob, 5, 5, '#8cc65a', '#3f6e25');
+    ell(c, x - 2, y - 2 + bob, 1.5, 1, '#b4e08a');
+    if (back) return;
+    if (mood === 'sanft') {
+      rect(c, x - 3, y + bob, 2, 1, EYE);
+      rect(c, x + 1, y + bob, 2, 1, EYE);
+    } else {
+      rect(c, x - 2, y - 1 + bob, 1, 2, EYE);
+      rect(c, x + 2, y - 1 + bob, 1, 2, EYE);
+    }
+    if (mood === 'froh') rect(c, x - 1, y + 2 + bob, 3, 1, '#3f6e25');
+    if (mood === 'neugierig') rect(c, x, y + 2 + bob, 1, 1, '#3f6e25');
+  };
+  pea(16, 27 + hop, 'froh', f % 2 === 0 ? 0 : -1);
+  pea(24, 25 + hop, 'sanft', 0);
+  pea(32, 27 + hop, 'neugierig', f % 2 === 1 ? 0 : -1);
+  // Schale
+  ellOut(c, 24, 33 + hop, 15, 6, '#f2e6cc', '#8a6a48');
+  rect(c, 10, 31 + hop, 29, 2, '#f2e6cc');
+  rect(c, 12, 34 + hop, 25, 1, '#d9c39b');
+  rect(c, 18, 37 + hop, 12, 1, '#c9645a');
+}
+
+/** Rentier: braun, helle Brust, Geweih. */
+function paintBean(c: C, f: number, state: string, dir: string) {
+  const back = dir === 'ne';
+  const fur = '#9a6a48';
+  const out = '#4a3020';
+  const dy = state === 'walk' ? (f % 2 === 0 ? 0 : -1) : f % 2;
+  ell(c, 24, 41, 11, 1.5, SHADOW);
+  const step = state === 'walk' ? f % 4 : 0;
+  for (const [x, l] of [[15, step === 1 ? 1 : 0], [19, step === 3 ? 1 : 0], [27, step === 3 ? 1 : 0], [31, step === 1 ? 1 : 0]] as const) {
+    rect(c, x, 35 - l, 2, 6, out);
+  }
+  ellOut(c, 23, 31 + dy, 11, 5.5, fur, out);
+  if (!back) ell(c, 30, 32 + dy, 3, 3, '#e8d2b0');
+  ellOut(c, 34, 22 + dy, 4.5, 4, fur, out);
+  rect(c, 32, 25 + dy, 3, 5, fur);
+  // Geweih
+  for (const [x, y, w, h] of [[31, 13, 1, 6], [29, 13, 3, 1], [29, 11, 1, 2], [37, 13, 1, 6], [37, 13, 3, 1], [39, 11, 1, 2], [34, 15, 1, 3]] as const) {
+    rect(c, x, y + dy, w, h, '#c8a878');
+  }
+  if (!back) {
+    rect(c, 35, 21 + dy, 1, 2, EYE);
+    ellOut(c, 38, 24 + dy, 1.5, 1.2, '#3a2a20', out);
+  }
+}
+
+function paintTheke(c: C) {
+  ell(c, 40, 31, 38, 1.5, SHADOW);
+  rect(c, 2, 12, 76, 19, '#8a5a36');
+  rect(c, 2, 12, 76, 4, '#c8955c');
+  rect(c, 2, 16, 76, 1, '#5a3a20');
+  for (let x = 8; x < 76; x += 12) rect(c, x, 18, 1, 12, '#6e4528');
+  // Tassen und Gläschen
+  for (const [x, col] of [[12, '#f2e6cc'], [28, '#e8a0a8'], [52, '#9fc8de'], [66, '#f2e6cc']] as const) {
+    rect(c, x, 7, 6, 5, col);
+    rect(c, x + 6, 8, 2, 2, col);
+  }
+}
+
+function paintBasteltisch(c: C) {
+  ell(c, 16, 23, 14, 1.5, SHADOW);
+  rect(c, 4, 12, 3, 11, '#6e4b2c');
+  rect(c, 25, 12, 3, 11, '#6e4b2c');
+  rect(c, 1, 8, 30, 5, '#d8b07a');
+  rect(c, 1, 8, 30, 1, '#ecc894');
+  ellOut(c, 9, 5, 3, 3, '#c9a0e8', '#7a5a9a');
+  ellOut(c, 17, 6, 2, 2, '#e86a8a', '#7a2f4a');
+  rect(c, 22, 5, 5, 1, '#9aa3ad');
+  rect(c, 22, 7, 5, 1, '#9aa3ad');
+}
+
+function paintCafetisch(c: C) {
+  ell(c, 16, 23, 12, 1.5, SHADOW);
+  rect(c, 15, 12, 2, 11, '#6e4b2c');
+  ellOut(c, 16, 10, 13, 4, '#d8b07a', '#8a5a36');
+  rect(c, 12, 5, 6, 5, '#f2e6cc');
+  rect(c, 18, 6, 2, 2, '#f2e6cc');
+  rect(c, 13, 5, 4, 1, '#8a5a36');
+}
+
+function paintKatze(c: C, f: number, farbe: string) {
+  const col = farbe === 'rot' ? { fur: '#e09a5a', dark: '#b06a30' } : { fur: '#9aa3ad', dark: '#6a7380' };
+  ell(c, 8, 14, 7, 1.5, SHADOW);
+  ellOut(c, 8, 10 - (f % 2 === 1 ? 0.5 : 0), 6.5, 4, col.fur, '#3a2a20');
+  ellOut(c, 4, 9, 3, 2.5, col.fur, '#3a2a20');
+  rect(c, 2, 6, 1, 2, col.dark);
+  rect(c, 5, 6, 1, 2, col.dark);
+  rect(c, 3, 9, 3, 1, '#3a2a20'); // geschlossene Augen
+  rect(c, 10, 12, 4, 1, col.dark); // Schwanz um den Körper
+  for (const x of [8, 11]) rect(c, x, 7, 1, 2, col.dark);
+}
+
+function paintZimmerpflanze(c: C) {
+  ell(c, 8, 31, 5, 1, SHADOW);
+  rect(c, 3, 23, 10, 8, '#c9645a');
+  rect(c, 3, 23, 10, 1, '#e07a6e');
+  for (const [x, y, rx] of [[5, 16, 4], [11, 14, 4], [8, 9, 4], [4, 9, 3], [12, 20, 3]] as const) ellOut(c, x, y, rx, 2.5, '#5f9142', '#2e4c22');
+  rect(c, 8, 12, 1, 11, '#3f6e35');
+}
+
+function paintKochtopf(c: C, f: number) {
+  ell(c, 16, 39, 14, 1.5, SHADOW);
+  rect(c, 3, 26, 26, 13, '#5a5f66'); // Herd
+  rect(c, 3, 26, 26, 2, '#7a8088');
+  ellOut(c, 16, 18, 12, 8, '#9aa3ad', '#3d4249'); // Topf
+  ell(c, 16, 13, 10, 2.5, '#d8a25a'); // Brühe
+  rect(c, 3, 16, 2, 3, '#3d4249');
+  rect(c, 27, 16, 2, 3, '#3d4249');
+  // Dampf
+  for (const [x, y] of [[11, 7], [17, 4], [22, 8]] as const) rect(c, x + (f % 2), y - (f % 2), 2, 2, 'rgba(255,255,255,0.7)');
+}
+
+function paintHotpottisch(c: C) {
+  ell(c, 16, 39, 14, 2, SHADOW);
+  rect(c, 14, 26, 4, 13, '#5a3a20');
+  ellOut(c, 16, 22, 15, 7, '#8a3a2e', '#4a1e18');
+  ellOut(c, 16, 19, 6, 4, '#3d4249', '#1e2226');
+  ell(c, 16, 17, 4.5, 1.5, '#d8a25a');
+  rect(c, 5, 22, 3, 1, '#f2e6cc');
+  rect(c, 24, 22, 3, 1, '#f2e6cc');
+}
+
+function paintLaterne(c: C) {
+  ell(c, 8, 31, 4, 1, SHADOW);
+  rect(c, 7, 14, 2, 17, '#5a3a20');
+  ellOut(c, 8, 9, 5, 6, '#d94a3a', '#7a1e18');
+  rect(c, 6, 3, 4, 1, '#3a2a20');
+  rect(c, 6, 15, 4, 1, '#3a2a20');
+  ell(c, 8, 9, 2, 3, '#f2a65a');
+}
+
+function paintFuchsbauhuegel(c: C) {
+  ell(c, 24, 39, 22, 2, SHADOW);
+  ellOut(c, 24, 28, 21, 11, '#8a6a48', '#4a3020');
+  ell(c, 24, 19, 16, 4, '#5f9142');
+  for (const x of [10, 15, 33, 38]) rect(c, x, 18, 1, 4, '#3f6e35');
+  ell(c, 24, 33, 7, 6, '#2a1a10'); // Eingang
+  for (const [x, y, w] of [[12, 26, 6], [31, 25, 6], [16, 34, 3]] as const) rect(c, x, y, w, 1, '#5a3a20'); // Wurzeln
+}
+
+function paintTeepflanze(c: C) {
+  ell(c, 8, 22, 5, 1, SHADOW);
+  rect(c, 4, 16, 8, 6, '#f2e6cc');
+  rect(c, 4, 16, 8, 1, '#d9c39b');
+  for (const [x, y] of [[5, 12], [10, 11], [7, 7], [4, 8], [11, 6]] as const) ellOut(c, x, y, 2.5, 1.5, '#7cbf68', '#3f6e35');
+  rect(c, 8, 8, 1, 8, '#3f6e35');
+}
+
+function paintWollfaden(c: C) {
+  ell(c, 8, 14, 5, 1, SHADOW);
+  for (let i = 0; i < 10; i++) rect(c, 3 + i, 10 + Math.round(Math.sin(i * 0.9) * 2), 1, 1, i % 2 ? '#e86a8a' : '#c9a0e8');
+  ellOut(c, 12, 10, 2, 2, '#e86a8a', '#7a2f4a');
+}
+
+function paintMehlsack(c: C) {
+  ell(c, 8, 14, 5, 1, SHADOW);
+  ellOut(c, 8, 9, 5, 5, '#efe6d2', '#9a8a6a');
+  rect(c, 6, 3, 4, 2, '#c9b48a');
+  rect(c, 7, 9, 2, 2, '#d9c39b');
+}
+
+function paintGemuesekiste(c: C) {
+  ell(c, 8, 14, 6, 1, SHADOW);
+  rect(c, 2, 8, 12, 6, '#a6784a');
+  rect(c, 2, 8, 12, 1, '#c8955c');
+  rect(c, 2, 11, 12, 1, '#6e4b2c');
+  for (const x of [4, 7, 10]) {
+    rect(c, x, 4, 2, 4, '#f08a3a');
+    rect(c, x, 3, 2, 1, '#5f9142');
+  }
+}
+
+function paintKraeutertopf(c: C) {
+  ell(c, 8, 14, 5, 1, SHADOW);
+  rect(c, 4, 9, 8, 5, '#c9645a');
+  for (const [x, y] of [[5, 6], [8, 4], [11, 6], [7, 7]] as const) ellOut(c, x, y, 1.5, 1.5, '#5f9142', '#2e4c22');
+}
+
+function paintTannenzapfen(c: C) {
+  ell(c, 8, 14, 4, 1, SHADOW);
+  ellOut(c, 8, 9, 3.5, 5, '#8a5a36', '#4a3020');
+  for (let y = 5; y < 14; y += 2) rect(c, 6, y, 5, 1, '#6e4528');
+}
+
+function paintBeerenstrauch(c: C) {
+  ell(c, 8, 22, 6, 1, SHADOW);
+  ellOut(c, 8, 15, 6.5, 6, '#4d7d38', '#2e4c22');
+  for (const [x, y] of [[5, 12], [10, 14], [7, 17], [11, 18], [4, 16]] as const) {
+    rect(c, x, y, 2, 2, '#d94a5a');
+    rect(c, x, y, 1, 1, '#ff9aa6');
+  }
+}
+
+function paintMoos(c: C) {
+  ellOut(c, 8, 11, 6, 3, '#6fae5a', '#3f6e35');
+  for (const [x, y] of [[5, 10], [9, 9], [11, 11], [7, 12]] as const) rect(c, x, y, 1, 1, '#9bd487');
+}
+
+function paintKletterpflanze(c: C) {
+  ell(c, 8, 30, 5, 1, SHADOW);
+  rect(c, 4, 24, 8, 6, '#c9645a');
+  rect(c, 8, 4, 1, 20, '#a6784a');
+  for (let y = 6; y < 24; y += 3) {
+    ellOut(c, y % 2 ? 6 : 10, y, 2, 1.5, '#7cbf68', '#3f6e35');
+  }
+  rect(c, 7, 14, 3, 1, '#e86a8a'); // Wollfaden
+}
+
+function paintWollkissen(c: C) {
+  ell(c, 8, 14, 6, 1, SHADOW);
+  ellOut(c, 8, 10, 6.5, 3.5, '#e8a0c8', '#9a4a7a');
+  for (let x = 3; x < 14; x += 2) rect(c, x, 9, 1, 3, '#c9a0e8');
+}
+
+function paintTeigtaschen(c: C, f: number) {
+  ell(c, 8, 14, 6, 1, SHADOW);
+  ellOut(c, 8, 11, 7, 2.5, '#f2e6cc', '#9a8a6a');
+  for (const x of [5, 8, 11]) ellOut(c, x, 9, 2, 1.5, '#f6e2b8', '#b8925a');
+  rect(c, 6 + (f % 2), 3, 1, 3, 'rgba(255,255,255,0.7)');
+  rect(c, 10 - (f % 2), 4, 1, 2, 'rgba(255,255,255,0.7)');
+}
+
+function paintKraeutersuppe(c: C, f: number) {
+  ell(c, 8, 14, 6, 1, SHADOW);
+  ellOut(c, 8, 11, 6, 3, '#f6c7d0', '#b97a88');
+  ell(c, 8, 10, 4.5, 1.5, '#9fbf5a');
+  rect(c, 6, 10, 1, 1, '#5f9142');
+  rect(c, 10, 9, 1, 1, '#f08a3a');
+  rect(c, 7 + (f % 2), 4, 1, 3, 'rgba(255,255,255,0.7)');
+}
+
+function paintZapfenkranz(c: C) {
+  ell(c, 8, 30, 4, 1, SHADOW);
+  rect(c, 7, 18, 2, 12, '#7a5a3a');
+  ring(c, 8, 11, 6, 6, '#4d7d38');
+  for (const [x, y] of [[3, 9], [12, 9], [5, 15], [11, 15], [8, 5]] as const) rect(c, x, y, 2, 3, '#8a5a36');
+  rect(c, 7, 16, 2, 2, '#d94a5a');
+}
+
+function paintBeerenlicht(c: C, f: number, an: boolean) {
+  ell(c, 8, 22, 4, 1, SHADOW);
+  rect(c, 4, 9, 8, 13, an ? (f % 2 ? '#fff3b0' : '#ffe68a') : '#cfe6ee');
+  rect(c, 4, 9, 8, 1, '#9fb3c4');
+  rect(c, 3, 7, 10, 2, '#a6784a');
+  for (const [x, y] of [[5, 16], [8, 18], [10, 15], [6, 19]] as const) rect(c, x, y, 2, 2, '#d94a5a');
+  ellOut(c, 8, 13, 1.5, 1.5, an ? '#ffffff' : '#b8c6d4', '#5c6b7a');
+}
+
+function paintMooskissen(c: C) {
+  ell(c, 8, 14, 6, 1, SHADOW);
+  ellOut(c, 8, 10, 6.5, 3.5, '#6fae5a', '#3f6e35');
+  for (const [x, y] of [[5, 9], [9, 8], [11, 11]] as const) rect(c, x, y, 1, 1, '#9bd487');
+  rect(c, 7, 6, 1, 4, '#4f8fd6');
+  rect(c, 8, 6, 1, 3, '#7fb0e6');
+}
+
 // ---------------- Umgebung und Dinge ----------------
 
 function paintAussichtsstein(c: C, wimpel: boolean) {
@@ -593,10 +878,54 @@ function paintPortrait(c: C, who: string) {
     bubbles: '#e0eefb',
     meerkat: '#f6ecd6',
     squichy: '#e4ecf2',
+    chamaron: '#e6f2dc',
+    beano: '#eef6e2',
+    beani: '#eef6e2',
+    beanz: '#eef6e2',
+    bean: '#f2e8dc',
   };
   const bg = bgs[who] ?? '#f3e3cc';
   rect(c, 2, 0, 60, 64, bg);
   rect(c, 0, 2, 64, 60, bg);
+  if (who === 'chamaron') {
+    ellOut(c, 30, 38, 18, 15, '#a8d890', '#4f6b40');
+    for (const x of [18, 24, 30, 36]) rect(c, x, 22, 3, 4, '#4f6b40');
+    ellOut(c, 38, 34, 7, 7, '#f6f6e8', '#4f6b40');
+    rect(c, 39, 33, 3, 3, EYE);
+    rect(c, 22, 44, 12, 2, '#4f6b40');
+    return;
+  }
+  if (who === 'beano' || who === 'beani' || who === 'beanz') {
+    ellOut(c, 32, 34, 18, 18, '#8cc65a', '#3f6e25');
+    ell(c, 25, 26, 5, 3, '#b4e08a');
+    if (who === 'beani') {
+      rect(c, 22, 34, 6, 2, EYE);
+      rect(c, 36, 34, 6, 2, EYE);
+      rect(c, 29, 42, 6, 1, '#3f6e25');
+    } else {
+      rect(c, 23, 31, 3, 5, EYE);
+      rect(c, 38, 31, 3, 5, EYE);
+      if (who === 'beano') {
+        rect(c, 26, 41, 12, 2, '#3f6e25');
+        rect(c, 24, 39, 2, 2, '#3f6e25');
+        rect(c, 38, 39, 2, 2, '#3f6e25');
+      } else {
+        ellOut(c, 32, 42, 2, 2, '#3f6e25', '#3f6e25');
+        rect(c, 46, 14, 3, 6, '#f2c14e'); // kleines Fragezeichen-Strichlein als Neugier (keine Schrift)
+        rect(c, 46, 22, 3, 3, '#f2c14e');
+      }
+    }
+    return;
+  }
+  if (who === 'bean') {
+    for (const [x, y, w, h] of [[16, 6, 3, 14], [10, 6, 9, 3], [44, 6, 3, 14], [44, 6, 9, 3]] as const) rect(c, x, y, w, h, '#c8a878');
+    ellOut(c, 32, 38, 16, 17, '#9a6a48', '#4a3020');
+    ell(c, 32, 46, 9, 7, '#e8d2b0');
+    rect(c, 24, 32, 3, 4, EYE);
+    rect(c, 37, 32, 3, 4, EYE);
+    ellOut(c, 32, 44, 3, 2.5, '#3a2a20', '#3a2a20');
+    return;
+  }
   if (who === 'meerkat') {
     ellOut(c, 20, 20, 4, 4, '#8a6a40', '#5a4128');
     ellOut(c, 44, 20, 4, 4, '#8a6a40', '#5a4128');
@@ -714,6 +1043,33 @@ export function paintFrame(c: C, def: SpriteDef, frame: number): void {
     federwimpel: () => paintFederwimpel(c, frame),
     schilfball: () => paintSchilfball(c),
     sonnenblumentopf: () => paintSonnenblumentopf(c),
+    chamaron: () => paintChamaron(c, frame, String(args.state), String(args.dir)),
+    erbsenschale: () => paintErbsenschale(c, frame, String(args.state), String(args.dir)),
+    bean: () => paintBean(c, frame, String(args.state), String(args.dir)),
+    theke: () => paintTheke(c),
+    basteltisch: () => paintBasteltisch(c),
+    cafetisch: () => paintCafetisch(c),
+    katze: () => paintKatze(c, frame, String(args.farbe)),
+    zimmerpflanze: () => paintZimmerpflanze(c),
+    kochtopf: () => paintKochtopf(c, frame),
+    hotpottisch: () => paintHotpottisch(c),
+    laterne: () => paintLaterne(c),
+    fuchsbauhuegel: () => paintFuchsbauhuegel(c),
+    teepflanze: () => paintTeepflanze(c),
+    wollfaden: () => paintWollfaden(c),
+    mehlsack: () => paintMehlsack(c),
+    gemuesekiste: () => paintGemuesekiste(c),
+    kraeutertopf: () => paintKraeutertopf(c),
+    tannenzapfen: () => paintTannenzapfen(c),
+    beerenstrauch: () => paintBeerenstrauch(c),
+    moos: () => paintMoos(c),
+    kletterpflanze: () => paintKletterpflanze(c),
+    wollkissen: () => paintWollkissen(c),
+    teigtaschen: () => paintTeigtaschen(c, frame),
+    kraeutersuppe: () => paintKraeutersuppe(c, frame),
+    zapfenkranz: () => paintZapfenkranz(c),
+    beerenlicht: () => paintBeerenlicht(c, frame, args.an === true),
+    mooskissen: () => paintMooskissen(c),
   };
   painters[def.placeholder.painter]();
 }
@@ -757,6 +1113,37 @@ export function paintTerrain(grid: Grid, frame: number): HTMLCanvasElement {
       const px = x * T;
       const py = y * T;
       const h = hash(x, y, 1);
+      if (t === 'boden') {
+        // Holzdielen (Innenräume)
+        // Lange Dielen von links nach rechts, abwechselnd heller und dunkler, selten eine Stoßfuge.
+        for (let row = 0; row < 2; row++) {
+          const shade = (y * 2 + row) % 2 === 0 ? '#c89a6a' : '#bd8f5f';
+          rect(c, px, py + row * 8, T, 8, shade);
+          rect(c, px, py + row * 8 + 7, T, 1, '#9a6e44');
+          if (hash(x, y, row + 50) % 5 === 0) rect(c, px + (hash(x, y, row + 60) % 14) + 1, py + row * 8, 1, 7, '#9a6e44');
+        }
+        if ((h >> 3) % 6 === 0) rect(c, px + (h % 12) + 2, py + 2 + ((h >> 6) % 4), 3, 1, '#d8ae80');
+        continue;
+      }
+      if (t === 'wand') {
+        // Wand: von oben dunkle Mauerkrone, zur Raumseite hin eine helle Wand mit Holzleiste
+        const below = at(x, y + 1);
+        if (below && below !== 'wand') {
+          rect(c, px, py, T, T, '#f1e2c6');
+          rect(c, px, py + 11, T, 5, '#b5835a');
+          rect(c, px, py + 11, T, 1, '#8a5a36');
+          if (h % 4 === 0) {
+            // kleines Fenster
+            rect(c, px + 3, py + 2, 10, 7, '#5a3c22');
+            rect(c, px + 4, py + 3, 8, 5, '#9fc8de');
+            rect(c, px + 8, py + 3, 1, 5, '#5a3c22');
+          }
+        } else {
+          rect(c, px, py, T, T, '#6e4a32');
+          rect(c, px, py, T, 1, '#8a6246');
+        }
+        continue;
+      }
       if (t === 'schilf') {
         // Schilf steht im flachen Wasser: Wasser darunter, Halme und Kolben darüber.
         rect(c, px, py, T, T, '#3f7f98');

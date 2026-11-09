@@ -1,5 +1,5 @@
 import type { EncounterDef } from './types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, MAP_ZOO, Q_LICHT, Q_PICKNICK, Q_SCHILF } from './ids';
+import { MAP_CAFE, MAP_FUCHSBAU, MAP_HOTPOT, MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, MAP_ZOO, Q_KLETTER, Q_LICHT, Q_PICKNICK, Q_SCHILF } from './ids';
 
 // Wo sich jeder Weltkörper aufhält – über alle Maps hinweg. Pro Körper genau eine Begegnung;
 // die erste passende Platzierung gilt. Der Körper, den die Spielerin gerade steuert, steht nie zusätzlich herum.
@@ -76,6 +76,35 @@ export const encounters: EncounterDef[] = [
     id: 'enc.squichy',
     characters: ['squichy'],
     placements: [{ map: MAP_ZOO, at: { tile: { x: 11, y: 14 } }, pose: 'idle', facing: 'sw' }],
+  },
+  {
+    // Chamaron versteckt sich neben der großen Pflanze – bis zur eigenen Kletterpflanze.
+    id: 'enc.chamaron',
+    characters: ['chamaron'],
+    placements: [
+      {
+        when: { questStep: { quest: Q_KLETTER, step: 'gemeinsam' } },
+        map: MAP_CAFE,
+        at: { besideDeco: 'item.kletterpflanze' },
+        pose: 'idle',
+        facing: 'se',
+        talkOnArrival: { questStep: { quest: Q_KLETTER, step: 'gemeinsam' } },
+      },
+      { when: { questDone: Q_KLETTER }, map: MAP_CAFE, at: { besideDeco: 'item.kletterpflanze' }, pose: 'idle', facing: 'se' },
+      { map: MAP_CAFE, at: { tile: { x: 13, y: 13 } }, pose: 'idle', facing: 'sw' },
+    ],
+  },
+  {
+    // Beano, Beani und Beanz: ein Körper, eine Schale – an der Theke im Hotpot-Restaurant.
+    id: 'enc.erbsen',
+    characters: ['beano', 'beani', 'beanz'],
+    placements: [{ map: MAP_HOTPOT, at: { tile: { x: 8, y: 9 } }, pose: 'idle', facing: 'se' }],
+  },
+  {
+    // Bean wohnt auf der Lichtung beim Fuchsbau.
+    id: 'enc.bean',
+    characters: ['bean'],
+    placements: [{ map: MAP_FUCHSBAU, at: { tile: { x: 8, y: 12 } }, pose: 'idle', facing: 'se' }],
   },
   {
     // Spielt sie gerade als jemand anderes, ruht ihr Otter vor dem Bau.

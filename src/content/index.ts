@@ -8,6 +8,9 @@ import { startufer } from './maps/startufer';
 import { schilfbucht } from './maps/schilfbucht';
 import { tiramisuStream } from './maps/tiramisu-stream';
 import { zoo } from './maps/zoo';
+import { catCafe } from './maps/cat-cafe';
+import { hotpotRestaurant } from './maps/hotpot-restaurant';
+import { fuchsbau } from './maps/fuchsbau';
 import { MAP_STARTUFER } from './ids';
 
 // Zentrale Sammlung aller Inhaltspakete. Eine neue Map kommt als weiterer Eintrag in `maps` hinzu
@@ -17,7 +20,15 @@ export const content: Content = {
   bodies,
   items,
   recipes,
-  maps: { [startufer.id]: startufer, [schilfbucht.id]: schilfbucht, [tiramisuStream.id]: tiramisuStream, [zoo.id]: zoo },
+  maps: {
+    [startufer.id]: startufer,
+    [schilfbucht.id]: schilfbucht,
+    [tiramisuStream.id]: tiramisuStream,
+    [zoo.id]: zoo,
+    [catCafe.id]: catCafe,
+    [hotpotRestaurant.id]: hotpotRestaurant,
+    [fuchsbau.id]: fuchsbau,
+  },
   encounters,
   quests,
   moments,

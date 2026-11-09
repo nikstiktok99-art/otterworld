@@ -39,13 +39,13 @@ export function terrainAt(g: Grid, t: Tile): Terrain {
 
 /** Kann ein Körper mit diesen Bewegungsarten auf diesem Untergrund stehen? */
 export function standable(terrain: Terrain, moves: readonly Movement[]): boolean {
-  if (terrain === 'blocked' || terrain === 'schilf' || terrain === 'zaun') return false;
+  if (terrain === 'blocked' || terrain === 'schilf' || terrain === 'zaun' || terrain === 'wand') return false;
   if (terrain === 'water') return moves.includes('water');
   return moves.includes('land'); // Sand, Gras, Blumen, Steg, Pfad
 }
 
 /** Boden, auf dem Deko stehen darf (Steg und Pfade bleiben frei). */
-export const isLand = (t: Terrain): boolean => t === 'sand' || t === 'grass' || t === 'blumen';
+export const isLand = (t: Terrain): boolean => t === 'sand' || t === 'grass' || t === 'blumen' || t === 'boden';
 
 /**
  * Nächste Kachel ab `from` (Breitensuche über das ganze Raster), auf der ein Körper sicher stehen kann.
