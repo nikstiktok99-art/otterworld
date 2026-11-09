@@ -11,7 +11,8 @@ Automatisch geprüft am 09.11.2026:
   Ankunft am sicheren Platz und zurück, Aufgaben „an einem Ort ankommen“ zählen auch bei Kartenreisen, eine reine
   Wasserfigur reist nicht an einen Ort ohne Wasser, Migration 0.7.0 → 0.8.0 leitet besuchte Orte aus dem Stand ab.
 - **Typprüfung:** fehlerfrei.
-- **Cloud:** CLOUD_ERGEBNIS
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b9), „Android-Testbuild (.apk)“ (a9) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
 
 | Test | Browser (`npm run e2e`, 102 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
 |---|---|---|---|---|
@@ -20,7 +21,7 @@ Automatisch geprüft am 09.11.2026:
 | Vom Fuchsbau direkt in den Zoo, Ankunft am sicheren Platz | ok | offen | – | offen |
 | Über die Karte zurück ans Startufer, Neuladen: Orte bleiben | ok | offen | – | offen |
 | Vier Knöpfe oben passen in eine Reihe (auch auf schmalen Handys) | ok (402 px) | offen | – | offen |
-| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
 
 ## Cat Café, Hotpot-Restaurant, Fuchsbau (Version 0.7.0)
 
