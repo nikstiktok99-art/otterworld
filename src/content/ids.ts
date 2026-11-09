@@ -27,3 +27,13 @@ export const R_KIESELLICHT = 'recipe.kiesellicht';
 export const M_PICKNICK = 'moment.lumi.picknick';
 export const M_ROSIE_KISSEN = 'moment.rosie.kissen';
 export const M_BUBBLES_KISSEN = 'moment.bubbles.kissen';
+
+// Kapitel Zoo (Vorschlag): Meerkat und Squichy.
+export const MAP_ZOO = 'map.zoo';
+export const Q_WIMPEL = 'quest.meerkat.wimpel';
+export const Q_BALL = 'quest.squichy.ball';
+export const R_WIMPEL = 'recipe.federwimpel';
+export const R_BALL = 'recipe.schilfball';
+export const R_TOPF = 'recipe.sonnenblumentopf';
+export const M_WIMPEL = 'moment.meerkat.wimpel';
+export const M_BALL = 'moment.squichy.ball';

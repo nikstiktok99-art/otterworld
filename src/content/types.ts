@@ -1,7 +1,7 @@
 // Typen der Inhaltsdaten. Inhalte sind reine Daten: Figuren, Körper, Orte, Gegenstände, Rezepte, Quests, Dialoge.
 import type { Dir, Tile } from '../game/types';
 
-export type Terrain = 'water' | 'sand' | 'grass' | 'blumen' | 'steg' | 'pfad' | 'schilf' | 'blocked';
+export type Terrain = 'water' | 'sand' | 'grass' | 'blumen' | 'steg' | 'pfad' | 'schilf' | 'zaun' | 'blocked';
 
 /** Kleine sichtbare Eigenheit eines Körpers (z. B. Bubbles macht immer wieder Blasen). */
 export type BodyTrait = 'blasen';
@@ -115,6 +115,8 @@ export interface MapObjectDef {
   footprint: { w: number; h: number };
   /** Grafik gespiegelt zeichnen (z. B. Wegweiser nach links). */
   flip?: boolean;
+  /** Anderes Aussehen je nach Spielverlauf (erste passende Bedingung gilt), z. B. Stein mit Wimpel. */
+  variants?: Array<{ when: Condition; sprite: string }>;
   interaction?:
     | { kind: 'workbench'; station?: string; title?: string }
     | { kind: 'inspect'; text: string }
@@ -191,6 +193,8 @@ export interface MapDef {
   /** Diese Kacheln müssen zu Fuß erreichbar bleiben (z. B. der Steg). Ausgänge gelten automatisch. */
   keepReachable: Array<{ tile: Tile; name: string }>;
   ambience?: string;
+  /** Farbe außerhalb der Karte (sichtbar am Rand, z. B. über der obersten Reihe). Standard: Wasserblau. */
+  backdrop?: string;
 }
 
 export interface QuestStepDef {

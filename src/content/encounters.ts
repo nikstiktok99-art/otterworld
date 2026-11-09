@@ -1,5 +1,5 @@
 import type { EncounterDef } from './types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, Q_LICHT, Q_PICKNICK, Q_SCHILF } from './ids';
+import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, MAP_ZOO, Q_LICHT, Q_PICKNICK, Q_SCHILF } from './ids';
 
 // Wo sich jeder Weltkörper aufhält – über alle Maps hinweg. Pro Körper genau eine Begegnung;
 // die erste passende Platzierung gilt. Der Körper, den die Spielerin gerade steuert, steht nie zusätzlich herum.
@@ -64,6 +64,18 @@ export const encounters: EncounterDef[] = [
     id: 'enc.bubbles',
     characters: ['bubbles'],
     placements: [{ map: MAP_TIRAMISU, at: { tile: { x: 6, y: 5 } }, pose: 'idle', facing: 'sw' }],
+  },
+  {
+    // Meerkat hält auf dem Aussichtsstein Wache.
+    id: 'enc.meerkat',
+    characters: ['meerkat'],
+    placements: [{ map: MAP_ZOO, at: { tile: { x: 4, y: 6 } }, pose: 'idle', facing: 'se' }],
+  },
+  {
+    // Squichy schwimmt im Robbenbecken.
+    id: 'enc.squichy',
+    characters: ['squichy'],
+    placements: [{ map: MAP_ZOO, at: { tile: { x: 11, y: 14 } }, pose: 'idle', facing: 'sw' }],
   },
   {
     // Spielt sie gerade als jemand anderes, ruht ihr Otter vor dem Bau.

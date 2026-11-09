@@ -8,6 +8,7 @@ import { movementBlocked, resolveAllNpcs, resolveNpcs, type NpcPlacement } from 
 import { checkPlacement } from '../game/rules/placement';
 import { accessTiles, findPath, gridFor, inBounds, key, standable, terrainAt, TILE, type Grid } from '../game/space';
 import { characterName, hasNews, selectDialogue } from '../game/text';
+import { matches } from '../game/conditions';
 import { spotReady } from '../game/rules/spots';
 import { DEFAULT_STATION } from '../content/types';
 import { clock } from '../app/clock';
@@ -53,17 +54,20 @@ const DECO_BAR_PX = 190;
 // Höhe der Anzeige oben ohne Safe Area (Knöpfe und Hinweis, CSS-Pixel)
 const HUD_PX = 120;
 
-let safeTopCache: number | null = null;
-/** Safe Area oben in CSS-Pixeln (Kamera-Aussparung, Statusleiste); im Browser meist 0. */
-function safeTopPx(): number {
-  if (safeTopCache !== null) return safeTopCache;
+let safeCache: { top: number; bottom: number } | null = null;
+/** Safe Areas in CSS-Pixeln (oben Kamera-Aussparung/Statusleiste, unten Home-Indikator); im Browser meist 0. */
+function safeArea(): { top: number; bottom: number } {
+  if (safeCache) return safeCache;
   const probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top)';
+  probe.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)';
   document.body.appendChild(probe);
-  safeTopCache = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+  const cs = getComputedStyle(probe);
+  safeCache = { top: parseFloat(cs.paddingTop) || 0, bottom: parseFloat(cs.paddingBottom) || 0 };
   probe.remove();
-  return safeTopCache;
+  return safeCache;
 }
+const safeTopPx = () => safeArea().top;
+const safeBottomPx = () => safeArea().bottom;
 // Überblendung bei Orts- und Figurenwechsel (Abendblau)
 const FADE = { ms: 260, r: 28, g: 42, b: 90 };
 
@@ -150,8 +154,9 @@ export class WorldScene extends Phaser.Scene {
     for (const obj of this.map.objects) {
       const x = (obj.tile.x + obj.footprint.w / 2) * TILE;
       const y = (obj.tile.y + obj.footprint.h) * TILE - 1;
-      const o = this.tex.origin(obj.sprite);
-      const sprite = this.add.sprite(x, y, obj.sprite, 0).setOrigin(o.x, o.y).setDepth(y).setFlipX(!!obj.flip);
+      const key = this.objectSprite(obj);
+      const o = this.tex.origin(key);
+      const sprite = this.add.sprite(x, y, key, 0).setOrigin(o.x, o.y).setDepth(y).setFlipX(!!obj.flip);
       this.objects.push({ obj, sprite });
     }
 
@@ -173,7 +178,7 @@ export class WorldScene extends Phaser.Scene {
 
     // Abendstimmung über der ganzen Map, Lichtschein darüber
     this.add
-      .rectangle(0, 0, this.grid.w * TILE, this.grid.h * TILE, 0x1c2a5a, 0.3)
+      .rectangle(-TILE, -400, (this.grid.w + 2) * TILE, this.grid.h * TILE + 800, 0x1c2a5a, 0.3)
       .setOrigin(0, 0)
       .setDepth(DEPTH_EVENING);
 
@@ -181,7 +186,7 @@ export class WorldScene extends Phaser.Scene {
     this.decoLayer = this.add.graphics().setDepth(DEPTH_UI - 1);
 
     const cam = this.cameras.main;
-    cam.setBackgroundColor('#3d86a8');
+    cam.setBackgroundColor(this.map.backdrop ?? '#3d86a8');
     this.applyNormalBounds();
     cam.setRoundPixels(true);
     this.applyZoom();
@@ -241,7 +246,8 @@ export class WorldScene extends Phaser.Scene {
   private applyNormalBounds(): void {
     const cam = this.cameras.main;
     const top = (safeTopPx() + HUD_PX) / (cam.zoom || 1);
-    cam.setBounds(0, -top, this.grid.w * TILE, this.grid.h * TILE + top);
+    const bottom = (safeBottomPx() + 80) / (cam.zoom || 1);
+    cam.setBounds(0, -top, this.grid.w * TILE, this.grid.h * TILE + top + bottom);
   }
 
   private applyZoom(): void {
@@ -291,6 +297,22 @@ export class WorldScene extends Phaser.Scene {
   /** Fundstelle sichtbar: noch nicht eingesammelt und schon verfügbar. */
   private spotOpen(spot: GatherSpotDef): boolean {
     return spotReady(this.deps.session.getState(), this.map, spot, clock.now());
+  }
+
+  /** Aussehen eines Objekts nach Spielverlauf (z. B. Aussichtsstein mit Wimpel). */
+  private objectSprite(obj: MapObjectDef): string {
+    const s = this.deps.session.getState();
+    return obj.variants?.find((v) => matches(v.when, s))?.sprite ?? obj.sprite;
+  }
+
+  private syncObjects(): void {
+    for (const { obj, sprite } of this.objects) {
+      const key = this.objectSprite(obj);
+      if (sprite.texture.key === key) continue;
+      const o = this.tex.origin(key);
+      sprite.setTexture(key, 0).setOrigin(o.x, o.y);
+      this.burst(sprite.x, sprite.y - 12);
+    }
   }
 
   /** Wieder (oder neu) verfügbare Fundstellen sanft einblenden. Ausblenden übernimmt die Aufheben-Animation. */
@@ -563,6 +585,7 @@ export class WorldScene extends Phaser.Scene {
   private onStateChanged(): void {
     // Einsammeln blendet die Fundstelle selbst aus (kleine Animation); hier nur neu erscheinende zeigen.
     this.refreshSpots();
+    this.syncObjects();
     this.syncDeco();
     this.syncNpcs(true);
   }
@@ -915,6 +938,7 @@ export class WorldScene extends Phaser.Scene {
         news: this.markers.has(placement.body),
       })),
       spotsVisible: [...this.spots.entries()].filter(([, sp]) => sp.visible).map(([id]) => id),
+      objects: this.objects.map(({ obj, sprite }) => ({ id: obj.id, sprite: sprite.texture.key })),
       bubblesMade: this.bubblesMade,
       warnings: this.tex.warnings,
       spriteKeys: spriteDef('characters.schnabbi.idle.se')?.file ? 'schnabbi:datei' : 'schnabbi:platzhalter',

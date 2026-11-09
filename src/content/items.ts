@@ -1,5 +1,5 @@
 import type { ItemDef, RecipeDef } from './types';
-import { Q_LICHT, R_BANK, R_GIRLANDE, R_KIESELLICHT, R_KISSEN, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
+import { Q_LICHT, R_BALL, R_BANK, R_GIRLANDE, R_KIESELLICHT, R_KISSEN, R_LEUCHTE, R_MATTE, R_TOPF, R_WIMPEL, R_WINDSPIEL } from './ids';
 
 // ENTWURF: Namen und Beschreibungen sind Vorschläge.
 export const items: Record<string, ItemDef> = {
@@ -116,6 +116,47 @@ export const items: Record<string, ItemDef> = {
     sprite: 'deco.kiesellicht.aus',
     deco: { spriteOn: 'deco.kiesellicht.an', glow: { x: 0, y: -6, scale: 0.9 } },
   },
+  // Kapitel Zoo (Vorschlag)
+  'item.feder': {
+    id: 'item.feder',
+    name: 'Feder',
+    plural: 'Federn',
+    kind: 'material',
+    description: 'Eine bunte Feder, leicht wie Luft.',
+    sprite: 'items.feder',
+  },
+  'item.sonnenblumenkern': {
+    id: 'item.sonnenblumenkern',
+    name: 'Sonnenblumenkern',
+    plural: 'Sonnenblumenkerne',
+    kind: 'material',
+    description: 'Gestreift und ein bisschen nussig.',
+    sprite: 'items.sonnenblume',
+  },
+  'item.federwimpel': {
+    id: 'item.federwimpel',
+    name: 'Federwimpel',
+    plural: 'Federwimpel',
+    kind: 'deco',
+    description: 'Ein kleiner Wimpel aus Treibholz mit zwei bunten Federn.',
+    sprite: 'deco.federwimpel',
+  },
+  'item.schilfball': {
+    id: 'item.schilfball',
+    name: 'Schilfball',
+    plural: 'Schilfbälle',
+    kind: 'deco',
+    description: 'Aus Schilf geflochten, mit einem Glitzerkiesel drin, der beim Rollen raschelt.',
+    sprite: 'deco.schilfball',
+  },
+  'item.sonnenblumentopf': {
+    id: 'item.sonnenblumentopf',
+    name: 'Sonnenblumentopf',
+    plural: 'Sonnenblumentöpfe',
+    kind: 'deco',
+    description: 'Eine kleine Sonnenblume in einer Muschel als Topf.',
+    sprite: 'deco.sonnenblumentopf',
+  },
 };
 
 export const recipes: Record<string, RecipeDef> = {
@@ -160,5 +201,23 @@ export const recipes: Record<string, RecipeDef> = {
     name: 'Kiesellicht',
     inputs: { 'item.glitzerkiesel': 2, 'item.muschelschale': 1 },
     output: { item: 'item.kiesellicht', count: 1 },
+  },
+  [R_WIMPEL]: {
+    id: R_WIMPEL,
+    name: 'Federwimpel',
+    inputs: { 'item.feder': 2, 'item.treibholz': 1 },
+    output: { item: 'item.federwimpel', count: 1 },
+  },
+  [R_BALL]: {
+    id: R_BALL,
+    name: 'Schilfball',
+    inputs: { 'item.schilfhalm': 2, 'item.glitzerkiesel': 1 },
+    output: { item: 'item.schilfball', count: 1 },
+  },
+  [R_TOPF]: {
+    id: R_TOPF,
+    name: 'Sonnenblumentopf',
+    inputs: { 'item.sonnenblumenkern': 2, 'item.muschelschale': 1 },
+    output: { item: 'item.sonnenblumentopf', count: 1 },
   },
 };

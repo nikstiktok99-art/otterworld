@@ -184,6 +184,10 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     if (!onLand(m.arrival)) err(`${where}: Ankunftspunkt nicht begehbar`);
     for (const o of m.objects) {
       asset(o.sprite, `${where}/${o.id}`);
+      for (const v of o.variants ?? []) {
+        asset(v.sprite, `${where}/${o.id}`);
+        condRefs(v.when, `${where}/${o.id}`);
+      }
       for (let y = o.tile.y; y < o.tile.y + o.footprint.h; y++)
         for (let x = o.tile.x; x < o.tile.x + o.footprint.w; x++)
           if (!inBounds(g, { x, y }) || terrainAt(g, { x, y }) === 'water') err(`${where}/${o.id}: Grundfläche liegt nicht auf Land`);

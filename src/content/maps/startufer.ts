@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, NACHWACHSEN_MIN } from '../ids';
+import { MAP_SCHILFBUCHT, MAP_STARTUFER, MAP_TIRAMISU, MAP_ZOO, NACHWACHSEN_MIN } from '../ids';
 
 // Vorläufiges Startufer (Vorschlag aus dem Startplan). 16 × 32 Kacheln à 16 px.
 // Legende: ~ Wasser · : Sand · , Gras · = Steg · - Pfad · # Büsche/Wurzeln (nicht begehbar)
@@ -34,8 +34,8 @@ const grid = [
   '--,,,,,,,,,,,,,#', // 27  Pfad zum Tiramisu Stream
   '--,,,,,,,,,,,,,#', // 28
   '#,,,,,,,,,,,,,,#', // 29
-  '#,,,,,,,,,,,,,,#', // 30
-  '################', // 31
+  '#,,,,,,,,,,,,,,#', // 30  Wegweiser zum Zoo
+  '#######--#######', // 31  Weg zum Zoo
 ];
 
 export const startufer: MapDef = {
@@ -79,6 +79,14 @@ export const startufer: MapDef = {
       flip: true,
       interaction: { kind: 'exit', exit: 'exit.zum-bach' },
     },
+    {
+      id: 'obj.wegweiser.zoo',
+      name: 'Wegweiser',
+      sprite: 'objects.wegweiser',
+      tile: { x: 9, y: 30 },
+      footprint: { w: 1, h: 1 },
+      interaction: { kind: 'exit', exit: 'exit.zum-zoo' },
+    },
   ],
   gatherSpots: [
     { id: 'spot.treibholz.strand', item: 'item.treibholz', count: 1, tile: { x: 4, y: 17 }, sprite: 'items.treibholz', regrowMinutes: NACHWACHSEN_MIN },
@@ -110,10 +118,21 @@ export const startufer: MapDef = {
       to: { map: MAP_TIRAMISU, entry: 'entry.vom-ufer' },
       keepName: 'den Weg zum Tiramisu Stream',
     },
+    {
+      id: 'exit.zum-zoo',
+      label: 'Zoo',
+      tiles: [
+        { x: 7, y: 31 },
+        { x: 8, y: 31 },
+      ],
+      to: { map: MAP_ZOO, entry: 'entry.vom-ufer' },
+      keepName: 'den Weg zum Zoo',
+    },
   ],
   entries: [
     { id: 'entry.von-der-bucht', tile: { x: 13, y: 22 }, facing: 'sw' },
     { id: 'entry.vom-bach', tile: { x: 2, y: 27 }, facing: 'se' },
+    { id: 'entry.vom-zoo', tile: { x: 7, y: 30 }, facing: 'ne' },
   ],
   decorZone: { x: 1, y: 15, w: 14, h: 16 },
   keepReachable: [

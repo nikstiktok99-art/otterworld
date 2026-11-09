@@ -1,5 +1,5 @@
 import type { BodyDef, CharacterDef } from './types';
-import { Q_KISSEN, Q_LICHT, Q_PICKNICK } from './ids';
+import { Q_BALL, Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_WIMPEL } from './ids';
 
 // Figuren-ID, Weltkörper-ID und Grafikschlüssel sind bewusst getrennt.
 // Weitere Figuren aus dem Kanon (Chamaron, Meerkat, Bean, Erbsentrio, Squichy) kommen hinzu, sobald ihre Kapitel
@@ -48,6 +48,22 @@ export const characters: Record<string, CharacterDef> = {
       metWhen: { not: { questNotStarted: Q_KISSEN } },
     },
   },
+  // Kanon: Erdmännchen, „Meerkat“ ist der Name.
+  meerkat: {
+    id: 'meerkat',
+    name: 'Meerkat',
+    body: 'body.meerkat',
+    portrait: 'portraits.meerkat',
+    friend: { about: 'Ein Erdmännchen, das im Zoo auf einem Stein Wache hält.', metWhen: { not: { questNotStarted: Q_WIMPEL } } },
+  },
+  // Kanon: eine Mini-Robbe, Schreibweise „Squichy“.
+  squichy: {
+    id: 'squichy',
+    name: 'Squichy',
+    body: 'body.squichy',
+    portrait: 'portraits.squichy',
+    friend: { about: 'Eine Mini-Robbe, die Kleinste im Becken des Zoos.', metWhen: { not: { questNotStarted: Q_BALL } } },
+  },
 };
 
 export const bodies: Record<string, BodyDef> = {
@@ -82,5 +98,19 @@ export const bodies: Record<string, BodyDef> = {
     moves: ['water'],
     speed: { land: 0, water: 32 },
     traits: ['blasen'],
+  },
+  // Erdmännchen: flink an Land, schwimmt nicht.
+  'body.meerkat': {
+    id: 'body.meerkat',
+    sprite: 'characters.meerkat',
+    moves: ['land'],
+    speed: { land: 52, water: 0 },
+  },
+  // Robbe: an Land eher gemütlich, im Wasser flink.
+  'body.squichy': {
+    id: 'body.squichy',
+    sprite: 'characters.squichy',
+    moves: ['land', 'water'],
+    speed: { land: 18, water: 46 },
   },
 };

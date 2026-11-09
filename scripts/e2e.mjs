@@ -63,12 +63,14 @@ const idle = () => waitFor('Figur steht', `window.__otterwelt.world() && !window
 const panel = (kind) => waitFor(`Fenster ${kind}`, `window.__otterwelt.ui().panel?.kind === '${kind}'`);
 const noPanel = () => waitFor('kein Fenster', `window.__otterwelt.ui().panel === null`);
 // Sichtbarer Bereich ohne Anzeige oben und ohne Leisten unten.
-const VIEW = { left: 24, right: 378, top: 150, bottom: 700 };
+const VIEW = { left: 24, right: 378, top: 150, bottom: 790 };
 const tapTile = async (x, y) => {
   for (let i = 0; i < 4; i++) {
     const p = await hook(`tileToScreen(${x}, ${y})`);
     if (!p) throw new Error('Welt nicht bereit');
-    if (p.x >= VIEW.left && p.x <= VIEW.right && p.y >= VIEW.top && p.y <= VIEW.bottom) {
+    // Im Dekoriermodus liegt unten die Leiste – dort nicht in die Welt tippen.
+    const bottom = (await hook('ui()')).decorate ? 700 : VIEW.bottom;
+    if (p.x >= VIEW.left && p.x <= VIEW.right && p.y >= VIEW.top && p.y <= bottom) {
       await page.touchscreen.tap(p.x, p.y);
       return;
     }
@@ -582,6 +584,83 @@ try {
   s = await state();
   check(s.location.map === 'map.tiramisu-stream' && s.activeCharacter === 'otterprinzessin', 'nach Neuladen: am Bach, als Lumi');
   check(s.moments.length === 5, 'fünf Momente, keiner doppelt');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  // ---------------- Kapitel Zoo: Meerkat und Squichy ----------------
+  console.log('33. Wieder als Otter, Treibholz am Startufer');
+  await button('Freunde').tap();
+  await panel('friends');
+  await button('Wieder als Otter spielen').tap();
+  await waitFor('als Otter', `window.__otterwelt.world()?.player.body === 'body.otter' && !window.__otterwelt.world().leaving`);
+  await tapTile(14, 26);
+  await inMap('map.startufer');
+  check((await page.locator('.hint').textContent())?.includes('Zoo'), 'Hinweis auf den Zoo');
+  await hook('advanceMinutes(11)');
+  await page.waitForTimeout(800);
+  await tapTile(4, 17);
+  await idle();
+  await has('item.treibholz', 1);
+
+  console.log('34. In den Zoo');
+  await tapTile(9, 30);
+  await inMap('map.zoo');
+  await page.waitForTimeout(600);
+  check((await figur('body.meerkat'))?.news === true && !!(await figur('body.squichy')), 'Meerkat mit Sprechblase, Squichy im Becken');
+  await shot('zoo');
+
+  console.log('35. Ein Wimpel für Meerkat');
+  await tapTile(4, 6);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await button('Klar!').tap();
+  await advanceDialogUntil('false');
+  await noPanel();
+  await tapTile(4, 10);
+  await idle();
+  await has('item.feder', 1);
+  await tapTile(3, 15);
+  await idle();
+  await has('item.feder', 2);
+  s = await state();
+  check(s.quests['quest.meerkat.wimpel']?.step === 'basteln', 'Federn und Treibholz beisammen');
+  await tapTile(11, 23);
+  await panel('werkbank');
+  await page.locator('.recipe', { hasText: 'Federwimpel' }).getByRole('button', { name: 'Bauen' }).tap();
+  await page.waitForTimeout(300);
+  await button('Später').tap();
+  await noPanel();
+  await tapTile(4, 6);
+  await panel('dialog');
+  await advanceDialogUntil('false');
+  await panel('endcard');
+  await button('Weiterspielen').tap();
+  await noPanel();
+  await page.waitForTimeout(500);
+  s = await state();
+  check(s.quests['quest.meerkat.wimpel'].done && s.inventory['item.sonnenblumenkern'] === 2, 'Wimpel abgegeben, zwei Sonnenblumenkerne geschenkt');
+  const stein = (await hook('world()')).objects.find((o) => o.id === 'obj.aussichtsstein');
+  check(stein?.sprite === 'objects.aussichtsstein.wimpel', 'der Wimpel steht jetzt auf dem Aussichtsstein');
+  await shot('meerkat-wimpel');
+
+  console.log('36. Squichy kennenlernen');
+  check((await figur('body.squichy'))?.news === true, 'Sprechblase über Squichy');
+  await tapTile(11, 14);
+  await panel('dialog');
+  await advanceDialogUntil(`!!document.querySelector('.choices')`);
+  await shot('squichy-frage');
+  await button('Mach ich!').tap();
+  await advanceDialogUntil('false');
+  await noPanel();
+  s = await state();
+  check(s.quests['quest.squichy.ball']?.step === 'basteln' || s.quests['quest.squichy.ball']?.step === 'sammeln', 'Ball-Aufgabe angenommen');
+  await hook('flush()');
+
+  console.log('37. Neuladen im Zoo');
+  await start();
+  s = await state();
+  check(s.location.map === 'map.zoo' && s.quests['quest.meerkat.wimpel'].done, 'nach Neuladen: im Zoo, Meerkats Aufgabe bleibt erledigt');
+  check(((await hook('world()')).objects.find((o) => o.id === 'obj.aussichtsstein'))?.sprite === 'objects.aussichtsstein.wimpel', 'nach Neuladen: Wimpel auf dem Stein');
 
   check(consoleErrors.length === 0, `keine Fehler in der Browserkonsole${consoleErrors.length ? ': ' + consoleErrors.join(' | ') : ''}`);
   console.log('\nBrowser-Durchlauf bestanden.');

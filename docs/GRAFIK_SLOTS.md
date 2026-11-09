@@ -20,6 +20,8 @@ Status: **P** = Platzhalter im Code · **E** = Codex-Entwurf eingebaut · **F** 
 | characters.otterprinzessin.idle/.walk/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·8 / 4·5 | P | Lumi: Otter mit Kleid und Krone; Krone bleibt beim Schwimmen über Wasser |
 | characters.rosie.idle/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·4 | P | pinker Axolotl, lebt nur im Wasser (Anker = Wasserlinie), Kiemenbüschel wippen |
 | characters.bubbles.idle/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·4 | P | blauer Axolotl; die Blasen erzeugt das Spiel selbst (fx.blase) |
+| characters.meerkat.idle/.walk (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·10 | P | Meerkat: Erdmännchen, steht aufrecht Wache, flitzt auf allen vieren; nur an Land |
+| characters.squichy.idle/.walk/.swim (se, ne) | 48 × 48 | 24, 40 | 2·2 / 4·6 / 4·5 | P | Squichy: Mini-Robbe, große Augen; Codex-Entwurf vorhanden, Maße bitte hierauf abstimmen |
 
 Solange von einer Figur nur einzelne Zustände geliefert sind, nutzt das Spiel für die fehlenden Zustände das gelieferte
 Bild (kein Mix aus Bild und Testform).
@@ -33,7 +35,8 @@ Bild (kein Mix aus Bild und Testform).
 | objects.wegweiser | 16 × 32 | 8, 31 | P | Holzpfosten mit Schild, Spitze nach rechts (das Spiel spiegelt für links); Grundfläche 1 Kachel; steht an jedem Ausgang |
 | objects.picknickdecke | 48 × 32 | 24, 31 | P | Tiramisu Stream: karierte Picknickdecke mit Körbchen, Grundfläche 3 × 2 Kacheln |
 | objects.bastelstumpf | 16 × 24 | 8, 23 | P | Tiramisu Stream: Baumstumpf mit Garn und Schere, Bastel-Station, 1 Kachel |
-| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Blumenwiese, Sand, Wasser (2 Frames), Uferkanten, Steg (längs) und Brücke (quer), Pfad, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
+| objects.aussichtsstein / .wimpel | 32 × 24 | 16, 23 | P | Zoo: Meerkats Aussichtsstein; zweite Fassung mit Federwimpel obendrauf (nach der Aufgabe) |
+| tiles.ufer | 16 × 16 je Kachel | – | P | Gras, Blumenwiese, Sand, Wasser (2 Frames), Uferkanten, Steg (längs) und Brücke (quer), Pfad, Holzzaun, Schilf im Wasser (2 Frames), Büsche – **Kachelbogen-Layout mit Claude abstimmen** |
 
 ## Gegenstände und Deko
 
@@ -54,6 +57,11 @@ Bild (kein Mix aus Bild und Testform).
 | deco.bluetengirlande | 16 × 32 | 8, 30 | 1 | P | Blütengirlande zwischen zwei Stäbchen |
 | deco.seerosenkissen | 16 × 16 | 8, 13 | 1 | P | rundes Kissen aus Seerosenblättern |
 | deco.kiesellicht.aus / .an | 16 × 16 | 8, 13 | 1 / 2 · 3 | P | Muschel mit Glitzerkieseln, an: leuchtet sanft |
+| items.feder | 16 × 16 | 8, 13 | 1 | P | bunte Feder im Gras (Fundstelle) |
+| items.sonnenblume | 16 × 32 | 8, 30 | 1 | P | Sonnenblume, gibt Kerne (Fundstelle) |
+| deco.federwimpel | 16 × 32 | 8, 30 | 2 · 2 | P | Wimpel mit Federn am Treibholzstab, flattert |
+| deco.schilfball | 16 × 16 | 8, 13 | 1 | P | geflochtener Ball aus Schilf |
+| deco.sonnenblumentopf | 16 × 32 | 8, 30 | 1 | P | kleine Sonnenblume in einer Muschel |
 
 ## Effekte
 
@@ -75,6 +83,8 @@ Bild (kein Mix aus Bild und Testform).
 | portraits.otterprinzessin | 64 × 64 | P | Lumi mit Krone |
 | portraits.rosie | 64 × 64 | P | pinker Axolotl |
 | portraits.bubbles | 64 × 64 | P | blauer Axolotl mit Blase |
+| portraits.meerkat | 64 × 64 | P | Erdmännchen |
+| portraits.squichy | 64 × 64 | P | Mini-Robbe |
 
 ## Ton (Platzhalter: synthetisch erzeugt, `src/app/sound.ts`)
 
@@ -91,3 +101,5 @@ Ambiente-Slots `ambience.startufer.abend` und `ambience.schilfbucht.abend` (noch
 5. **Tiramisu Stream** (neu, Version 0.5.0): Lumi (Otter mit Kleid und Krone), Rosie und Bubbles (Axolotl, rosa und
    blau, nur im Wasser), Porträts der drei, Picknickdecke, Bastelstumpf, Blumenwiese, Querbrücke, Wiesenblüten,
    Glitzerkiesel, Seerosenblätter, Blütengirlande, Seerosenkissen, Kiesellicht aus/an. Gleicher Stil wie das Startufer.
+6. **Zoo** (neu, Version 0.6.0): Meerkat (Erdmännchen), Squichy (Mini-Robbe – Codex-Entwurf vorhanden), Porträts,
+   Aussichtsstein mit und ohne Wimpel, Holzzaun, Feder, Sonnenblume, Federwimpel, Schilfball, Sonnenblumentopf.

@@ -12,7 +12,7 @@ spielbar). Jede Figur hat eine kleine Eigenheit (z. B. Blasen) und bewegt sich p
 |---|---|---|---|---|---|
 | 1–2 | Startufer, Schilfbucht | Schnabbi | Treibholz, Muscheln, Schilf | Uferleuchte, Schilfmatte, Treibholzbank, Muschelwindspiel | fertig |
 | 3 | Tiramisu Stream (`map.tiramisu-stream`) – Bach mit Teich, Blumenwiese | **Lumi** (Otterprinzessin, Begegnung direkt nach Schnabbi), **Rosie** und **Bubbles** (Axolotl im Teich) | Wiesenblüten, Glitzerkiesel, Seerosenblätter | Blütengirlande, Seerosenkissen, Kiesellicht | **gebaut (0.5.0)**: Lumi spielbar; Rosie und Bubbles befreundet, ihre Vertrauens-Aufgaben folgen |
-| 4 | Zoo (`map.zoo`) | Meerkat (buddelt im Sand, schaut gern Wache), Squichy (Mini-Robbe im Becken) | Federn, Kerne, kleine Bälle | Wimpelkette, Robbenball, Buddelschaufel | geplant |
+| 4 | Zoo (`map.zoo`) – Gehege, Robbenbecken, Wiese mit Werkbank; Weg unten am Startufer | **Meerkat** (Erdmännchen, hält auf dem Aussichtsstein Wache, nur an Land), **Squichy** (Mini-Robbe, Kleinste im Becken) | Federn, Sonnenblumenkerne | Federwimpel, Schilfball, Sonnenblumentopf | **gebaut (0.6.0)**: beide befreundet; der Wimpel steht danach auf Meerkats Stein; Vertrauens-Aufgaben folgen |
 | 5 | Cat Café (`map.cat-cafe`) | Chamaron (Chamäleon zwischen den Pflanzen – wechselt die Farbe, muss erst gefunden werden) | Teeblätter, Blüten, Wolle | Pflanztopf, Tassenlicht, Wollknäuel | geplant |
 | 6 | Hotpot-Restaurant (`map.hotpot-restaurant`) | Beano, Beani, Beanz (immer gemeinsam in ihrer Schale) | Zutaten (Gemüse, Kräuter) | Kochtopf als eigene Station: kleine Gerichte als Geschenke und Deko | geplant |
 | 7 | Fuchsbau (`map.fuchsbau`) | Bean (Rentier, eigenständig) | Tannenzapfen, Beeren, Moos | Zapfenkranz, Beerenlicht, Mooskissen | geplant |

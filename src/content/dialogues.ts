@@ -1,5 +1,5 @@
 import type { DialogueDef } from './types';
-import { Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_SCHILF, R_BANK, R_GIRLANDE, R_KISSEN, R_LEUCHTE, R_MATTE, R_WINDSPIEL } from './ids';
+import { Q_BALL, Q_KISSEN, Q_LICHT, Q_PICKNICK, Q_SCHILF, Q_WIMPEL, R_BALL, R_BANK, R_GIRLANDE, R_KISSEN, R_LEUCHTE, R_MATTE, R_WIMPEL, R_WINDSPIEL } from './ids';
 
 // ENTWURF: Alle Texte sind Vorschläge und dürfen frei ersetzt werden.
 // {name} wird durch den Namen ersetzt, den die Spielerin im ersten Gespräch wählt.
@@ -306,5 +306,128 @@ export const dialogues: DialogueDef[] = [
       { speaker: 'bubbles', text: 'Blubb!' },
       { speaker: null, text: 'Bubbles dreht sich einmal im Kreis. Eine Blase steigt auf und macht leise plopp.' },
     ],
+  },
+
+  // ---- Kapitel Zoo (Vorschlag): Meerkat ----
+  {
+    id: 'dlg.meerkat.hallo',
+    character: 'meerkat',
+    when: { all: [{ questDone: Q_KISSEN }, { questNotStarted: Q_WIMPEL }] },
+    lines: [
+      { speaker: 'meerkat', text: 'Halt! Wer da? … Ach, eine Otter! Hallo, ich bin Meerkat.' },
+      { speaker: 'meerkat', text: 'Ich halte hier Wache. Den ganzen Tag! Von meinem Stein aus sehe ich alles.' },
+      {
+        speaker: 'meerkat',
+        text: 'Nur finden mich meine Freunde nie, wenn ich mich ducke. Ein Wimpel auf dem Stein wäre perfekt. Bastelst du mir einen?',
+        choices: [
+          { label: 'Klar!', then: 'weiter' },
+          { label: 'Später', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'meerkat', text: 'Super! Zwei Federn und ein Stück Treibholz. Federn liegen hier im Zoo herum, Treibholz gibt es am Ufer.' },
+    ],
+    effects: [{ startQuest: Q_WIMPEL }, { learnRecipe: R_WIMPEL }],
+  },
+  {
+    id: 'dlg.meerkat.danke',
+    character: 'meerkat',
+    when: { all: [{ questStep: { quest: Q_WIMPEL, step: 'bringen' } }, { hasItems: { 'item.federwimpel': 1 } }] },
+    lines: [
+      { speaker: 'meerkat', text: 'Ist das … mein Wimpel? Wie schön!' },
+      { speaker: null, text: 'Meerkat steckt den Wimpel oben auf den Aussichtsstein und stellt sich stolz daneben.' },
+      { speaker: 'meerkat', text: 'Jetzt findet mich jeder. Hier, die habe ich beim Wachehalten gesammelt – Sonnenblumenkerne!' },
+      { speaker: 'meerkat', text: 'Mit einer Muschel als Topf wächst daraus eine kleine Sonnenblume.' },
+    ],
+    effects: [{ takeItems: { 'item.federwimpel': 1 } }, { giveItems: { 'item.sonnenblumenkern': 2 } }],
+  },
+  {
+    id: 'dlg.meerkat.bringen',
+    character: 'meerkat',
+    when: { questStep: { quest: Q_WIMPEL, step: 'bringen' } },
+    lines: [{ speaker: 'meerkat', text: 'Hast du den Wimpel? Wenn er schon irgendwo steht, kannst du ihn im Beutel wieder einpacken.' }],
+  },
+  {
+    id: 'dlg.meerkat.sammeln',
+    character: 'meerkat',
+    when: { questStep: { quest: Q_WIMPEL, step: 'sammeln' } },
+    lines: [{ speaker: 'meerkat', text: 'Federn liegen überall im Zoo. Treibholz findest du am Ufer oder in der Schilfbucht.' }],
+  },
+  {
+    id: 'dlg.meerkat.basteln',
+    character: 'meerkat',
+    when: { questStep: { quest: Q_WIMPEL, step: 'basteln' } },
+    lines: [{ speaker: 'meerkat', text: 'Die Werkbank steht unten im Zoo. Ich pass so lange auf!' }],
+  },
+  {
+    id: 'dlg.meerkat.plaudern',
+    character: 'meerkat',
+    when: { questDone: Q_WIMPEL },
+    lines: [{ speaker: 'meerkat', text: 'Alles ruhig, {name}! Ich halte weiter Wache – mit Wimpel.' }],
+  },
+  {
+    id: 'dlg.meerkat.fremd',
+    character: 'meerkat',
+    lines: [{ speaker: 'meerkat', text: 'Halt! Wer da? … Ach so. Ich bin gerade sehr beschäftigt mit Wachehalten.' }],
+  },
+
+  // ---- Kapitel Zoo (Vorschlag): Squichy ----
+  {
+    id: 'dlg.squichy.hallo',
+    character: 'squichy',
+    when: { all: [{ questDone: Q_WIMPEL }, { questNotStarted: Q_BALL }] },
+    lines: [
+      { speaker: 'squichy', text: 'Huiii, Besuch! Hallo! Ich bin Squichy!' },
+      { speaker: 'squichy', text: 'Ich bin die Kleinste hier. Die Großen spielen immer mit Bällen, aber ich hab gar keinen.' },
+      {
+        speaker: 'squichy',
+        text: 'Kannst du mir einen basteln? Einen, der beim Rollen raschelt?',
+        choices: [
+          { label: 'Mach ich!', then: 'weiter' },
+          { label: 'Gerade nicht', then: 'spaeter' },
+        ],
+      },
+      { speaker: 'squichy', text: 'Juhu! Aus zwei Schilfhalmen und einem Glitzerkiesel geht das. Schilf wächst in der Bucht beim Startufer.' },
+    ],
+    effects: [{ startQuest: Q_BALL }, { learnRecipe: R_BALL }],
+  },
+  {
+    id: 'dlg.squichy.danke',
+    character: 'squichy',
+    when: { all: [{ questStep: { quest: Q_BALL, step: 'bringen' } }, { hasItems: { 'item.schilfball': 1 } }] },
+    lines: [
+      { speaker: 'squichy', text: 'Ein Ball! Für mich?' },
+      { speaker: null, text: 'Squichy stupst den Schilfball mit der Nase hoch und balanciert ihn eine ganze Weile.' },
+      { speaker: 'squichy', text: 'Danke! Die hier hab ich am Beckenrand gefunden – für dich!' },
+    ],
+    effects: [{ takeItems: { 'item.schilfball': 1 } }, { giveItems: { 'item.muschelschale': 2 } }],
+  },
+  {
+    id: 'dlg.squichy.bringen',
+    character: 'squichy',
+    when: { questStep: { quest: Q_BALL, step: 'bringen' } },
+    lines: [{ speaker: 'squichy', text: 'Ist der Ball fertig? Wenn er schon irgendwo liegt, pack ihn im Beutel wieder ein!' }],
+  },
+  {
+    id: 'dlg.squichy.sammeln',
+    character: 'squichy',
+    when: { questStep: { quest: Q_BALL, step: 'sammeln' } },
+    lines: [{ speaker: 'squichy', text: 'Schilf wächst in der Bucht beim Startufer. Glitzerkiesel liegen am Tiramisu Stream!' }],
+  },
+  {
+    id: 'dlg.squichy.basteln',
+    character: 'squichy',
+    when: { questStep: { quest: Q_BALL, step: 'basteln' } },
+    lines: [{ speaker: 'squichy', text: 'Die Werkbank ist unten im Zoo. Ich warte hier und übe schon mal Nase hoch!' }],
+  },
+  {
+    id: 'dlg.squichy.plaudern',
+    character: 'squichy',
+    when: { questDone: Q_BALL },
+    lines: [{ speaker: 'squichy', text: 'Guck mal, {name}: Nase hoch, Ball drauf! Huiii!' }],
+  },
+  {
+    id: 'dlg.squichy.fremd',
+    character: 'squichy',
+    lines: [{ speaker: 'squichy', text: 'Huiii! Hallo! Ich schwimm gerade Kreise. Komm doch bald mal wieder!' }],
   },
 ];

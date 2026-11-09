@@ -90,7 +90,8 @@ Erlebnisse. `unlockCharacter` macht sie spielbar. Mehrere Figuren können einen 
 ### Orte – `maps/*.ts`
 
 Raster, Legende, sicherer Platz, Objekte, Fundstellen, Ausgänge mit Ankunftspunkten, Deko-Fläche. Die Prüfung verlangt
-Hin- und Rückweg und dass Ziele, Ausgänge und Ankunftspunkte zu Fuß erreichbar sind.
+Hin- und Rückweg und dass Ziele, Ausgänge und Ankunftspunkte zu Fuß erreichbar sind. Objekte können mit `variants`
+ihr Aussehen nach dem Spielverlauf wechseln (z. B. Meerkats Stein mit Wimpel); `backdrop` ist die Farbe außerhalb der Karte.
 
 ## Beispiel: eine Bring-Mission (so würde sie aussehen)
 

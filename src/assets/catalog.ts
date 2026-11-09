@@ -38,7 +38,15 @@ export type PainterId =
   | 'bluetengirlande'
   | 'seerosenkissen'
   | 'kiesellicht'
-  | 'blase';
+  | 'blase'
+  | 'meerkat'
+  | 'squichy'
+  | 'aussichtsstein'
+  | 'feder'
+  | 'sonnenblume'
+  | 'federwimpel'
+  | 'schilfball'
+  | 'sonnenblumentopf';
 
 export interface SpriteDef {
   key: string;
@@ -145,6 +153,25 @@ export const sprites: SpriteDef[] = [
     {},
     { farbe: 'blau' },
   ),
+  ...character(
+    'meerkat',
+    'meerkat',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Meerkat steht aufrecht und hält Wache, schaut sich um' },
+      walk: { frames: 4, fps: 10, note: 'Meerkat flitzt auf allen vieren' },
+    },
+  ),
+  ...character(
+    'squichy',
+    'squichy',
+    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    {
+      idle: { frames: 2, fps: 2, note: 'Squichy (Mini-Robbe) liegt gemütlich' },
+      walk: { frames: 4, fps: 6, note: 'Squichy robbt an Land' },
+      swim: { frames: 4, fps: 5, note: 'Squichy schwimmt, Kopf über Wasser (Anker = Wasserlinie)' },
+    },
+  ),
 
   // ---- Umgebung ----
   { key: 'objects.bau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'bau' }, note: 'Otterbau unter Wurzeln mit karierter Gardine, Grundfläche 3 × 2 Kacheln' },
@@ -152,6 +179,8 @@ export const sprites: SpriteDef[] = [
   { key: 'objects.wegweiser', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'wegweiser' }, note: 'Wegweiser aus Holz, Schild zeigt nach rechts (das Spiel spiegelt für links), Grundfläche 1 Kachel' },
   { key: 'objects.picknickdecke', frameW: 48, frameH: 32, frames: 1, anchor: { x: 24, y: 31 }, placeholder: { painter: 'picknickdecke' }, note: 'Karierte Picknickdecke mit Körbchen (Tiramisu Stream), Grundfläche 3 × 2 Kacheln' },
   { key: 'objects.bastelstumpf', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 23 }, placeholder: { painter: 'bastelstumpf' }, note: 'Baumstumpf mit Garn und Schere zum Basteln (Station wie die Werkbank), Grundfläche 1 Kachel' },
+  { key: 'objects.aussichtsstein', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: false } }, note: 'Zoo: flacher Aussichtsstein in Meerkats Gehege, Grundfläche 2 × 1 Kacheln' },
+  { key: 'objects.aussichtsstein.wimpel', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: true } }, note: 'Zoo: derselbe Stein mit dem Federwimpel obendrauf (nach „Ein Wimpel für Meerkat“)' },
 
   // ---- Gegenstände in der Welt ----
   { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand' },
@@ -170,6 +199,11 @@ export const sprites: SpriteDef[] = [
   { key: 'deco.seerosenkissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'seerosenkissen' }, note: 'Rundes grünes Kissen aus Seerosenblättern mit Blüte' },
   { key: 'deco.kiesellicht.aus', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'kiesellicht', args: { an: false } }, note: 'Muschel mit Glitzerkieseln, aus' },
   { key: 'deco.kiesellicht.an', frameW: 16, frameH: 16, frames: 2, fps: 3, anchor: { x: 8, y: 13 }, placeholder: { painter: 'kiesellicht', args: { an: true } }, note: 'Muschel mit Glitzerkieseln, leuchtet sanft' },
+  { key: 'items.feder', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'feder' }, note: 'Bunte Feder im Gras (Fundstelle)' },
+  { key: 'items.sonnenblume', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'sonnenblume' }, note: 'Sonnenblume, gibt Sonnenblumenkerne (Fundstelle)' },
+  { key: 'deco.federwimpel', frameW: 16, frameH: 32, frames: 2, fps: 2, anchor: { x: 8, y: 30 }, placeholder: { painter: 'federwimpel' }, note: 'Wimpel an einem Treibholzstab mit zwei Federn, flattert' },
+  { key: 'deco.schilfball', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'schilfball' }, note: 'Geflochtener Ball aus Schilf' },
+  { key: 'deco.sonnenblumentopf', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'sonnenblumentopf' }, note: 'Kleine Sonnenblume in einer Muschel als Topf' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },
@@ -185,6 +219,8 @@ export const sprites: SpriteDef[] = [
   { key: 'portraits.otterprinzessin', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'prinzessin' } }, note: 'Otterprinzessin-Porträt mit Krone, neutral' },
   { key: 'portraits.rosie', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'rosie' } }, note: 'Rosie-Porträt (pinker Axolotl), neutral' },
   { key: 'portraits.bubbles', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'bubbles' } }, note: 'Bubbles-Porträt (blauer Axolotl) mit einer Blase, neutral' },
+  { key: 'portraits.meerkat', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'meerkat' } }, note: 'Meerkat-Porträt (Erdmännchen), neutral' },
+  { key: 'portraits.squichy', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'squichy' } }, note: 'Squichy-Porträt (Mini-Robbe), neutral' },
 ];
 
 /** Bodenkacheln: vorerst prozedural gezeichnet (Platzhalter). Kachelbogen-Layout wird mit Codex abgestimmt. */

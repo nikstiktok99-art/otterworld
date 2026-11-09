@@ -1,20 +1,27 @@
 import type { MomentDef, QuestDef } from './types';
 import {
+  M_BALL,
   M_BUBBLES_KISSEN,
   M_ERSTER_ABEND,
   M_PICKNICK,
   M_PLATZ_FUER_ZWEI,
   M_ROSIE_KISSEN,
+  M_WIMPEL,
   MAP_SCHILFBUCHT,
+  Q_BALL,
   Q_KISSEN,
   Q_LICHT,
   Q_PICKNICK,
   Q_SCHILF,
+  Q_WIMPEL,
+  R_BALL,
   R_GIRLANDE,
   R_KIESELLICHT,
   R_KISSEN,
   R_LEUCHTE,
   R_MATTE,
+  R_TOPF,
+  R_WIMPEL,
 } from './ids';
 
 // Vorschläge, austauschbar. Phase 1: Am Steg fehlt abends ein Licht.
@@ -158,6 +165,56 @@ export const quests: Record<string, QuestDef> = {
       text: 'Rosie kuschelt sich ins Seerosenkissen, und Bubbles blubbert vor Freude. Jetzt hast du zwei Freunde im Teich.',
     },
   },
+
+  // ---- Kapitel Zoo (Vorschlag) ----
+  [Q_WIMPEL]: {
+    id: Q_WIMPEL,
+    name: 'Ein Wimpel für Meerkat',
+    giver: 'meerkat',
+    offer: { when: { questDone: Q_KISSEN }, hint: 'Im Zoo hält jemand Wache – der Weg beginnt unten am Startufer' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Federwimpel: Federn {count:item.feder}/2 · Treibholz {count:item.treibholz}/1',
+        completeWhen: { hasItems: { 'item.feder': 2, 'item.treibholz': 1 } },
+      },
+      { id: 'basteln', hint: 'Einen Federwimpel basteln – an der Werkbank im Zoo', completeWhen: { crafted: R_WIMPEL } },
+      {
+        id: 'bringen',
+        hint: 'Bring Meerkat den Federwimpel',
+        completeWhen: { dialogue: 'dlg.meerkat.danke' },
+        onComplete: [{ addMoment: M_WIMPEL }, { learnRecipe: R_TOPF }],
+      },
+    ],
+    ending: {
+      title: 'Ein Wimpel für Meerkat',
+      text: 'Auf dem Aussichtsstein flattert jetzt ein bunter Wimpel. Wer Meerkat sucht, findet ihn sofort.',
+    },
+  },
+  [Q_BALL]: {
+    id: Q_BALL,
+    name: 'Ein Ball für Squichy',
+    giver: 'squichy',
+    offer: { when: { questDone: Q_WIMPEL }, hint: 'Im Robbenbecken im Zoo wartet jemand Kleines' },
+    steps: [
+      {
+        id: 'sammeln',
+        hint: 'Schilfball: Schilfhalme {count:item.schilfhalm}/2 · Glitzerkiesel {count:item.glitzerkiesel}/1',
+        completeWhen: { hasItems: { 'item.schilfhalm': 2, 'item.glitzerkiesel': 1 } },
+      },
+      { id: 'basteln', hint: 'Einen Schilfball basteln', completeWhen: { crafted: R_BALL } },
+      {
+        id: 'bringen',
+        hint: 'Bring Squichy den Schilfball',
+        completeWhen: { dialogue: 'dlg.squichy.danke' },
+        onComplete: [{ addMoment: M_BALL }],
+      },
+    ],
+    ending: {
+      title: 'Ein Ball für Squichy',
+      text: 'Squichy balanciert den Schilfball auf der Nase und will gar nicht mehr aufhören. Jetzt hat das Becken seinen kleinsten Star.',
+    },
+  },
 };
 
 /** Gemeinsame Erlebnisse (Vertrauen). Sie stehen im Freundebuch. */
@@ -191,5 +248,17 @@ export const moments: Record<string, MomentDef> = {
     character: 'bubbles',
     title: 'Blasen vor Freude',
     text: 'Als Rosie ihr Kissen bekam, hat Bubbles dir zwei Glitzerkiesel vom Teichgrund geschenkt.',
+  },
+  [M_WIMPEL]: {
+    id: M_WIMPEL,
+    character: 'meerkat',
+    title: 'Ein Wimpel für Meerkat',
+    text: 'Dein Federwimpel flattert auf Meerkats Aussichtsstein. Dafür gab es Sonnenblumenkerne.',
+  },
+  [M_BALL]: {
+    id: M_BALL,
+    character: 'squichy',
+    title: 'Ein Ball für Squichy',
+    text: 'Squichy hat zum ersten Mal einen eigenen Ball – aus Schilf, mit einem Glitzerkiesel, der raschelt.',
   },
 };

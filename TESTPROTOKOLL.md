@@ -2,6 +2,52 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Kapitel Zoo (Version 0.6.0)
+
+Automatisch geprüft am 09.11.2026:
+
+- **Unit-Tests:** 108 bestanden, davon 9 neu (`tests/zoo.test.ts`): Weg hin und zurück, Meerkat nur an Land, Squichy im
+  Becken, beide vorher „beschäftigt“, Meerkats Wimpel (Treibholz vom Ufer, Federn aus dem Zoo) mit Geschenk, Moment und
+  Rezept genau einmal, Stein zeigt danach den Wimpel, Sonnenblumentopf, Squichys Ball mit Schilf aus der Bucht.
+- **Typprüfung:** fehlerfrei.
+- **Cloud:** CLOUD_ERGEBNIS
+
+| Test | Browser (`npm run e2e`, 86 Prüfungen, zweimal bestanden) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Alles aus 0.5.0 wie bisher | ok | offen | – | offen |
+| Weg unten am Startufer in den Zoo, Hinweis auf den Zoo | ok | offen | – | offen |
+| Meerkat: „Klar!“, Federn sammeln, Wimpel an der Zoo-Werkbank, abgeben | ok | offen | – | offen |
+| Wimpel steht danach auf dem Aussichtsstein (auch nach Neuladen) | ok | offen | – | offen |
+| Squichy: Sprechblase, Aufgabe annehmen | ok | offen | – | offen |
+| Squichys Ball bis zum Ende (Schilf aus der Bucht) | – (Unit-Test ok) | offen | – | offen |
+| Unterste Reihe am Startufer (Wegweiser zum Zoo) antippbar | ok | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+
+## Kapitel Tiramisu Stream (Version 0.5.0, Commit 04528b6)
+
+Automatisch geprüft am 09.11.2026:
+
+- **Unit-Tests:** 99 bestanden, davon 9 neu (`tests/tiramisu.test.ts`): Weg hin und zurück, Rosie und Bubbles nur im
+  Wasser, Lumi erst nach Schnabbis zweitem Erlebnis, Picknick-Ablauf mit Hinsetzen und Selbst-Ansprechen, Moment,
+  Rezept und Freischaltung genau einmal, als Lumi kein zweiter Lumi-Körper, Rosies Kissen abgeben (genau einmal,
+  Geschenk zwei Glitzerkiesel), Kissen schon als Deko aufgestellt → Rosie erinnert ans Einpacken.
+- **Typprüfung:** fehlerfrei.
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b6, 934 KB), „Android-Testbuild (.apk)“ (a6) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
+
+| Test | Browser (`npm run e2e`, 77 Prüfungen, zweimal bestanden) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Alles aus 0.4.0 wie bisher | ok | offen | – | offen |
+| Weg links neben dem Bau zum Tiramisu Stream | ok | offen | – | offen |
+| Lumi mit Sprechblase, „Na klar!“, Blüten und Kiesel sammeln | ok | offen | – | offen |
+| Bastelstumpf als eigene Station, Girlande aufhängen | ok | offen | – | offen |
+| Lumi setzt sich dazu und spricht von selbst, Abschlusskarte, Lumi spielbar | ok | offen | – | offen |
+| Bubbles macht Blasen | ok | offen | – | offen |
+| Rosie: Seerosenblätter schwimmend sammeln, Kissen basteln und abgeben | ok | offen | – | offen |
+| Freundebuch mit fünf Figuren, als Lumi spielen, Neuladen am Bach | ok | offen | – | offen |
+| Oberste Kartenreihe antippbar (Kamera reicht über den Rand) | – (nicht automatisiert) | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
+
 ## Grundbau Missionen und Crafting (Version 0.4.0, Commit d5576f2)
 
 Automatisch geprüft am 08.11.2026:

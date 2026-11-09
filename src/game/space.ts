@@ -39,7 +39,7 @@ export function terrainAt(g: Grid, t: Tile): Terrain {
 
 /** Kann ein Körper mit diesen Bewegungsarten auf diesem Untergrund stehen? */
 export function standable(terrain: Terrain, moves: readonly Movement[]): boolean {
-  if (terrain === 'blocked' || terrain === 'schilf') return false;
+  if (terrain === 'blocked' || terrain === 'schilf' || terrain === 'zaun') return false;
   if (terrain === 'water') return moves.includes('water');
   return moves.includes('land'); // Sand, Gras, Blumen, Steg, Pfad
 }
