@@ -1,5 +1,6 @@
 import { useApp, useUi } from './context';
 import { DialogPanel } from './Dialog';
+import { WegkartePanel } from './Wegkarte';
 import { DecorateBar, Hud, Toasts } from './Hud';
 import {
   BagPanel,
@@ -32,6 +33,7 @@ export function UiRoot() {
       {kind === 'menu' && <MenuPanel />}
       {kind === 'friends' && <FriendsPanel />}
       {kind === 'quests' && <QuestsPanel />}
+      {kind === 'karte' && <WegkartePanel />}
       {kind === 'name' && <NamePanel />}
       {kind === 'saveExport' && <SaveExportPanel />}
       {kind === 'saveImport' && <SaveImportPanel />}

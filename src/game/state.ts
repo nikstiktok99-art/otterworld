@@ -1,7 +1,7 @@
 import type { Content } from '../content/types';
 import type { GameState } from './types';
 
-export const SCHEMA = 3 as const;
+export const SCHEMA = 4 as const;
 
 export function newGame(content: Content): GameState {
   const map = content.maps[content.start.map];
@@ -18,6 +18,7 @@ export function newGame(content: Content): GameState {
     regrow: {},
     quests: {},
     tracked: null,
+    visited: [map.id],
     claimed: [],
     moments: [],
     deco: [],

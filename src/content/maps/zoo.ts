@@ -144,5 +144,6 @@ export const zoo: MapDef = {
     { tile: { x: 11, y: 24 }, name: 'die Werkbank' },
   ],
   ambience: 'ambience.zoo',
+  overview: { x: 56, y: 69 },
   backdrop: '#4d7d38',
 };

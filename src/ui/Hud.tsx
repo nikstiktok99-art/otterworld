@@ -10,7 +10,9 @@ export function Hud() {
   const hint = activeHint(state, content);
   // Das Freundebuch erscheint, sobald sie jemanden kennt.
   const hasFriends = friendList(state, content).length > 1;
-  const open = (kind: 'bag' | 'menu' | 'friends' | 'quests') => {
+  // Die Wegkarte erscheint, sobald sie einen zweiten Ort betreten hat.
+  const hasMap = state.visited.length > 1;
+  const open = (kind: 'bag' | 'menu' | 'friends' | 'quests' | 'karte') => {
     sound.play('sfx.tipp');
     ui.open({ kind });
   };
@@ -23,6 +25,11 @@ export function Hud() {
         {hasFriends && (
           <button className="pill" onClick={() => open('friends')}>
             Freunde
+          </button>
+        )}
+        {hasMap && (
+          <button className="pill" onClick={() => open('karte')}>
+            Karte
           </button>
         )}
         <button className="pill" onClick={() => open('menu')}>

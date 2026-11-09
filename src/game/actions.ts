@@ -14,6 +14,8 @@ export type Action =
   | { type: 'setPlayerName'; name: string }
   | { type: 'arrive'; map: string; tile: Tile; facing: Dir }
   | { type: 'travel'; exit: string }
+  /** Über die Wegkarte zu einem schon besuchten Ort reisen. */
+  | { type: 'fastTravel'; map: string }
   | { type: 'switchCharacter'; character: string }
   | { type: 'setSetting'; key: 'sound' | 'haptics'; value: boolean };
 
@@ -31,7 +33,8 @@ export type RejectReason =
   | 'invalidName'
   | 'invalidPosition'
   | 'locked'
-  | 'wrongStation';
+  | 'wrongStation'
+  | 'alreadyHere';
 
 export type GameEvent =
   | { type: 'itemGained'; item: string; count: number; total: number }
@@ -48,7 +51,8 @@ export type GameEvent =
   | { type: 'questDone'; quest: string }
   | { type: 'momentGained'; moment: string }
   | { type: 'nameSet'; name: string }
-  | { type: 'traveled'; exit: string; from: string; to: string }
+  /** exit: null = über die Wegkarte */
+  | { type: 'traveled'; exit: string | null; from: string; to: string }
   | { type: 'switched'; character: string; body: string; bodyChanged: boolean }
   | { type: 'unlocked'; character: string }
   | { type: 'rejected'; action: Action['type']; reason: RejectReason; detail?: string };

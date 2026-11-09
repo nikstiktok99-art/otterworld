@@ -195,6 +195,8 @@ export interface MapDef {
   ambience?: string;
   /** Farbe außerhalb der Karte (sichtbar am Rand, z. B. über der obersten Reihe). Standard: Wasserblau. */
   backdrop?: string;
+  /** Platz auf der Wegkarte in Prozent (0–100). Fehlt er, erscheint der Ort nicht auf der Karte. */
+  overview?: { x: number; y: number };
 }
 
 export interface QuestStepDef {

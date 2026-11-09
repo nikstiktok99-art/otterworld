@@ -9,6 +9,7 @@ export type Panel =
   | { kind: 'bag' }
   | { kind: 'werkbank'; station: string; title: string }
   | { kind: 'quests' }
+  | { kind: 'karte' }
   | { kind: 'menu' }
   | { kind: 'name' }
   | { kind: 'saveExport' }

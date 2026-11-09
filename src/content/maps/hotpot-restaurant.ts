@@ -113,5 +113,6 @@ export const hotpotRestaurant: MapDef = {
     { tile: { x: 7, y: 8 }, name: 'die Theke' },
   ],
   ambience: 'ambience.hotpot',
+  overview: { x: 74, y: 89 },
   backdrop: '#5a2e22',
 };

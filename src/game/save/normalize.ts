@@ -15,6 +15,8 @@ const migrations: Record<number, (s: Record<string, unknown>) => Record<string, 
   1: (s) => ({ ...s, unlocked: [] }),
   // 2 -> 3 (Version 0.4.0): nachwachsende Fundstellen und verfolgte Aufgabe.
   2: (s) => ({ ...s, regrow: {}, tracked: null }),
+  // 3 -> 4 (Version 0.8.0): besuchte Orte für die Wegkarte. Was sich ableiten lässt, ergänzt normalizeState unten.
+  3: (s) => ({ ...s, visited: [] }),
 };
 
 export interface NormalizeResult {
@@ -147,6 +149,16 @@ export function normalizeState(raw: unknown, schema: number, content: Content): 
   } else if (loc) {
     notes.push('Gespeicherter Ort unbekannt – zurück zum Startufer.');
   }
+
+  // Besuchte Orte: gespeicherte, dazu alles, was sich aus dem Stand ablesen lässt (Start, aktueller Ort,
+  // Orte mit eingesammelten Fundstellen oder aufgestellter Deko). So verliert kein älterer Stand seine Orte.
+  const visited = new Set<string>();
+  if (Array.isArray(src.visited)) for (const m of src.visited) if (typeof m === 'string') visited.add(m);
+  visited.add(content.start.map);
+  visited.add(s.location.map);
+  for (const k of [...s.gathered, ...Object.keys(s.regrow)]) visited.add(k.split('/')[0] ?? '');
+  for (const dd of s.deco) visited.add(dd.map);
+  s.visited = [...visited].filter((m) => !!content.maps[m]);
 
   return { state: s, notes };
 }

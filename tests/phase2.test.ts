@@ -14,7 +14,7 @@ import { normalizeState } from '../src/game/save/normalize';
 import { SaveStore, type KeyValueStore } from '../src/app/saveStore';
 import { validateContent } from '../src/content/validate';
 import { assetKeys } from '../src/assets/catalog';
-import { newGame } from '../src/game/state';
+import { newGame, SCHEMA } from '../src/game/state';
 
 const BAY = 'map.schilfbucht';
 const Q2 = 'quest.schnabbi.schilf';
@@ -252,7 +252,7 @@ describe('Migration', () => {
     const loaded = await new SaveStore(mem).load(content);
     expect(loaded.problem).toBeNull();
     const s = loaded.state!;
-    expect(s.schema).toBe(3);
+    expect(s.schema).toBe(SCHEMA);
     expect(s.regrow).toEqual({});
     expect(s.tracked).toBeNull();
     expect(s.unlocked).toEqual(['otter']);

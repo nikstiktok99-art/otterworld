@@ -11,7 +11,7 @@ import { activeHint, hasNews, questLog } from '../src/game/text';
 import { normalizeState } from '../src/game/save/normalize';
 import { validateContent } from '../src/content/validate';
 import { assetKeys } from '../src/assets/catalog';
-import { newGame } from '../src/game/state';
+import { newGame, SCHEMA } from '../src/game/state';
 import { DialogController } from '../src/app/dialogs';
 import { GameSession } from '../src/app/session';
 import { SaveStore, type KeyValueStore } from '../src/app/saveStore';
@@ -286,7 +286,7 @@ describe('Migration von 0.3.0 (Schema 2)', () => {
     old.schema = 2;
     old.gathered = ['map.startufer/spot.treibholz.strand', 'map.startufer/spot.treibholz.wasser', 'map.startufer/spot.muschel.sand'];
     const { state } = normalizeState(old, 2, content);
-    expect(state.schema).toBe(3);
+    expect(state.schema).toBe(SCHEMA);
     expect(state.gathered).toEqual([]);
     expect(state.regrow).toEqual({});
     expect(state.tracked).toBeNull();

@@ -135,5 +135,6 @@ export const catCafe: MapDef = {
     { tile: { x: 4, y: 5 }, name: 'die Theke' },
   ],
   ambience: 'ambience.cat-cafe',
+  overview: { x: 28, y: 89 },
   backdrop: '#6e4a32',
 };

@@ -127,5 +127,6 @@ export const tiramisuStream: MapDef = {
     { tile: { x: 12, y: 17 }, name: 'Lumis Picknickplatz' },
   ],
   ambience: 'ambience.tiramisu-stream',
+  overview: { x: 27, y: 31 },
   backdrop: '#4d7d38',
 };

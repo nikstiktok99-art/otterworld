@@ -793,6 +793,35 @@ try {
   await start();
   s = await state();
   check(s.location.map === 'map.fuchsbau' && s.quests['quest.bean.kranz']?.step === 'sammeln', 'nach Neuladen: im Wald, Aufgabe bleibt');
+  await button('Weiterspielen').tap();
+  await noPanel();
+
+  // ---------------- Wegkarte ----------------
+  console.log('43. Wegkarte: vom Wald direkt in den Zoo');
+  await button('Karte').tap();
+  await panel('karte');
+  const orte = await page.locator('.ort:not([disabled])').allTextContents();
+  check(orte.length === 7, `Wegkarte zeigt alle sieben besuchten Orte (${orte.join(', ')})`);
+  check((await page.locator('.ort.hier').textContent())?.includes('Fuchsbau'), 'Wegkarte: „Du bist hier“ beim Fuchsbau');
+  await shot('wegkarte');
+  await page.locator('.ort', { hasText: 'Zoo' }).tap();
+  await button('Hinreisen: Zoo').tap();
+  await inMap('map.zoo');
+  s = await state();
+  check(s.location.map === 'map.zoo' && s.location.tile.x === 8 && s.location.tile.y === 9, 'über die Karte im Zoo angekommen (sicherer Platz)');
+  await page.waitForTimeout(500);
+  await shot('nach-reise');
+
+  console.log('44. Über die Karte zurück ans Startufer, Neuladen');
+  await button('Karte').tap();
+  await panel('karte');
+  await page.locator('.ort', { hasText: 'Startufer' }).tap();
+  await button('Hinreisen: Startufer').tap();
+  await inMap('map.startufer');
+  await hook('flush()');
+  await start();
+  s = await state();
+  check(s.location.map === 'map.startufer' && s.visited.length === 7, 'nach Neuladen: am Startufer, alle Orte bleiben auf der Karte');
 
   check(consoleErrors.length === 0, `keine Fehler in der Browserkonsole${consoleErrors.length ? ': ' + consoleErrors.join(' | ') : ''}`);
   console.log('\nBrowser-Durchlauf bestanden.');

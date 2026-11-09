@@ -81,5 +81,6 @@ export const schilfbucht: MapDef = {
   entries: [{ id: 'entry.vom-ufer', tile: { x: 2, y: 24 }, facing: 'se' }],
   keepReachable: [],
   ambience: 'ambience.schilfbucht.abend',
+  overview: { x: 80, y: 30 },
   backdrop: '#4d7d38',
 };

@@ -2,6 +2,26 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Wegkarte (Version 0.8.0)
+
+Automatisch geprüft am 09.11.2026:
+
+- **Unit-Tests:** 125 bestanden, davon 7 neu (`tests/wegkarte.test.ts`): Anzeige am Anfang (Startufer plus drei unbekannte
+  Nachbarn), besuchte Orte werden gemerkt (ohne Doppelte), Reisen nur zu besuchten Orten und nicht an den aktuellen,
+  Ankunft am sicheren Platz und zurück, Aufgaben „an einem Ort ankommen“ zählen auch bei Kartenreisen, eine reine
+  Wasserfigur reist nicht an einen Ort ohne Wasser, Migration 0.7.0 → 0.8.0 leitet besuchte Orte aus dem Stand ab.
+- **Typprüfung:** fehlerfrei.
+- **Cloud:** CLOUD_ERGEBNIS
+
+| Test | Browser (`npm run e2e`, 102 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Alles aus 0.7.0 wie bisher | ok | offen | – | offen |
+| Knopf „Karte“ erscheint, Karte zeigt alle sieben Orte, „Du bist hier“ | ok | offen | – | offen |
+| Vom Fuchsbau direkt in den Zoo, Ankunft am sicheren Platz | ok | offen | – | offen |
+| Über die Karte zurück ans Startufer, Neuladen: Orte bleiben | ok | offen | – | offen |
+| Vier Knöpfe oben passen in eine Reihe (auch auf schmalen Handys) | ok (402 px) | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+
 ## Cat Café, Hotpot-Restaurant, Fuchsbau (Version 0.7.0)
 
 Automatisch geprüft am 09.11.2026:

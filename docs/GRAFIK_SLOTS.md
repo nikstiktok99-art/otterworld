@@ -136,3 +136,9 @@ Ambiente-Slots `ambience.startufer.abend` und `ambience.schilfbucht.abend` (noch
 7. **Cat Café, Hotpot-Restaurant, Fuchsbau** (neu, Version 0.7.0): Chamaron, Erbsenschale mit Beano/Beani/Beanz,
    Bean, fünf Porträts, Innenraum-Boden und Wände, Möbel (Theke, Tische, Kochtopf, Laterne), zwei schlafende Katzen,
    Fuchsbau-Hügel, alle neuen Fundstellen und Deko (siehe Tabellen oben).
+
+## Oberfläche
+
+| Schlüssel | Größe | Status | Hinweis |
+|---|---|---|---|
+| ui.wegkarte | etwa 360 × 460 (Hochformat) | P (CSS-Verlauf) | Gemalte Übersichtskarte als Hintergrund der Wegkarte. Die Orte liegen bei (x, y in Prozent): Fuchsbau 27/9, Tiramisu Stream 27/31, Schilfbucht 80/30, Startufer 56/48, Zoo 56/69, Cat Café 28/89, Hotpot-Restaurant 74/89 – die Schilder setzt das Spiel darüber. |

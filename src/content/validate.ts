@@ -182,6 +182,7 @@ export function validateContent(c: Content, assetKeys?: ReadonlySet<string>): st
     const land = ['land'] as const;
     const onLand = (t: { x: number; y: number }) => inBounds(g, t) && standable(terrainAt(g, t), land);
     if (!onLand(m.arrival)) err(`${where}: Ankunftspunkt nicht begehbar`);
+    if (m.overview && [m.overview.x, m.overview.y].some((v) => !(v >= 0 && v <= 100))) err(`${where}: Platz auf der Wegkarte außerhalb von 0–100`);
     for (const o of m.objects) {
       asset(o.sprite, `${where}/${o.id}`);
       for (const v of o.variants ?? []) {

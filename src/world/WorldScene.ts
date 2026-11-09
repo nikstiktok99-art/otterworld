@@ -512,12 +512,17 @@ export class WorldScene extends Phaser.Scene {
 
   /** Figurenwechsel mit anderem Körper: kurz ausblenden und die Welt mit der neuen Figur aufbauen. */
   private rebuildAfterSwitch(character: string): void {
+    const name = characterName(character, this.deps.session.getState(), this.deps.content);
+    this.rebuild(`Du spielst jetzt als ${name}.`);
+  }
+
+  /** Nach einer Änderung von außen (Figurenwechsel, Reise über die Wegkarte): ausblenden, Szene neu aufbauen. */
+  private rebuild(toast: string): void {
     if (this.leaving) return;
     this.leaving = true;
-    const name = characterName(character, this.deps.session.getState(), this.deps.content);
     const cam = this.cameras.main;
     cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.pendingEnter = { toast: `Du spielst jetzt als ${name}.` };
+      this.pendingEnter = { toast };
       this.scene.restart(this.deps);
     });
     cam.fadeOut(FADE.ms, FADE.r, FADE.g, FADE.b);
@@ -574,6 +579,9 @@ export class WorldScene extends Phaser.Scene {
         sound.play('sfx.leuchte');
       } else if (e.type === 'rejected' && action?.type === 'gather') {
         sound.play('sfx.nein');
+      } else if (e.type === 'traveled' && action?.type === 'fastTravel') {
+        // Reise über die Wegkarte: der Stand zeigt schon den neuen Ort.
+        this.rebuild(content.maps[e.to]?.name ?? e.to);
       } else if (e.type === 'switched') {
         sound.play('sfx.aufstellen');
         haptic();

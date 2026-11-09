@@ -28,7 +28,7 @@ export interface Settings {
 
 /** Der gespeicherte Spielstand. Enthält nur stabile IDs, nie Namen, Bilder oder Sprites. */
 export interface GameState {
-  schema: 3;
+  schema: 4;
   player: { name: string | null };
   /** Wer gerade gespielt wird (Figuren-ID). Der Körper ergibt sich aus dem Inhalt. */
   activeCharacter: string;
@@ -45,6 +45,8 @@ export interface GameState {
   quests: Record<string, QuestProgress>;
   /** Die Aufgabe, deren Hinweis oben angezeigt wird (null = die zuerst begonnene offene). */
   tracked: string | null;
+  /** Orte, die sie schon betreten hat (für die Wegkarte). */
+  visited: string[];
   /** Einmalige Belohnungen, die bereits vergeben wurden. */
   claimed: string[];
   moments: string[];

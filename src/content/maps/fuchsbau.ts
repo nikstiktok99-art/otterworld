@@ -100,5 +100,6 @@ export const fuchsbau: MapDef = {
     { tile: { x: 7, y: 5 }, name: 'den Fuchsbau' },
   ],
   ambience: 'ambience.fuchsbau',
+  overview: { x: 27, y: 9 },
   backdrop: '#2e4c22',
 };

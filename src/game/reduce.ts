@@ -207,8 +207,25 @@ export function reduce(state: GameState, action: Action, content: Content): Redu
       const tile = safeTile(s, content, target.id, entry.tile, body.moves);
       if (!tile) return reject('invalidPosition');
       s.location = { map: target.id, tile, facing: entry.facing };
+      if (!s.visited.includes(target.id)) s.visited.push(target.id);
       d.touch();
       d.emit({ type: 'traveled', exit: exit.id, from: map.id, to: target.id });
+      break;
+    }
+
+    case 'fastTravel': {
+      // Wegkarte: nur zu Orten, die sie schon kennt; Ankunft am sicheren Platz des Ortes.
+      const target = content.maps[action.map];
+      const body = content.bodies[content.characters[s.activeCharacter]?.body ?? ''];
+      if (!target || !body) return reject('unknown');
+      if (!s.visited.includes(target.id)) return reject('locked');
+      if (s.location.map === target.id) return reject('alreadyHere');
+      const tile = safeTile(s, content, target.id, target.arrival, body.moves);
+      if (!tile) return reject('invalidPosition');
+      const from = s.location.map;
+      s.location = { map: target.id, tile, facing: 'se' };
+      d.touch();
+      d.emit({ type: 'traveled', exit: null, from, to: target.id });
       break;
     }
 

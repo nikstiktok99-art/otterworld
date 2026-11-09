@@ -142,4 +142,5 @@ export const startufer: MapDef = {
     { tile: { x: 3, y: 25 }, name: 'deinen Bau' },
   ],
   ambience: 'ambience.startufer.abend',
+  overview: { x: 56, y: 48 },
 };

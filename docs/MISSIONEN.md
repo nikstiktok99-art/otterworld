@@ -95,6 +95,7 @@ Raster, Legende, sicherer Platz, Objekte, Fundstellen, Ausgänge mit Ankunftspun
 Sand, Wasser, Steg, Pfad, Schilf, Zaun, Büsche; für Innenräume Holzboden und Wand. Die Prüfung verlangt
 Hin- und Rückweg und dass Ziele, Ausgänge und Ankunftspunkte zu Fuß erreichbar sind. Objekte können mit `variants`
 ihr Aussehen nach dem Spielverlauf wechseln (z. B. Meerkats Stein mit Wimpel); `backdrop` ist die Farbe außerhalb der Karte.
+`overview: { x, y }` (0–100) ist der Platz des Ortes auf der Wegkarte; besuchte Orte merkt sich der Spielstand.
 
 ## Beispiel: eine Bring-Mission (so würde sie aussehen)
 
