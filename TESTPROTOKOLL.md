@@ -12,7 +12,9 @@ Automatisch geprüft am 09.11.2026:
   Festessen, Beans Kranz mit zwei Rezepten genau einmal. Das Erbsentrio ist jetzt echter Inhalt; die Trio-Prüfungen
   aus Phase 2 laufen gegen ihn.
 - **Typprüfung:** fehlerfrei. **Inhaltsprüfung:** alle sieben Orte erreichbar, jeder Weg hin und zurück.
-- **Cloud:** CLOUD_ERGEBNIS
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b8), „Android-Testbuild (.apk)“ (a8) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
+- **Browser-Durchlauf:** zweimal hintereinander bestanden (98 Prüfungen).
 
 | Test | Browser (`npm run e2e`, 98 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
 |---|---|---|---|---|
@@ -22,7 +24,7 @@ Automatisch geprüft am 09.11.2026:
 | Hotpot: Erbsenschale mit Sprechblase, drei Stimmen, Kochtopf als eigene Station, Festessen | ok | offen | – | offen |
 | Durch Zoo, Ufer und Bach in den Wald, Bean kennenlernen | ok | offen | – | offen |
 | Freundebuch mit zwölf Figuren, Neuladen im Wald | ok | offen | – | offen |
-| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
 
 ## Kapitel Zoo (Version 0.6.0)
 
