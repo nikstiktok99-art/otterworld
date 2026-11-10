@@ -12,7 +12,8 @@ Automatisch geprüft am 10.11.2026:
   Blütengirlande für Chamaron, Kräutersuppe vom Kochtopf für das Erbsentrio (alle drei spielbar, weiterhin genau eine
   Schale), Beerenlicht für Bean.
 - **Typprüfung:** fehlerfrei. **Inhaltsprüfung:** jede Abgabe ist durch „hat die Dinge“ abgesichert.
-- **Cloud:** CLOUD_ERGEBNIS
+- **Cloud:** „Prüfen“, „iPhone-Build (.ipa)“ (b10), „Android-Testbuild (.apk)“ (a10) und „iPhone-Simulator-Test“ grün.
+  Simulator (iPhone 16 Pro): App startet, nativer Speicher liest beide Plätze, 4 Lebenszyklus-Listener, läuft nach 35 s noch.
 - **Browser-Durchlauf:** bestanden (108 Prüfungen).
 
 | Test | Browser (`npm run e2e`, 108 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
@@ -23,7 +24,7 @@ Automatisch geprüft am 10.11.2026:
 | Stein zeigt danach Wimpel und Sonnenblume | ok | offen | – | offen |
 | Im Freundebuch als Meerkat spielen und zurück zum Otter wechseln | ok | offen | – | offen |
 | Rosie an einem Ort ohne Wasser wählen: freundlicher Hinweis statt Wechsel | nur Unit-Test | offen | – | offen |
-| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+| Keine Fehler in der Konsole | ok | offen | ok (Start) | offen |
 
 ## Wegkarte (Version 0.8.0)
 
