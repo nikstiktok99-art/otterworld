@@ -1,4 +1,5 @@
 import { activeHint, friendList } from '../game/text';
+import { Icon } from './icons';
 import type { RejectReason } from '../game/actions';
 import { useApp, useGameState, useUi } from './context';
 
@@ -19,27 +20,32 @@ export function Hud() {
   return (
     <div className="hud">
       <div className="hud-row">
-        <button className="pill" onClick={() => open('bag')}>
-          Beutel
+        <button className="hud-btn" onClick={() => open('bag')}>
+          <Icon name="bag" />
+          <span>Beutel</span>
         </button>
         {hasFriends && (
-          <button className="pill" onClick={() => open('friends')}>
-            Freunde
+          <button className="hud-btn" onClick={() => open('friends')}>
+            <Icon name="friends" />
+            <span>Freunde</span>
           </button>
         )}
         {hasMap && (
-          <button className="pill" onClick={() => open('karte')}>
-            Karte
+          <button className="hud-btn" onClick={() => open('karte')}>
+            <Icon name="map" />
+            <span>Karte</span>
           </button>
         )}
-        <button className="pill" onClick={() => open('menu')}>
-          Menü
+        <button className="hud-btn" onClick={() => open('menu')}>
+          <Icon name="settings" />
+          <span>Menü</span>
         </button>
       </div>
       {hint && (
         // Antippen öffnet das Aufgabenbuch.
         <button className="hint" aria-label={`${hint} – Aufgabenbuch öffnen`} onClick={() => open('quests')}>
-          {hint}
+          <Icon name="task" className="hint-icon" />
+          <span>{hint}</span>
         </button>
       )}
     </div>
@@ -100,10 +106,14 @@ export function DecorateBar() {
       <p className={d.problem ? 'deco-text problem' : 'deco-text'}>{text}</p>
       <div className="row">
         <button className="btn" onClick={() => ui.set({ decorate: null })}>
-          Abbrechen
+          <Icon name="close" className="btn-icon" />
+          <span>Abbrechen</span>
         </button>
         <button className="btn primary" disabled={!d.tile || !!d.problem} onClick={confirm}>
-          {d.mode === 'move' ? 'Hierhin versetzen' : 'Hier aufstellen'}
+          <Icon name="place" className="btn-icon" />
+          <span>
+            {d.mode === 'move' ? 'Hierhin versetzen' : 'Hier aufstellen'}
+          </span>
         </button>
       </div>
     </div>

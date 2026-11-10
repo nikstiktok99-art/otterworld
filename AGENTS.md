@@ -24,9 +24,19 @@ Claude baut das Spiel, Codex gestaltet die Grafik. Diese Datei beschreibt, wie g
 Spielcode (`src/`), Konfiguration, Abhängigkeiten, native Projekte und Git. Wenn Maße oder Schlüssel nicht passen,
 vermerke es in deiner Übergabe – Claude passt den Katalog an.
 
-## Rückmeldung aus dem ersten Einbau (Paket 01)
+## Einbau der Entwürfe (Grafik-Stufe 1, Version 0.10.0)
 
-- `characters.schnabbi.idle.se` (88 × 48, Anker 44/40) ist eingebaut und funktioniert technisch.
-- Im Spiel wirkt Schnabbi neben dem 32 px hohen Otter **sehr groß** (74 px lang ≈ 4–5 Kacheln) und überdeckt
-  beim Sitzen die 16 × 32 px große Uferleuchte. Bitte prüfen, ob ein Verhältnis von etwa 48–56 px Körperlänge
-  besser passt – dann ändern wir die Framegröße im Katalog gemeinsam.
+Der User hat alle Entwürfe aus `otter-design/arbeit/` freigegeben („baue alles in dem Style ein, Skalierungen
+dürfen abweichen“). Claude schneidet sie mit `scripts/grafik/bauen.mjs` aus (liest `otter-design` nur):
+
+- Motive werden über einen gemeinsamen Maßstab auf Spielgröße gebracht (Starter-Otter ≈ 41 × 30 px);
+  je Zielpixel zählt das Quellpixel mittlerer Helligkeit aus der Zellmitte (hält Konturen klar).
+- Eingebaut: Starter-Otter (stehen, laufen, treiben), Schnabbi (jetzt 58 px lang), Squichy (v3), Lumi (aus dem
+  Otter abgeleitet, mit Krone, Vorschlag), Uferleuchte aus/an, Muschel, Treibholz, Kiesel, Werkbank, Bau (aus
+  `startufer.png` ausgeschnitten), Café-Tisch, Korbpflanze, Wurzeltür als Fuchsbau, Schilfmatte, drei Porträts,
+  alle 22 Icons aus `uebergabe/paket-03-icons` für die Oberfläche.
+- Der Boden (`src/assets/terrain.ts`) und die übrigen Freunde (`src/assets/freunde.ts`) sind im Stil der
+  Entwürfe im Code gezeichnet; Farben aus `startufer.png` gemessen.
+- Neue Codex-Bilder dürfen weiter Entwürfe sein: einfach in `otter-design/arbeit/` ablegen und im Übergabetext
+  sagen, welcher Katalogschlüssel gemeint ist. Am meisten fehlen noch: Rückansichten (`ne`), echte Lauf-Frames,
+  und eigene Entwürfe für Meerkat, Rosie, Bubbles, Chamaron, die Erbsenschale, Bean und die Gegenstände der Orte.

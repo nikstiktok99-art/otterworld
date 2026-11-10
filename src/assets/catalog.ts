@@ -127,11 +127,17 @@ export const sprites: SpriteDef[] = [
   ...character(
     'otter',
     'otter',
-    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    { w: 64, h: 48, anchorX: 32, anchorY: 40 },
     {
       idle: { frames: 2, fps: 2, note: 'Starter-Otter steht, atmet' },
       walk: { frames: 4, fps: 8, note: 'Starter-Otter läuft' },
-      swim: { frames: 4, fps: 5, note: 'Starter-Otter schwimmt (Anker = Wasserlinie)' },
+      swim: { frames: 4, fps: 3, note: 'Starter-Otter treibt auf dem Rücken (Anker = Wasserlinie)' },
+    },
+    {
+      // Aus der Stilreferenz starter-otter.png (scripts/grafik/bauen.mjs)
+      'idle.se': { path: 'art/characters/otter/idle-se.png', frames: 2, fps: 2, status: 'entwurf' },
+      'walk.se': { path: 'art/characters/otter/walk-se.png', frames: 4, fps: 8, status: 'entwurf' },
+      'swim.se': { path: 'art/characters/otter/swim-se.png', frames: 4, fps: 3, status: 'entwurf' },
     },
   ),
   ...character(
@@ -145,18 +151,25 @@ export const sprites: SpriteDef[] = [
       sit: { frames: 2, fps: 2, note: 'Schnabbi sitzt neben der Leuchte' },
     },
     {
-      // Codex Paket 01, Designentwurf: nur zum Testen des Einbaus.
-      'idle.se': { path: 'art/characters/schnabbi/idle-se.png', frames: 1, status: 'entwurf' },
+      // Codex Paket 01, auf Spielgröße neben dem Otter gebracht (scripts/grafik/bauen.mjs)
+      'idle.se': { path: 'art/characters/schnabbi/idle-se.png', frames: 2, fps: 2, status: 'entwurf' },
+      'walk.se': { path: 'art/characters/schnabbi/walk-se.png', frames: 4, fps: 6, status: 'entwurf' },
     },
   ),
   ...character(
     'otterprinzessin',
     'prinzessin',
-    { w: 48, h: 48, anchorX: 24, anchorY: 40 },
+    { w: 64, h: 48, anchorX: 32, anchorY: 40 },
     {
-      idle: { frames: 2, fps: 2, note: 'Otterprinzessin (Lumi) mit Kleid und Krone, steht' },
-      walk: { frames: 4, fps: 8, note: 'Otterprinzessin läuft, Kleid schwingt' },
-      swim: { frames: 4, fps: 5, note: 'Otterprinzessin schwimmt, Krone bleibt über Wasser (Anker = Wasserlinie)' },
+      idle: { frames: 2, fps: 2, note: 'Otterprinzessin (Lumi) mit Krone, steht' },
+      walk: { frames: 4, fps: 8, note: 'Otterprinzessin läuft' },
+      swim: { frames: 4, fps: 3, note: 'Otterprinzessin treibt auf dem Rücken, Krone bleibt oben (Anker = Wasserlinie)' },
+    },
+    {
+      // Vorschlag: Codex-Otter mit honigfarbenem Fell und kleiner goldener Krone (scripts/grafik/bauen.mjs)
+      'idle.se': { path: 'art/characters/otterprinzessin/idle-se.png', frames: 2, fps: 2, status: 'entwurf' },
+      'walk.se': { path: 'art/characters/otterprinzessin/walk-se.png', frames: 4, fps: 8, status: 'entwurf' },
+      'swim.se': { path: 'art/characters/otterprinzessin/swim-se.png', frames: 4, fps: 3, status: 'entwurf' },
     },
   ),
   ...character(
@@ -199,6 +212,11 @@ export const sprites: SpriteDef[] = [
       walk: { frames: 4, fps: 6, note: 'Squichy robbt an Land' },
       swim: { frames: 4, fps: 5, note: 'Squichy schwimmt, Kopf über Wasser (Anker = Wasserlinie)' },
     },
+    {
+      // Codex Paket 01 (Entwurf v3), auf Spielgröße gebracht
+      'idle.se': { path: 'art/characters/squichy/idle-se.png', frames: 2, fps: 2, status: 'entwurf' },
+      'walk.se': { path: 'art/characters/squichy/walk-se.png', frames: 4, fps: 6, status: 'entwurf' },
+    },
   ),
   ...character(
     'chamaron',
@@ -229,8 +247,8 @@ export const sprites: SpriteDef[] = [
   ),
 
   // ---- Umgebung ----
-  { key: 'objects.bau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'bau' }, note: 'Otterbau unter Wurzeln mit karierter Gardine, Grundfläche 3 × 2 Kacheln' },
-  { key: 'objects.werkbank', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'werkbank' }, note: 'Werkbank, Grundfläche 2 × 1 Kacheln' },
+  { key: 'objects.bau', frameW: 80, frameH: 64, frames: 1, anchor: { x: 40, y: 62 }, file: { path: 'art/objects/bau.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'bau' }, note: 'Otterbau unter der Weide mit runder Tür und karierter Gardine (aus der Stilreferenz startufer.png), Grundfläche 3 × 2 Kacheln' },
+  { key: 'objects.werkbank', frameW: 40, frameH: 32, frames: 1, anchor: { x: 20, y: 30 }, file: { path: 'art/objects/werkbank.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'werkbank' }, note: 'Werkbank mit Holzhammer und Klötzchen (Codex Paket 03), Grundfläche 2 × 1 Kacheln' },
   { key: 'objects.wegweiser', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'wegweiser' }, note: 'Wegweiser aus Holz, Schild zeigt nach rechts (das Spiel spiegelt für links), Grundfläche 1 Kachel' },
   { key: 'objects.picknickdecke', frameW: 48, frameH: 32, frames: 1, anchor: { x: 24, y: 31 }, placeholder: { painter: 'picknickdecke' }, note: 'Karierte Picknickdecke mit Körbchen (Tiramisu Stream), Grundfläche 3 × 2 Kacheln' },
   { key: 'objects.bastelstumpf', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 23 }, placeholder: { painter: 'bastelstumpf' }, note: 'Baumstumpf mit Garn und Schere zum Basteln (Station wie die Werkbank), Grundfläche 1 Kachel' },
@@ -239,27 +257,27 @@ export const sprites: SpriteDef[] = [
   { key: 'objects.aussichtsstein.blume', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: true, blume: true } }, note: 'Zoo: Stein mit Wimpel und Sonnenblume daneben (nach „Eine Sonnenblume für Meerkat“)' },
   { key: 'objects.theke', frameW: 80, frameH: 32, frames: 1, anchor: { x: 40, y: 31 }, placeholder: { painter: 'theke' }, note: 'Theke (Cat Café und Hotpot-Restaurant), Grundfläche 5 × 1 Kacheln' },
   { key: 'objects.basteltisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'basteltisch' }, note: 'Cat Café: Basteltisch mit Wolle und Schere, Grundfläche 2 × 1' },
-  { key: 'objects.cafetisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'cafetisch' }, note: 'Cat Café: kleiner runder Tisch mit Teetasse, Grundfläche 2 × 1' },
+  { key: 'objects.cafetisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 22 }, file: { path: 'art/objects/cafetisch.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'cafetisch' }, note: 'Cat Café: kleiner runder Holztisch (Codex Paket 05), Grundfläche 2 × 1' },
   { key: 'objects.katze.grau', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'katze', args: { farbe: 'grau' } }, note: 'Cat Café: schlafende graue Katze (atmet), 1 Kachel – Kulisse, keine Figur' },
   { key: 'objects.katze.rot', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 14 }, placeholder: { painter: 'katze', args: { farbe: 'rot' } }, note: 'Cat Café: schlafende rote Katze (atmet), 1 Kachel – Kulisse, keine Figur' },
-  { key: 'objects.zimmerpflanze', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'zimmerpflanze' }, note: 'Cat Café: große Zimmerpflanze im Topf, 1 Kachel' },
+  { key: 'objects.zimmerpflanze', frameW: 24, frameH: 32, frames: 1, anchor: { x: 12, y: 30 }, file: { path: 'art/objects/zimmerpflanze.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'zimmerpflanze' }, note: 'Cat Café: Grünpflanze im Flechtkorb (Codex Paket 05), 1 Kachel' },
   { key: 'objects.kochtopf', frameW: 32, frameH: 40, frames: 2, fps: 2, anchor: { x: 16, y: 39 }, placeholder: { painter: 'kochtopf' }, note: 'Hotpot-Restaurant: großer Kochtopf auf dem Herd, dampft (Station „Kochtopf“), Grundfläche 2 × 2' },
   { key: 'objects.hotpottisch', frameW: 32, frameH: 40, frames: 1, anchor: { x: 16, y: 39 }, placeholder: { painter: 'hotpottisch' }, note: 'Hotpot-Restaurant: runder Tisch mit kleinem Topf, Grundfläche 2 × 2' },
   { key: 'objects.laterne', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 31 }, placeholder: { painter: 'laterne' }, note: 'Hotpot-Restaurant: rote Papierlaterne auf einem Ständer, 1 Kachel' },
-  { key: 'objects.fuchsbau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 39 }, placeholder: { painter: 'fuchsbauhuegel' }, note: 'Fuchsbau: Erdhügel mit Eingang unter Wurzeln, Grundfläche 3 × 2' },
+  { key: 'objects.fuchsbau', frameW: 48, frameH: 40, frames: 1, anchor: { x: 24, y: 38 }, file: { path: 'art/objects/fuchsbau.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'fuchsbauhuegel' }, note: 'Fuchsbau: Wurzelbogen mit Holztür (Codex Paket 05), Grundfläche 3 × 2' },
 
   // ---- Gegenstände in der Welt ----
-  { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand' },
-  { key: 'items.treibholz.treibend', frameW: 16, frameH: 16, frames: 2, fps: 2, anchor: { x: 8, y: 12 }, placeholder: { painter: 'treibholzTreibend' }, note: 'Treibholz treibt im Wasser' },
-  { key: 'items.muschelschale', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'muschel' }, note: 'Natürliche Muschelschale im Sand (ohne Aufhängung)' },
-  { key: 'deco.uferleuchte.aus', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'leuchteAus' }, note: 'Uferleuchte aus Treibholz mit Muschel, ausgeschaltet' },
-  { key: 'deco.uferleuchte.an', frameW: 16, frameH: 32, frames: 3, fps: 4, anchor: { x: 8, y: 30 }, placeholder: { painter: 'leuchteAn' }, note: 'Uferleuchte eingeschaltet, sanftes Flackern' },
+  { key: 'items.treibholz', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, file: { path: 'art/items/treibholz.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'treibholz' }, note: 'Treibholz am Strand (Codex Paket 03)' },
+  { key: 'items.treibholz.treibend', frameW: 16, frameH: 16, frames: 2, fps: 2, anchor: { x: 8, y: 12 }, file: { path: 'art/items/treibholz-treibend.png', frames: 2, fps: 2, status: 'entwurf' }, placeholder: { painter: 'treibholzTreibend' }, note: 'Codex-Treibholz treibt im Wasser, kleine Wellen' },
+  { key: 'items.muschelschale', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, file: { path: 'art/items/muschelschale.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'muschel' }, note: 'Natürliche Muschelschale im Sand, ohne Aufhängung (Codex Paket 03)' },
+  { key: 'deco.uferleuchte.aus', frameW: 32, frameH: 48, frames: 1, anchor: { x: 16, y: 46 }, file: { path: 'art/deco/uferleuchte-aus.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'leuchteAus' }, note: 'Uferleuchte aus Treibholz mit Muschel, aus (Codex-Stilreferenz muschellampe.png)' },
+  { key: 'deco.uferleuchte.an', frameW: 32, frameH: 48, frames: 1, anchor: { x: 16, y: 46 }, file: { path: 'art/deco/uferleuchte-an.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'leuchteAn' }, note: 'Uferleuchte eingeschaltet (Codex-Stilreferenz); das Spiel legt einen warmen Schein darüber' },
   { key: 'items.schilfhalm', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'schilfhalm' }, note: 'Bündel heller Schilfhalme mit Band (Fundstelle), gut vom stehenden Schilf zu unterscheiden' },
-  { key: 'deco.schilfmatte', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'schilfmatte' }, note: 'Geflochtene Schilfmatte, flach auf dem Boden' },
+  { key: 'deco.schilfmatte', frameW: 24, frameH: 16, frames: 1, anchor: { x: 12, y: 11 }, file: { path: 'art/deco/schilfmatte.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'schilfmatte' }, note: 'Geflochtene runde Matte, flach auf dem Boden (Codex Paket 05: Schilfteppich)' },
   { key: 'deco.treibholzbank', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 21 }, placeholder: { painter: 'bank' }, note: 'Kleine Bank aus Treibholz, 1 Kachel breit' },
   { key: 'deco.muschelwindspiel', frameW: 16, frameH: 32, frames: 3, fps: 2, anchor: { x: 8, y: 30 }, placeholder: { painter: 'windspiel' }, note: 'Windspiel aus Muscheln an einem Treibholzpfosten, Muscheln schaukeln leicht' },
   { key: 'items.wiesenbluete', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'wiesenbluete' }, note: 'Kleiner Strauß bunter Wiesenblüten (Fundstelle)' },
-  { key: 'items.glitzerkiesel', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'glitzerkiesel' }, note: 'Runder, funkelnder Kiesel im Sand (Fundstelle)' },
+  { key: 'items.glitzerkiesel', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 14 }, file: { path: 'art/items/glitzerkiesel.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'glitzerkiesel' }, note: 'Runder Kiesel (Codex Paket 03), das Spiel lässt ihn glitzern (Fundstelle)' },
   { key: 'items.seerosenblatt', frameW: 16, frameH: 16, frames: 2, fps: 1, anchor: { x: 8, y: 12 }, placeholder: { painter: 'seerosenblatt' }, note: 'Seerosenblatt, schwimmt und wippt leicht (Fundstelle im Teich)' },
   { key: 'deco.bluetengirlande', frameW: 16, frameH: 32, frames: 1, anchor: { x: 8, y: 30 }, placeholder: { painter: 'bluetengirlande' }, note: 'Blütengirlande zwischen zwei Stäbchen, Glitzerkiesel in der Mitte' },
   { key: 'deco.seerosenkissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'seerosenkissen' }, note: 'Rundes grünes Kissen aus Seerosenblättern mit Blüte' },
@@ -298,13 +316,13 @@ export const sprites: SpriteDef[] = [
   { key: 'fx.spritzer', frameW: 16, frameH: 8, frames: 3, fps: 10, anchor: { x: 8, y: 6 }, placeholder: { painter: 'spritzer' }, note: 'Spritzer beim Ein- und Aussteigen' },
 
   // ---- Porträts (Dialog) ----
-  { key: 'portraits.schnabbi', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'schnabbi' } }, note: 'Schnabbi-Porträt, neutral' },
-  { key: 'portraits.otter', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'otter' } }, note: 'Starter-Otter-Porträt, neutral' },
-  { key: 'portraits.otterprinzessin', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'prinzessin' } }, note: 'Otterprinzessin-Porträt mit Krone, neutral' },
+  { key: 'portraits.schnabbi', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, file: { path: 'art/portraits/schnabbi.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'portrait', args: { who: 'schnabbi' } }, note: 'Schnabbi-Porträt, neutral' },
+  { key: 'portraits.otter', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, file: { path: 'art/portraits/otter.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'portrait', args: { who: 'otter' } }, note: 'Starter-Otter-Porträt, neutral' },
+  { key: 'portraits.otterprinzessin', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, file: { path: 'art/portraits/otterprinzessin.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'portrait', args: { who: 'prinzessin' } }, note: 'Otterprinzessin-Porträt mit Krone, neutral' },
   { key: 'portraits.rosie', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'rosie' } }, note: 'Rosie-Porträt (pinker Axolotl), neutral' },
   { key: 'portraits.bubbles', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'bubbles' } }, note: 'Bubbles-Porträt (blauer Axolotl) mit einer Blase, neutral' },
   { key: 'portraits.meerkat', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'meerkat' } }, note: 'Meerkat-Porträt (Erdmännchen), neutral' },
-  { key: 'portraits.squichy', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'squichy' } }, note: 'Squichy-Porträt (Mini-Robbe), neutral' },
+  { key: 'portraits.squichy', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, file: { path: 'art/portraits/squichy.png', frames: 1, status: 'entwurf' }, placeholder: { painter: 'portrait', args: { who: 'squichy' } }, note: 'Squichy-Porträt (Mini-Robbe), neutral' },
   { key: 'portraits.chamaron', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'chamaron' } }, note: 'Chamaron-Porträt (Chamäleon), neutral' },
   { key: 'portraits.beano', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'beano' } }, note: 'Beano-Porträt (fröhliche Erbse)' },
   { key: 'portraits.beani', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'portrait', args: { who: 'beani' } }, note: 'Beani-Porträt (sanfte, verträumte Erbse)' },

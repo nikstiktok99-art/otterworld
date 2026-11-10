@@ -2,6 +2,30 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Grafik-Stufe 1 – Codex-Entwürfe eingebaut (Version 0.10.0)
+
+Automatisch geprüft am 10.11.2026:
+
+- **Unit-Tests:** 132 bestanden (Spielregeln unverändert). **Typprüfung:** fehlerfrei.
+- **Grafik-Einbau:** `scripts/grafik/bauen.mjs` liest die freigegebenen Entwürfe aus `otter-design/arbeit` und legt
+  26 Bilddateien unter `public/art/` ab; dazu die 44 Icons aus `otter-design/uebergabe/paket-03-icons`. Beim Start
+  meldet das Spiel keine Texturwarnung (jede Datei passt zu Framegröße und Frame-Anzahl im Katalog).
+- **Ansicht aller sieben Orte** (`scripts/grafik/ansehen.mjs`, Chromium, iPhone-16-Pro-Größe): keine Konsolenfehler.
+- **Cloud:** CLOUD_ERGEBNIS
+- **Browser-Durchlauf:** bestanden (108 Prüfungen). Dabei einen alten Fehler gefunden und behoben: Nach dem Aufheben
+  blieb das Bild einer Fundstelle 10 px nach oben verschoben; nachgewachsenes Treibholz erschien darum jedes Mal höher
+  und war nach zweimaligem Sammeln nicht mehr antippbar. Deko-Gegenstände haben jetzt einen engen Trefferbereich
+  (die neue Uferleuchte ist 32 × 48 px groß).
+
+| Test | Browser (`npm run e2e`) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Ganzer Spielablauf wie in 0.9.0 (nur Grafik neu) | ok | offen | – | offen |
+| Boden, Steg, Büsche, Blumen im neuen Stil an allen sieben Orten | ok (Fotos) | offen | – | offen |
+| Knöpfe oben mit Codex-Icons, Fenster mit Holzrahmen, Porträts im Gespräch | ok (Fotos) | offen | – | offen |
+| Sachen im Beutel und an der Werkbank mit Bildchen | ok | offen | – | offen |
+| Schrift (Georgia) auf dem Gerät vorhanden bzw. sauberer Ersatz | – | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+
 ## Vertrauens-Aufgaben – alle Freunde spielbar (Version 0.9.0)
 
 Automatisch geprüft am 10.11.2026:

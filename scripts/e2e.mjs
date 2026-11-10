@@ -884,6 +884,8 @@ try {
 } catch (e) {
   await shot('fehler').catch(() => {});
   console.error('\nBrowser-Durchlauf FEHLGESCHLAGEN:', e.message);
+  const info = await page.evaluate('({ w: window.__otterwelt.world(), loc: window.__otterwelt.state().location, inv: window.__otterwelt.state().inventory, ui: window.__otterwelt.ui() })').catch(() => null);
+  console.error('Zustand beim Fehler:', JSON.stringify(info));
   if (consoleErrors.length) console.error('Konsole:', consoleErrors);
   process.exitCode = 1;
 } finally {

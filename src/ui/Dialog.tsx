@@ -63,10 +63,15 @@ export function DialogPanel() {
   return (
     <div className="backdrop clear" onClick={() => dialogs.next()}>
       <div className="sheet dialog" role="dialog" aria-live="polite">
+        <span className="ribbon" aria-hidden="true" />
         {speaker && (
           <div className="speaker">
-            {portrait && <img className="portrait" src={portrait} alt="" />}
-            <span>{characterName(speaker, state, content)}</span>
+            {portrait && (
+              <span className="portrait-frame">
+                <img className="portrait" src={portrait} alt="" />
+              </span>
+            )}
+            <span className="speaker-name">{characterName(speaker, state, content)}</span>
           </div>
         )}
         <p className={speaker ? 'dialog-text' : 'dialog-text narration'}>{fillText(line.text, state)}</p>

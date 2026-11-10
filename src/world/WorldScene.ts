@@ -13,7 +13,7 @@ import { spotReady } from '../game/rules/spots';
 import { DEFAULT_STATION } from '../content/types';
 import { clock } from '../app/clock';
 import { spriteDef } from '../assets/catalog';
-import { paintTerrain } from '../assets/placeholders';
+import { paintTerrain, TERRAIN_MARGIN } from '../assets/terrain';
 import type { DialogController } from '../app/dialogs';
 import type { GameSession } from '../app/session';
 import type { Sound } from '../app/sound';
@@ -52,7 +52,7 @@ const DEPTH_UI = 50010;
 // Höhe der Dekorier-Leiste unten (CSS-Pixel, großzügig inkl. Home-Indikator)
 const DECO_BAR_PX = 190;
 // Höhe der Anzeige oben ohne Safe Area (Knöpfe und Hinweis, CSS-Pixel)
-const HUD_PX = 120;
+const HUD_PX = 132;
 
 let safeCache: { top: number; bottom: number } | null = null;
 /** Safe Areas in CSS-Pixeln (oben Kamera-Aussparung/Statusleiste, unten Home-Indikator); im Browser meist 0. */
@@ -103,6 +103,8 @@ export class WorldScene extends Phaser.Scene {
   private leaving = false;
   /** Überlebt den Neustart der Szene: Einblenden und kurzer Hinweis nach einem Wechsel. */
   private pendingEnter: { toast?: string } | null = null;
+  /** Für Fehlersuche (debugInfo): was der letzte Tipp getroffen hat und was dabei herauskam. */
+  private lastTap: { tile: Tile; target: string; result?: string } | null = null;
 
   constructor() {
     super('world');
@@ -141,7 +143,10 @@ export class WorldScene extends Phaser.Scene {
       if (this.textures.exists(k)) this.textures.remove(k);
       this.textures.addCanvas(k, paintTerrain(this.grid, f));
     }
-    this.terrain = this.add.image(0, 0, `terrain.${this.map.id}.0`).setOrigin(0, 0).setDepth(-100000);
+    this.terrain = this.add
+      .image(-TERRAIN_MARGIN * TILE, -TERRAIN_MARGIN * TILE, `terrain.${this.map.id}.0`)
+      .setOrigin(0, 0)
+      .setDepth(-100000);
     this.time.addEvent({
       delay: 700,
       loop: true,
@@ -179,7 +184,7 @@ export class WorldScene extends Phaser.Scene {
 
     // Abendstimmung über der ganzen Map, Lichtschein darüber
     this.add
-      .rectangle(-TILE, -400, (this.grid.w + 2) * TILE, this.grid.h * TILE + 800, 0x1c2a5a, 0.3)
+      .rectangle(-TERRAIN_MARGIN * TILE, -400, (this.grid.w + 2 * TERRAIN_MARGIN) * TILE, this.grid.h * TILE + 800, 0x2a2452, 0.12)
       .setOrigin(0, 0)
       .setDepth(DEPTH_EVENING);
 
@@ -289,6 +294,7 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
     const target = this.pick(wx, wy);
+    this.lastTap = { tile, target: target ? target.kind : 'boden' };
     const exit = this.map.exits.find((e) => e.tiles.some((t) => t.x === tile.x && t.y === tile.y));
     if (target) this.goInteract(target);
     else if (exit) this.goInteract({ kind: 'exit', exit });
@@ -322,7 +328,8 @@ export class WorldScene extends Phaser.Scene {
       const sprite = this.spots.get(spot.id);
       if (!sprite || sprite.visible || !this.spotOpen(spot)) continue;
       this.tweens.killTweensOf(sprite);
-      sprite.setVisible(true).setAlpha(0);
+      const home = anchorOf(spot.tile);
+      sprite.setPosition(home.x, home.y).setVisible(true).setAlpha(0);
       this.tweens.add({ targets: sprite, alpha: 1, duration: 600 });
     }
   }
@@ -345,7 +352,14 @@ export class WorldScene extends Phaser.Scene {
       const box = new Phaser.Geom.Rectangle(actor.pos.x - w / 2, actor.pos.y - 26, w, 30);
       test(actor.sprite, { kind: 'npc', actor, character: placement.characters[0]! }, box);
     }
-    for (const [uid, d] of this.decos) test(d.sprite, { kind: 'deco', uid });
+    for (const [uid, d] of this.decos) {
+      // Deko-Bilder können größer sein als ihre Kachel (Uferleuchte 32 × 48): getroffen wird nur der Bereich über
+      // dem Standplatz, damit eine Fundstelle daneben erreichbar bleibt.
+      const b = d.sprite.getBounds();
+      const w = Math.min(b.width, 20);
+      const h = Math.min(b.height, 30);
+      test(d.sprite, { kind: 'deco', uid }, new Phaser.Geom.Rectangle(d.sprite.x - w / 2, d.sprite.y - h + 3, w, h));
+    }
     for (const spot of this.map.gatherSpots) {
       const sp = this.spots.get(spot.id);
       if (sp) test(sp, { kind: 'spot', spot });
@@ -453,7 +467,10 @@ export class WorldScene extends Phaser.Scene {
 
   private interact(target: Target): void {
     const { session, ui, dialogs, sound } = this.deps;
-    if (!ui.idle) return;
+    if (!ui.idle) {
+      if (this.lastTap) this.lastTap.result = 'ui-nicht-frei';
+      return;
+    }
     switch (target.kind) {
       case 'npc':
         target.actor.faceToward(this.player.tile);
@@ -466,7 +483,10 @@ export class WorldScene extends Phaser.Scene {
       case 'exit':
         break;
       case 'spot':
-        session.dispatch({ type: 'gather', map: this.map.id, spot: target.spot.id, at: clock.now() });
+        {
+          const ev = session.dispatch({ type: 'gather', map: this.map.id, spot: target.spot.id, at: clock.now() });
+          if (this.lastTap) this.lastTap.result = ev.map((e) => (e.type === 'rejected' ? `rejected:${e.reason}` : e.type)).join(',');
+        }
         break;
       case 'object':
         if (target.obj.interaction?.kind === 'workbench') {
@@ -547,12 +567,14 @@ export class WorldScene extends Phaser.Scene {
         const sprite = this.spots.get(action.spot);
         if (sprite) {
           this.burst(sprite.x, sprite.y - 6);
+          // Hochschweben und ausblenden, danach zurück an den Platz (sonst taucht Nachgewachsenes höher auf).
+          const homeY = sprite.y;
           this.tweens.add({
             targets: sprite,
-            y: sprite.y - 10,
+            y: homeY - 10,
             alpha: 0,
             duration: 380,
-            onComplete: () => sprite.setVisible(false).setAlpha(1),
+            onComplete: () => sprite.setVisible(false).setAlpha(1).setY(homeY),
           });
         }
         sound.play('sfx.aufheben');
@@ -957,6 +979,7 @@ export class WorldScene extends Phaser.Scene {
     return {
       map: this.map.id,
       leaving: this.leaving,
+      lastTap: this.lastTap,
       zoom: this.cameras.main.zoom,
       player: { body: this.player.body.id, tile: this.player.tile, moving: this.player.moving, pose: this.player.pose() },
       leavers: this.leavers.length,

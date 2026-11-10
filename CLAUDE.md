@@ -15,7 +15,11 @@ der Freundin erfinden. An vereinbarten Meilensteinen stoppen und kurz berichten.
 - Figuren-ID, Weltkörper-ID und Grafikschlüssel bleiben getrennt; pro Körper höchstens eine Instanz in der Welt.
 - App-ID `com.schnabbisfriends.otterwelt` nie ändern (Sideload-Updates brauchen dieselbe ID).
 - Keine Funktionen, die ein bezahltes Apple-Konto verlangen (Push, iCloud, In-App-Käufe, Game Center).
-- Grafik macht Codex. Ich baue nur Spielprinzip und Platzhalter hinter den Schlüsseln aus `src/assets/catalog.ts`.
+- Grafik entwirft Codex in `../otter-design/arbeit/` (nur lesen, nie dort schreiben). Seit 10.11.2026 gilt: Alle
+  Entwürfe dort sind vom Nutzer freigegeben und kommen ins Spiel; die Grafik ist ihm am wichtigsten („90 %“).
+  Einbau über `scripts/grafik/bauen.mjs` → `public/art/`, Schlüssel in `src/assets/catalog.ts`. Was Codex noch nicht
+  entworfen hat, zeichne ich im selben Stil (Boden `src/assets/terrain.ts`, Freunde `freunde.ts`, Dinge `dinge.ts`).
+  Ansehen: `node scripts/grafik/ansehen.mjs <ordner>` (alle Orte) und `scripts/grafik/figuren.mjs` (Kontaktblatt).
 - Versionen exakt pinnen; neue Pakete: neueste Version, die mindestens zwei Wochen alt ist.
 
 ## Plattformen und Prüfung

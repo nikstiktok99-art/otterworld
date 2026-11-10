@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { wegkarte } from '../game/text';
 import { useApp, useGameState } from './context';
+import { Icon } from './icons';
 
 export function WegkartePanel() {
   const { ui, content, session, sound } = useApp();
@@ -22,7 +23,11 @@ export function WegkartePanel() {
   return (
     <div className="backdrop" onClick={() => ui.close()}>
       <div className="sheet panel wegkarte-sheet" role="dialog" aria-label="Wegkarte" onClick={(e) => e.stopPropagation()}>
-        <h2>Wegkarte</h2>
+        <div className="sheet-head">
+          <span className="ribbon" aria-hidden="true" />
+          <Icon name="map" className="head-icon" />
+          <h2>Wegkarte</h2>
+        </div>
         <div className="wegkarte">
           <svg className="wege" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {wege.map(([a, b]) => {
@@ -56,8 +61,9 @@ export function WegkartePanel() {
         <button className="btn primary" disabled={!ziel || ziel.hier} onClick={reisen}>
           {!ziel ? 'Ort wählen' : ziel.hier ? 'Hier bist du gerade' : `Hinreisen: ${ziel.name}`}
         </button>
-        <button className="btn ghost" onClick={() => ui.close()}>
-          Zurück
+        <button className="btn back" onClick={() => ui.close()}>
+          <Icon name="back" className="btn-icon" />
+          <span>Zurück</span>
         </button>
       </div>
     </div>

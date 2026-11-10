@@ -7,15 +7,33 @@ import { DEFAULT_STATION, type RecipeDef } from '../content/types';
 import { useApp, useGameState, useUi } from './context';
 import { NameForm } from './Dialog';
 import { portraitSrc } from './portraits';
+import { Icon, SpriteIcon, type IconName } from './icons';
 
-function Sheet({ title, children, onClose, closeLabel = 'Zurück' }: { title: string; children: ReactNode; onClose: () => void; closeLabel?: string }) {
+function Sheet({
+  title,
+  icon,
+  children,
+  onClose,
+  closeLabel = 'Zurück',
+}: {
+  title: string;
+  icon?: IconName;
+  children: ReactNode;
+  onClose: () => void;
+  closeLabel?: string;
+}) {
   return (
     <div className="backdrop" onClick={onClose}>
       <div className="sheet panel" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
-        <h2>{title}</h2>
+        <div className="sheet-head">
+          <span className="ribbon" aria-hidden="true" />
+          {icon && <Icon name={icon} className="head-icon" />}
+          <h2>{title}</h2>
+        </div>
         <div className="panel-body">{children}</div>
-        <button className="btn ghost" onClick={onClose}>
-          {closeLabel}
+        <button className="btn back" onClick={onClose}>
+          <Icon name="back" className="btn-icon" />
+          <span>{closeLabel}</span>
         </button>
       </div>
     </div>
@@ -29,7 +47,9 @@ export function TitlePanel() {
   return (
     <div className="backdrop title-screen">
       <div className="title-card">
+        <span className="ribbon" aria-hidden="true" />
         <h1>Otterwelt</h1>
+        <p className="title-ribbon">Ein kleines Zuhause am Wasser</p>
         <button
           className="btn primary big"
           onClick={() => {
@@ -68,18 +88,21 @@ export function BagPanel() {
     return item ? (n === 1 ? item.name : item.plural) : id;
   };
   return (
-    <Sheet title="Beutel" onClose={() => ui.close()}>
+    <Sheet title="Beutel" icon="bag" onClose={() => ui.close()}>
       {items.length === 0 && placed.length === 0 && <p className="muted">Noch nichts dabei.</p>}
       {materials.length > 0 && (
         <>
           <h3 className="section">Sachen</h3>
           <ul className="list">
             {materials.map(([id, n]) => (
-              <li key={id} className="list-row column">
-                <span>
-                  {label(id, n)} <strong>{n}</strong>
+              <li key={id} className="list-row item-row">
+                <SpriteIcon sprite={content.items[id]?.sprite} />
+                <span className="item-text">
+                  <span>
+                    {label(id, n)} <strong className="count">{n}</strong>
+                  </span>
+                  {content.items[id]?.description && <span className="muted small">{content.items[id]!.description}</span>}
                 </span>
-                {content.items[id]?.description && <span className="muted small">{content.items[id]!.description}</span>}
               </li>
             ))}
           </ul>
@@ -89,8 +112,11 @@ export function BagPanel() {
       <ul className="list">
         {decoItems.map(([id, n]) => (
           <li key={id} className="list-row">
-            <span>
-              {label(id, n)} <strong>{n}</strong>
+            <span className="item-line">
+              <SpriteIcon sprite={content.items[id]?.sprite} />
+              <span>
+                {label(id, n)} <strong className="count">{n}</strong>
+              </span>
             </span>
             {canDecorate ? (
               <button className="btn small primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: id, tile: null, problem: null } })}>
@@ -103,8 +129,11 @@ export function BagPanel() {
         ))}
         {placed.map((d) => (
           <li key={d.uid} className="list-row">
-            <span>
-              {content.items[d.item]?.name ?? d.item} <span className="muted">steht {content.maps[d.map]?.at ?? 'am Ufer'}</span>
+            <span className="item-line">
+              <SpriteIcon sprite={content.items[d.item]?.sprite} />
+              <span>
+                {content.items[d.item]?.name ?? d.item} <span className="muted">steht {content.maps[d.map]?.at ?? 'am Ufer'}</span>
+              </span>
             </span>
             {d.map === s.location.map && canDecorate && (
               <span className="row-buttons">
@@ -138,7 +167,7 @@ export function QuestsPanel() {
   const log = questLog(s, content);
   const giver = (id: string | null) => (id ? characterName(id, s, content) : null);
   return (
-    <Sheet title="Aufgaben" onClose={() => ui.close()}>
+    <Sheet title="Aufgaben" icon="task" onClose={() => ui.close()}>
       {log.active.length === 0 && log.offers.length === 0 && <p className="muted">Gerade gibt es nichts zu tun. Genieß das Ufer!</p>}
       {log.active.length > 0 && (
         <ul className="list quests">
@@ -201,7 +230,7 @@ export function FriendsPanel() {
   const s = useGameState();
   const friends = friendList(s, content);
   return (
-    <Sheet title="Freundebuch" onClose={() => ui.close()}>
+    <Sheet title="Freundebuch" icon="friends" onClose={() => ui.close()}>
       <ul className="list friends">
         {friends.map((id) => {
           const ch = content.characters[id];
@@ -276,8 +305,11 @@ export function WorkbenchPanel() {
   if (built) {
     const item = content.items[built];
     return (
-      <Sheet title={title} onClose={() => ui.close()} closeLabel="Später">
-        <p className="big-text">{item?.name ?? built} gebaut.</p>
+      <Sheet title={title} icon="workbench" onClose={() => ui.close()} closeLabel="Später">
+        <div className="built">
+          <SpriteIcon sprite={item?.sprite} box={72} />
+          <p className="big-text">{item?.name ?? built} gebaut.</p>
+        </div>
         {item?.kind === 'deco' && count(s, built) > 0 && (
           <button className="btn primary" onClick={() => ui.set({ panel: null, decorate: { mode: 'place', item: built, tile: null, problem: null } })}>
             Jetzt aufstellen
@@ -290,22 +322,30 @@ export function WorkbenchPanel() {
     );
   }
   return (
-    <Sheet title={title} onClose={() => ui.close()}>
+    <Sheet title={title} icon="workbench" onClose={() => ui.close()}>
       {known.length === 0 && <p className="muted">Hier kannst du bauen, sobald du weißt wie.</p>}
       {known.map((r) => {
         const ok = canBuild(r);
         const desc = content.items[r.output.item]?.description;
         return (
           <div key={r.id} className="recipe">
-            <p className="recipe-name">{r.name}</p>
-            {desc && <p className="muted small">{desc}</p>}
+            <div className="recipe-head">
+              <SpriteIcon sprite={content.items[r.output.item]?.sprite} box={52} />
+              <div>
+                <p className="recipe-name">{r.name}</p>
+                {desc && <p className="muted small">{desc}</p>}
+              </div>
+            </div>
             <ul className="list compact">
               {Object.entries(r.inputs).map(([i, n]) => {
                 const have = count(s, i);
                 const item = content.items[i];
                 return (
                   <li key={i} className={have >= n ? 'list-row done' : 'list-row'}>
-                    <span>{item ? (n === 1 ? item.name : item.plural) : i}</span>
+                    <span className="item-line">
+                      <SpriteIcon sprite={item?.sprite} box={28} />
+                      <span>{item ? (n === 1 ? item.name : item.plural) : i}</span>
+                    </span>
                     <span>
                       {Math.min(have, n)} von {n}
                     </span>
@@ -338,7 +378,7 @@ export function MenuPanel() {
     sound.play('sfx.tipp');
   };
   return (
-    <Sheet title="Menü" onClose={() => ui.close()} closeLabel="Zurück zum Spiel">
+    <Sheet title="Menü" icon="settings" onClose={() => ui.close()} closeLabel="Zurück zum Spiel">
       <div className="stack">
         <button className="btn" onClick={() => ui.open({ kind: 'quests' })}>
           Aufgaben
@@ -398,7 +438,7 @@ export function SaveExportPanel() {
   const code = useMemo(() => exportCode(s), [s]);
   const [copied, setCopied] = useState(false);
   return (
-    <Sheet title="Spielstand sichern" onClose={() => ui.open({ kind: 'menu' })}>
+    <Sheet title="Spielstand sichern" icon="store" onClose={() => ui.open({ kind: 'menu' })}>
       <p className="muted">Diesen Code kopieren und zum Beispiel in der Notizen-App aufheben. Damit lässt sich dein Spielstand jederzeit wiederherstellen.</p>
       <textarea className="code" readOnly value={code} rows={5} onFocus={(e) => e.currentTarget.select()} />
       <button
@@ -487,7 +527,7 @@ export function TechPanel() {
     ['Quest', JSON.stringify(s.quests)],
   ];
   return (
-    <Sheet title="Technik-Info" onClose={() => ui.open({ kind: 'menu' })}>
+    <Sheet title="Technik-Info" icon="help" onClose={() => ui.open({ kind: 'menu' })}>
       <dl className="tech">
         {rows.map(([k, v]) => (
           <div key={k} className="tech-row">
