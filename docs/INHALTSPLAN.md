@@ -9,13 +9,13 @@ Persönliche Bezüge, Geschichten und weitere Details liefert der Nutzer – hie
 |---|---|---|---|---|
 | otter | (Name der Spielerin) | body.otter | im Spiel | Erste steuerbare Figur; heißt so, wie sie sich im ersten Gespräch nennt. Ruht vor dem Bau, während sie jemand anderen spielt |
 | schnabbi | Schnabbi | body.schnabbi | im Spiel, **spielbar ab Phase 2** | Erster Freund und Helfer; Schnabeltier-Kuscheltier, Aussehen nach Foto |
-| rosie | Rosie | body.rosie | im Spiel (Tiramisu Stream, Teich, nur Wasser) | Pinker Axolotl, Schwester von Bubbles |
-| bubbles | Bubbles | body.bubbles | im Spiel (Tiramisu Stream, Teich, nur Wasser) | Blauer Axolotl, Bruder von Rosie, macht immer wieder Blasen (im Spiel sichtbar) |
-| chamaron | Chamaron | body.chamaron | im Spiel (Cat Café, getarnt bis gefunden, dann Farbwechsel) | Chamäleon (Schreibweise beibehalten) |
-| meerkat | Meerkat | body.meerkat | im Spiel (Zoo, Gehege, nur an Land) | Erdmännchen, „Meerkat“ ist der Name |
-| bean | Bean | body.bean | im Spiel (Fuchsbau) | Rentier, unabhängig vom Erbsentrio |
-| beano, beani, beanz | Beano, Beani, Beanz | **body.erbsenschale** (gemeinsam, 3 Sitze) | im Spiel (Hotpot-Restaurant) | Drei eigene Figuren, eigene Stimmen (Vorschlag: fröhlich, verträumt, neugierig), ein gemeinsamer Körper |
-| squichy | Squichy | body.squichy | im Spiel (Zoo, Robbenbecken; Codex-Entwurf vorhanden, noch nicht eingebaut) | Mini-Robbe, Schreibweise „Squichy“ |
+| rosie | Rosie | body.rosie | im Spiel, **spielbar** (Tiramisu Stream, nur Wasser) | Pinker Axolotl, Schwester von Bubbles |
+| bubbles | Bubbles | body.bubbles | im Spiel, **spielbar** (Tiramisu Stream, nur Wasser) | Blauer Axolotl, Bruder von Rosie, macht immer wieder Blasen (im Spiel sichtbar) |
+| chamaron | Chamaron | body.chamaron | im Spiel, **spielbar** (Cat Café, Farbwechsel) | Chamäleon (Schreibweise beibehalten) |
+| meerkat | Meerkat | body.meerkat | im Spiel, **spielbar** (Zoo, nur an Land) | Erdmännchen, „Meerkat“ ist der Name |
+| bean | Bean | body.bean | im Spiel, **spielbar** (Fuchsbau) | Rentier, unabhängig vom Erbsentrio |
+| beano, beani, beanz | Beano, Beani, Beanz | **body.erbsenschale** (gemeinsam, 3 Sitze) | im Spiel, **spielbar** (Hotpot-Restaurant) | Drei eigene Figuren, eigene Stimmen (Vorschlag: fröhlich, verträumt, neugierig), ein gemeinsamer Körper |
+| squichy | Squichy | body.squichy | im Spiel, **spielbar** (Zoo; Codex-Entwurf vorhanden, noch nicht eingebaut) | Mini-Robbe, Schreibweise „Squichy“ |
 | otterprinzessin | Lumi (Vorschlag aus dem Masterprompt) | body.otterprinzessin | im Spiel, **spielbar** (Tiramisu Stream) | Kleid und Krone; Begegnung nach Schnabbi |
 
 **Erbsentrio, geprüft** (`tests/phase2.test.ts`, `tests/orte.test.ts`): In der Welt steht genau eine
@@ -47,6 +47,12 @@ zwischen den Erbsen behält Körper und Platz, nur wer spricht, ändert sich. Sp
 | quest.chamaron.kletterpflanze | Ein Versteck für Chamaron (**Vorschlag**) | moment.chamaron.kletterpflanze | Rezept Wollkissen |
 | quest.erbsen.festessen | Ein Festessen für drei (**Vorschlag**, Kochtopf) | moment.beano/beani/beanz.festessen | Rezept Kräutersuppe |
 | quest.bean.kranz | Ein Kranz für Bean (**Vorschlag**) | moment.bean.kranz | Rezepte Beerenlicht, Mooskissen |
+| quest.rosie.teichlicht | Ein Licht für den Teich (Vertrauen) | moment.rosie/bubbles.teichlicht | Rosie und Bubbles spielbar |
+| quest.meerkat.sonnenblume | Eine Sonnenblume für Meerkat (Vertrauen) | moment.meerkat.sonnenblume | Meerkat spielbar, Sonnenblume am Stein |
+| quest.squichy.nickerchen | Ein Nickerchen für Squichy (Vertrauen) | moment.squichy.nickerchen | Squichy spielbar |
+| quest.chamaron.farben | Farben für Chamaron (Vertrauen) | moment.chamaron.farben | Chamaron spielbar |
+| quest.erbsen.suppe | Suppe für alle (Vertrauen) | moment.beano/beani/beanz.suppe | alle drei Erbsen spielbar |
+| quest.bean.waldlicht | Ein Licht im Wald (Vertrauen) | moment.bean.waldlicht | Bean spielbar |
 
 Nach „Ein Platz für zwei“ zeigt Schnabbi zwei Rezepte zum freien Bauen (**Vorschlag**): Treibholzbank (3 Treibholz) und
 Muschelwindspiel (1 Treibholz, 2 Muschelschalen). Treibholz, Muscheln und Schilf wachsen nach 10 Minuten nach

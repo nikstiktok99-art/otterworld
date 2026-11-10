@@ -17,7 +17,11 @@ spielbar). Jede Figur hat eine kleine Eigenheit (z. B. Blasen) und bewegt sich p
 | 6 | Hotpot-Restaurant (`map.hotpot-restaurant`) – Küche mit Kochtopf (eigene Station), Theke, Tische; Weg rechts im Zoo | **Beano, Beani, Beanz** (eine Schale, drei Stimmen: fröhlich, verträumt, neugierig) | Mehl, Möhrchen, Kräuter | am Kochtopf: Teigtaschen, Kräutersuppe | **gebaut (0.7.0)**: alle drei befreundet (je ein Moment); Vertrauens-Aufgabe folgt |
 | 7 | Fuchsbau (`map.fuchsbau`) – Waldlichtung mit Fuchsbau (die Füchse bleiben unsichtbar); Weg oben am Tiramisu Stream | **Bean** (Rentier) | Tannenzapfen, Waldbeeren, Moos | Zapfenkranz, Beerenlicht, Mooskissen | **gebaut (0.7.0)**: befreundet; Vertrauens-Aufgabe folgt |
 
-Spätere Vertrauens-Aufgaben (Vorschläge): Rosie und Bubbles wollen ein Blasen-Licht für den Teich; als Axolotl spielt
+**Vertrauens-Aufgaben (gebaut in 0.9.0, Inhaltspaket `src/content/vertrauen.ts`):** Rosie und Bubbles – Teichlaterne;
+Meerkat – Sonnenblumentopf (steht danach am Stein); Squichy – Seerosenkissen; Chamaron – Blütengirlande; Erbsentrio –
+Kräutersuppe (alle drei spielbar, eine Schale); Bean – Beerenlicht. Danach ist jeder Freund aus dem Kanon spielbar.
+Axolotl spielen sich nur im Wasser (und können nicht an Orte ohne Wasser wechseln oder reisen), Meerkat, Chamaron, Bean
+und die Schale nur an Land, Squichy an Land gemütlich und im Wasser flink. Ältere Idee:
 man nur im Wasser. Lumi könnte zu einem kleinen Fest am Bach einladen, zu dem alle Freunde kommen.
 
 ## Was bereits vorhanden ist und wiederverwendet wird

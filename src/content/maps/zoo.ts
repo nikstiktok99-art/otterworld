@@ -1,5 +1,5 @@
 import type { MapDef } from '../types';
-import { MAP_CAFE, MAP_HOTPOT, MAP_STARTUFER, MAP_ZOO, NACHWACHSEN_MIN, Q_WIMPEL } from '../ids';
+import { MAP_CAFE, MAP_HOTPOT, MAP_STARTUFER, MAP_ZOO, NACHWACHSEN_MIN, Q_SONNENBLUME, Q_WIMPEL } from '../ids';
 
 // Zoo (Ort aus dem Masterprompt; Gestaltung offen, Bild macht Codex).
 // Vorschlag für den Aufbau: ein Weg von oben nach unten, links Meerkats Gehege mit Aussichtsstein, rechts das
@@ -54,7 +54,10 @@ export const zoo: MapDef = {
       sprite: 'objects.aussichtsstein',
       tile: { x: 3, y: 5 },
       footprint: { w: 2, h: 1 },
-      variants: [{ when: { questDone: Q_WIMPEL }, sprite: 'objects.aussichtsstein.wimpel' }],
+      variants: [
+        { when: { questDone: Q_SONNENBLUME }, sprite: 'objects.aussichtsstein.blume' },
+        { when: { questDone: Q_WIMPEL }, sprite: 'objects.aussichtsstein.wimpel' },
+      ],
       interaction: { kind: 'inspect', text: 'Meerkats Aussichtsstein. Von hier oben sieht man den ganzen Zoo.' },
     },
     {

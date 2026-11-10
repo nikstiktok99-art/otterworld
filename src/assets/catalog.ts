@@ -73,7 +73,8 @@ export type PainterId =
   | 'kraeutersuppe'
   | 'zapfenkranz'
   | 'beerenlicht'
-  | 'mooskissen';
+  | 'mooskissen'
+  | 'teichlaterne';
 
 export interface SpriteDef {
   key: string;
@@ -235,6 +236,7 @@ export const sprites: SpriteDef[] = [
   { key: 'objects.bastelstumpf', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 23 }, placeholder: { painter: 'bastelstumpf' }, note: 'Baumstumpf mit Garn und Schere zum Basteln (Station wie die Werkbank), Grundfläche 1 Kachel' },
   { key: 'objects.aussichtsstein', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: false } }, note: 'Zoo: flacher Aussichtsstein in Meerkats Gehege, Grundfläche 2 × 1 Kacheln' },
   { key: 'objects.aussichtsstein.wimpel', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: true } }, note: 'Zoo: derselbe Stein mit dem Federwimpel obendrauf (nach „Ein Wimpel für Meerkat“)' },
+  { key: 'objects.aussichtsstein.blume', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'aussichtsstein', args: { wimpel: true, blume: true } }, note: 'Zoo: Stein mit Wimpel und Sonnenblume daneben (nach „Eine Sonnenblume für Meerkat“)' },
   { key: 'objects.theke', frameW: 80, frameH: 32, frames: 1, anchor: { x: 40, y: 31 }, placeholder: { painter: 'theke' }, note: 'Theke (Cat Café und Hotpot-Restaurant), Grundfläche 5 × 1 Kacheln' },
   { key: 'objects.basteltisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'basteltisch' }, note: 'Cat Café: Basteltisch mit Wolle und Schere, Grundfläche 2 × 1' },
   { key: 'objects.cafetisch', frameW: 32, frameH: 24, frames: 1, anchor: { x: 16, y: 23 }, placeholder: { painter: 'cafetisch' }, note: 'Cat Café: kleiner runder Tisch mit Teetasse, Grundfläche 2 × 1' },
@@ -284,6 +286,8 @@ export const sprites: SpriteDef[] = [
   { key: 'deco.beerenlicht.aus', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 22 }, placeholder: { painter: 'beerenlicht', args: { an: false } }, note: 'Glas mit Waldbeeren und Glitzerkiesel, aus' },
   { key: 'deco.beerenlicht.an', frameW: 16, frameH: 24, frames: 2, fps: 3, anchor: { x: 8, y: 22 }, placeholder: { painter: 'beerenlicht', args: { an: true } }, note: 'Glas mit Waldbeeren und Glitzerkiesel, leuchtet warm' },
   { key: 'deco.mooskissen', frameW: 16, frameH: 16, frames: 1, anchor: { x: 8, y: 13 }, placeholder: { painter: 'mooskissen' }, note: 'Kissen aus Moos mit einer Feder' },
+  { key: 'deco.teichlaterne.aus', frameW: 16, frameH: 24, frames: 1, anchor: { x: 8, y: 21 }, placeholder: { painter: 'teichlaterne', args: { an: false } }, note: 'Kiesellicht auf einem Seerosenblatt, aus' },
+  { key: 'deco.teichlaterne.an', frameW: 16, frameH: 24, frames: 2, fps: 3, anchor: { x: 8, y: 21 }, placeholder: { painter: 'teichlaterne', args: { an: true } }, note: 'Kiesellicht auf einem Seerosenblatt, leuchtet' },
 
   // ---- Effekte ----
   { key: 'fx.leuchtschein', frameW: 64, frameH: 64, frames: 1, anchor: { x: 32, y: 32 }, placeholder: { painter: 'schein' }, note: 'Weicher Lichtkreis (additiv)' },

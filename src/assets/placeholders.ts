@@ -533,7 +533,7 @@ function paintMooskissen(c: C) {
 
 // ---------------- Umgebung und Dinge ----------------
 
-function paintAussichtsstein(c: C, wimpel: boolean) {
+function paintAussichtsstein(c: C, wimpel: boolean, blume = false) {
   ell(c, 16, 23, 14, 1.5, SHADOW);
   ellOut(c, 16, 17, 13, 6, '#9aa3ad', '#555d66');
   ell(c, 13, 15, 7, 2.5, '#b8c0c8');
@@ -545,6 +545,26 @@ function paintAussichtsstein(c: C, wimpel: boolean) {
     rect(c, 23, 4, 2, 1, '#f5d76e');
     rect(c, 20, 6, 2, 3, '#4f8fd6');
   }
+  if (blume) {
+    // kleine Sonnenblume in Muschel links neben dem Stein
+    ellOut(c, 4, 21, 3.5, 2, '#f6c7d0', '#b97a88');
+    rect(c, 4, 9, 1, 11, '#4f7d38');
+    ell(c, 2, 15, 2, 1, '#5f9142');
+    ellOut(c, 4, 7, 3.5, 3.5, '#f5c542', '#b8862b');
+    ell(c, 4, 7, 1.3, 1.3, '#6b4423');
+  }
+}
+
+function paintTeichlaterne(c: C, f: number, an: boolean) {
+  ring(c, 8, 21, 7.5, 2, RIPPLE);
+  ellOut(c, 8, 18, 6.5, 3, '#6fae5a', '#3f6e35');
+  rect(c, 8, 15, 1, 3, '#3f6e35');
+  // Muschel mit Kieseln als kleine Laterne
+  ellOut(c, 8, 13, 4, 2.5, '#f6c7d0', '#b97a88');
+  const glow = an ? ['#fff3b0', '#ffe68a'][f % 2]! : '#b8c6d4';
+  ellOut(c, 7, 11, 1.5, 1.5, glow, an ? '#d9a640' : '#5c6b7a');
+  ellOut(c, 10, 11, 1.2, 1.2, glow, an ? '#d9a640' : '#5c6b7a');
+  if (an) rect(c, 8, 6, 1, 3, '#fff8d8');
 }
 
 function paintFeder(c: C) {
@@ -1037,7 +1057,8 @@ export function paintFrame(c: C, def: SpriteDef, frame: number): void {
     blase: () => paintBlase(c),
     meerkat: () => paintMeerkat(c, frame, String(args.state), String(args.dir)),
     squichy: () => paintSquichy(c, frame, String(args.state), String(args.dir)),
-    aussichtsstein: () => paintAussichtsstein(c, args.wimpel === true),
+    aussichtsstein: () => paintAussichtsstein(c, args.wimpel === true, args.blume === true),
+    teichlaterne: () => paintTeichlaterne(c, frame, args.an === true),
     feder: () => paintFeder(c),
     sonnenblume: () => paintSonnenblume(c),
     federwimpel: () => paintFederwimpel(c, frame),

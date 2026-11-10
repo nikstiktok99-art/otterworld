@@ -2,12 +2,14 @@
 
 Kleines, persönliches Otterspiel. **Hauptplattform: ihr iPhone 16 Pro.** Android = dein Testgerät, Browser = schnelle Vorschau.
 
-Aktueller Stand: **Version 0.8.0** – mit Wegkarte zum Reisen zwischen besuchten Orten; alle Orte aus dem Masterprompt sind begehbar (Tiramisu Stream, Zoo, Cat Café, Hotpot-Restaurant, Fuchsbau) und alle Freunde aus dem Kanon haben eine Kennenlern-Aufgabe; dazu der Grundbau für Missionen und Crafting
+Aktueller Stand: **Version 0.9.0** – jeder Freund hat jetzt eine Herzensbitte (Vertrauens-Aufgabe) und wird danach spielbar; mit Wegkarte zum Reisen zwischen besuchten Orten; alle Orte aus dem Masterprompt sind begehbar (Tiramisu Stream, Zoo, Cat Café, Hotpot-Restaurant, Fuchsbau) und alle Freunde aus dem Kanon haben eine Kennenlern-Aufgabe; dazu der Grundbau für Missionen und Crafting
 (Aufgabenbuch, Sprechblasen über Figuren, Antworten im Gespräch, Abgeben/Geschenke, nachwachsende Fundstellen,
 freies Bauen, Deko einpacken, Stationen; Baukasten in `docs/MISSIONEN.md`, Plan in `docs/WELTPLAN.md`). Spielbar: der erste Abend, danach ein zweites
 Erlebnis mit Schnabbi in der Schilfbucht, Freundebuch und Spielen als Schnabbi, danach der Tiramisu Stream mit Lumis
 Picknick (Lumi wird spielbar) und einem Kissen für Rosie und Bubbles, dann der Zoo mit Meerkats Wimpel und Squichys Ball,
-das Cat Café mit dem versteckten Chamaron, das Hotpot-Restaurant mit dem Erbsentrio am Kochtopf und Bean beim Fuchsbau.
+das Cat Café mit dem versteckten Chamaron, das Hotpot-Restaurant mit dem Erbsentrio am Kochtopf und Bean beim Fuchsbau;
+nach der Kennenlern-Aufgabe bittet jeder Freund um etwas Kleines (Teichlaterne, Sonnenblumentopf, Seerosenkissen,
+Blütengirlande, Kräutersuppe, Beerenlicht) – danach kann man ihn im Freundebuch spielen.
 Alle Grafiken sind Platzhalter bis auf Schnabbis Codex-Entwurf; Geschichte und Texte von Phase 2 sind Vorschläge.
 
 ## Selbst spielen

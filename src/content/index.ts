@@ -12,14 +12,15 @@ import { catCafe } from './maps/cat-cafe';
 import { hotpotRestaurant } from './maps/hotpot-restaurant';
 import { fuchsbau } from './maps/fuchsbau';
 import { MAP_STARTUFER } from './ids';
+import { vertrauenDialogues, vertrauenItems, vertrauenMoments, vertrauenQuests, vertrauenRecipes } from './vertrauen';
 
 // Zentrale Sammlung aller Inhaltspakete. Eine neue Map kommt als weiterer Eintrag in `maps` hinzu
 // (plus Ausgänge hin und zurück und ggf. Platzierungen in `encounters`).
 export const content: Content = {
   characters,
   bodies,
-  items,
-  recipes,
+  items: { ...items, ...vertrauenItems },
+  recipes: { ...recipes, ...vertrauenRecipes },
   maps: {
     [startufer.id]: startufer,
     [schilfbucht.id]: schilfbucht,
@@ -30,8 +31,9 @@ export const content: Content = {
     [fuchsbau.id]: fuchsbau,
   },
   encounters,
-  quests,
-  moments,
-  dialogues,
+  quests: { ...quests, ...vertrauenQuests },
+  moments: { ...moments, ...vertrauenMoments },
+  // Vertrauens-Gespräche zuerst: Sie greifen erst nach der ersten Aufgabe eines Freundes und gehen dann vor.
+  dialogues: [...vertrauenDialogues, ...dialogues],
   start: { character: 'otter', map: MAP_STARTUFER },
 };

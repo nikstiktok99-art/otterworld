@@ -238,7 +238,13 @@ export function FriendsPanel() {
                   onClick={() => {
                     sound.play('sfx.tipp');
                     ui.close();
-                    session.dispatch({ type: 'switchCharacter', character: id });
+                    const ev = session.dispatch({ type: 'switchCharacter', character: id });
+                    if (ev.some((e) => e.type === 'rejected')) {
+                      // z. B. Rosie im Café: Hier gibt es kein Wasser.
+                      const nurWasser = content.bodies[ch.body]?.moves.every((m) => m === 'water');
+                      sound.play('sfx.nein');
+                      ui.toast(nurWasser ? `${name} braucht Wasser – hier gibt es keins.` : `Hier kann ${name} gerade nicht hin.`);
+                    }
                   }}
                 >
                   {isStart ? 'Wieder als Otter spielen' : `Als ${name} spielen`}

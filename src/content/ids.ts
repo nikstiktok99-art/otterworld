@@ -62,3 +62,12 @@ export const R_KRANZ = 'recipe.zapfenkranz';
 export const R_BEERENLICHT = 'recipe.beerenlicht';
 export const R_MOOSKISSEN = 'recipe.mooskissen';
 export const M_KRANZ = 'moment.bean.kranz';
+
+// Vertrauens-Aufgaben (Vorschlag): danach sind die Freunde im Freundebuch spielbar.
+export const Q_TEICHLICHT = 'quest.rosie.teichlicht';
+export const Q_SONNENBLUME = 'quest.meerkat.sonnenblume';
+export const Q_NICKERCHEN = 'quest.squichy.nickerchen';
+export const Q_FARBEN = 'quest.chamaron.farben';
+export const Q_SUPPE = 'quest.erbsen.suppe';
+export const Q_WALDLICHT = 'quest.bean.waldlicht';
+export const R_TEICHLATERNE = 'recipe.teichlaterne';

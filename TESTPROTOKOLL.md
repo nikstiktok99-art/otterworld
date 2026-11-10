@@ -2,6 +2,29 @@
 
 Jede Spalte zählt nur für sich: Ein Browser- oder Simulatorlauf ist kein Gerätetest.
 
+## Vertrauens-Aufgaben – alle Freunde spielbar (Version 0.9.0)
+
+Automatisch geprüft am 10.11.2026:
+
+- **Unit-Tests:** 132 bestanden, davon 7 neu (`tests/vertrauen.test.ts`): Teichlaterne für Rosie und Bubbles (beide
+  spielbar, zwei Momente genau einmal), als Rosie nur im Wasser und im Café ohne Wasser kein Wechsel, Sonnenblumentopf
+  für Meerkat (Stein zeigt danach die Sonnenblume, Meerkat steht nicht doppelt im Gehege), Seerosenkissen für Squichy,
+  Blütengirlande für Chamaron, Kräutersuppe vom Kochtopf für das Erbsentrio (alle drei spielbar, weiterhin genau eine
+  Schale), Beerenlicht für Bean.
+- **Typprüfung:** fehlerfrei. **Inhaltsprüfung:** jede Abgabe ist durch „hat die Dinge“ abgesichert.
+- **Cloud:** CLOUD_ERGEBNIS
+- **Browser-Durchlauf:** bestanden (108 Prüfungen).
+
+| Test | Browser (`npm run e2e`, 108 Prüfungen) | Android (dein Handy) | iPhone-Simulator (Cloud) | iPhone 16 Pro (ihr Gerät) |
+|---|---|---|---|---|
+| Alles aus 0.8.0 wie bisher | ok | offen | – | offen |
+| Meerkat bittet nach dem Wimpel um einen Sonnenblumentopf (Sprechblase) | ok | offen | – | offen |
+| Am Startufer basteln, über die Karte zurück in den Zoo, abgeben | ok | offen | – | offen |
+| Stein zeigt danach Wimpel und Sonnenblume | ok | offen | – | offen |
+| Im Freundebuch als Meerkat spielen und zurück zum Otter wechseln | ok | offen | – | offen |
+| Rosie an einem Ort ohne Wasser wählen: freundlicher Hinweis statt Wechsel | nur Unit-Test | offen | – | offen |
+| Keine Fehler in der Konsole | ok | offen | SIM_ERGEBNIS | offen |
+
 ## Wegkarte (Version 0.8.0)
 
 Automatisch geprüft am 09.11.2026:

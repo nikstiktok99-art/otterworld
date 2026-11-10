@@ -38,7 +38,7 @@ Bild (kein Mix aus Bild und Testform).
 | objects.wegweiser | 16 × 32 | 8, 31 | P | Holzpfosten mit Schild, Spitze nach rechts (das Spiel spiegelt für links); Grundfläche 1 Kachel; steht an jedem Ausgang |
 | objects.picknickdecke | 48 × 32 | 24, 31 | P | Tiramisu Stream: karierte Picknickdecke mit Körbchen, Grundfläche 3 × 2 Kacheln |
 | objects.bastelstumpf | 16 × 24 | 8, 23 | P | Tiramisu Stream: Baumstumpf mit Garn und Schere, Bastel-Station, 1 Kachel |
-| objects.aussichtsstein / .wimpel | 32 × 24 | 16, 23 | P | Zoo: Meerkats Aussichtsstein; zweite Fassung mit Federwimpel obendrauf (nach der Aufgabe) |
+| objects.aussichtsstein / .wimpel / .blume | 32 × 24 | 16, 23 | P | Zoo: Meerkats Aussichtsstein; zweite Fassung mit Federwimpel obendrauf (nach der Aufgabe), dritte zusätzlich mit Sonnenblume daneben (nach der Vertrauens-Aufgabe) |
 | objects.theke | 80 × 32 | 40, 31 | P | Cat Café und Hotpot-Restaurant: Theke, Grundfläche 5 × 1 |
 | objects.basteltisch | 32 × 24 | 16, 23 | P | Cat Café: Basteltisch (Station wie die Werkbank), 2 × 1 |
 | objects.cafetisch | 32 × 24 | 16, 23 | P | Cat Café: kleiner runder Tisch mit Tasse, 2 × 1 |
@@ -89,6 +89,7 @@ Bild (kein Mix aus Bild und Testform).
 | deco.zapfenkranz | 16 × 32 | 8, 30 | 1 | P | Kranz aus Tannenzapfen mit Beere auf einem Ständer |
 | deco.beerenlicht.aus / .an | 16 × 24 | 8, 22 | 1 / 2 · 3 | P | Glas mit Waldbeeren und Glitzerkiesel; an: leuchtet |
 | deco.mooskissen | 16 × 16 | 8, 13 | 1 | P | Kissen aus Moos mit Feder |
+| deco.teichlaterne.aus / .an | 16 × 24 | 8, 21 | 1 / 2 · 3 | P | Kiesellicht auf einem Seerosenblatt; an: leuchtet sanft (für Rosie und Bubbles) |
 
 ## Effekte
 
